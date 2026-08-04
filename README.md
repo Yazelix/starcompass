@@ -10,7 +10,9 @@ It provides:
 - deterministic, self-contained `AGENTS.md` rendering;
 - exact source-commit, protocol-version, overlay, and exception records;
 - a dependency-free structural drift checker;
-- two Codex skills dedicated only to applying and auditing the protocols.
+- two Codex skills dedicated only to applying and auditing the protocols; and
+- self-adoption of the `greenfield` profile through the ordinary consumer
+  format.
 
 The repository is private while the format and broader consumer adoption are
 incubating. It has no hosted CI. Local verification is the current proof surface.
@@ -186,12 +188,23 @@ scripts/protocols.py       index, render, and drift-check owner
 tests/                     focused contract tests
 skills/                    protocol-only Codex skills
 docs/DESIGN.md             architecture decisions and boundaries
+.agent-protocols.local.md  Starcompass-specific policy input
+.agent-protocols.*.json    exact self-import and exception records
+AGENTS.md                  generated self-contained active policy
 .beads/                    durable planning state managed through br
 ```
 
-The source repository's own `AGENTS.md` is a hand-authored bootstrap document.
-It is not rendered from itself because embedding its current commit would create
-a self-referential pin.
+Starcompass consumes its own `greenfield` profile through the same files and
+renderer used by other repositories. Its manifest pins the latest accepted
+protocol-bearing revision rather than the consumer revision that contains the
+generated files. A same-commit pin is impossible because committing the import
+would change the commit being named.
+
+Canonical protocol, profile, or checker changes therefore use two revisions.
+Commit and verify the source change under the existing pin, then render the
+self-adoption from a clean detached checkout at that source revision and commit
+the refreshed import separately. This compiler-style bootstrap needs no special
+profile, checker mode, or exception.
 
 ## Verification
 
@@ -202,6 +215,18 @@ python3 -m unittest discover -s tests -v
 python3 /home/lucca/.codex/skills/.system/skill-creator/scripts/quick_validate.py skills/apply-agent-protocols
 python3 /home/lucca/.codex/skills/.system/skill-creator/scripts/quick_validate.py skills/audit-agent-protocols
 git diff --check
+```
+
+The self-import check must use a clean checkout at the source commit recorded in
+`.agent-protocols.json`, not the newer consumer checkout:
+
+```sh
+PINNED_STARCOMPASS=/path/to/clean/checkout-at-the-manifest-source-commit
+python3 "$PINNED_STARCOMPASS/scripts/protocols.py" check \
+  --overlay .agent-protocols.local.md \
+  --exceptions .agent-protocols.exceptions.json \
+  --manifest .agent-protocols.json \
+  --agents AGENTS.md
 ```
 
 ## LOC scorecard
@@ -215,5 +240,5 @@ The scorecard counts tracked project text and code, excluding `.beads/` state.
 | Checker | 620 |
 | Tests | 252 |
 | Enforcement skills | 162 |
-| Repository policy and docs | 505 |
-| **Total** | **2,218** |
+| Repository policy and docs | 991 |
+| **Total** | **2,704** |

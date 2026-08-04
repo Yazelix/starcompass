@@ -29,7 +29,7 @@ replaces the other.
 
 ## Profiles compose; projects still own policy
 
-The four profiles are curated ordered sets, not inheritance trees. Repeated
+The five profiles are curated ordered sets, not inheritance trees. Repeated
 `--profile` arguments form an ordered union and discard duplicate protocol IDs at
 their second occurrence. This supports combinations such as a greenfield
 terminal engine without inventing a profile for every project type.
@@ -128,10 +128,18 @@ and checker rather than copy protocol wording.
 
 ## Bootstrap and publication
 
-This repository cannot embed its own current commit into a generated
-`AGENTS.md`: committing the result would immediately change the commit it claims
-to pin. Its self-contained root instructions are therefore a documented
-bootstrap exception to consumer rendering, not a hidden import.
+Starcompass dogfoods the ordinary consumer format with the `greenfield` profile.
+Its generated root `AGENTS.md` cannot pin the commit that contains itself:
+committing the result would immediately change the claimed source revision.
+Instead, the manifest pins the latest accepted protocol-bearing revision and
+the generated adoption lands in a follow-up revision, like a compiler built by
+its preceding version.
+
+Canonical protocol, profile, and checker changes are committed and verified
+under the existing pin before a clean detached checkout at that new revision
+renders the next self-adoption. The exact-pinned checkout also runs the
+structural check. This uses the public profile, manifest, renderer, and checker
+without a special self-hosting mode or exception.
 
 The repository starts private and without hosted CI. This keeps early format
 iteration and GitHub Actions cost explicit. Publication, licensing, releases,

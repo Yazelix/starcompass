@@ -21,3 +21,5 @@
   drift.
 - Protocol-only apply and audit Codex skills.
 - Generated `AGENTS.md` files identify their editable consumer-owned inputs.
+- Exact-pinned `greenfield` self-adoption through the ordinary consumer format
+  and a two-revision bootstrap sequence for canonical source changes.

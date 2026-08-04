@@ -1,0 +1,76 @@
+{
+  "schema": 1,
+  "source": {
+    "repository": "https://github.com/luccahuguet/starcompass",
+    "commit": "db190113958f64e936bf9441fe3fa905c24a632d"
+  },
+  "profiles": [
+    "greenfield"
+  ],
+  "protocols": [
+    {
+      "id": "AP-SCOPE-001",
+      "version": 1,
+      "sha256": "b3f7e012df0708d4baf8957e3c315878a9eb8cd7fddf637dfde1506609d08444"
+    },
+    {
+      "id": "AP-CONTRACT-001",
+      "version": 1,
+      "sha256": "0aa692f4c52542111149b691b7d0c015a0c16523cd620a67b0cf335f3284da82"
+    },
+    {
+      "id": "AP-REFERENCE-001",
+      "version": 1,
+      "sha256": "3d72ac864b050af7783493245be59450c39db940d736ea6fb60269cd21f7927b"
+    },
+    {
+      "id": "AP-MINIMAL-001",
+      "version": 1,
+      "sha256": "256c158cc8b226e4baf96d5590531ea180edc9717338dac0fe51a34dd037791f"
+    },
+    {
+      "id": "AP-DEPENDENCY-001",
+      "version": 1,
+      "sha256": "a389ff9054708574c52ec5e5dd7fc3e2d13b125d2218c70062f50a86761981ca"
+    },
+    {
+      "id": "AP-OWNERSHIP-001",
+      "version": 1,
+      "sha256": "bdc09117f79b0d8dbe78e2dd8673a2463398aa31880fe27209fd6cc47f58bbf7"
+    },
+    {
+      "id": "AP-TEST-001",
+      "version": 1,
+      "sha256": "363da7c542521be22233a4cc3373c0d3c3c5a9a0cf37f633cd5029545f4a3bee"
+    },
+    {
+      "id": "AP-PROOF-001",
+      "version": 1,
+      "sha256": "1af235a56e9711d55362d869fa4057f1658d0aa7fe766030be0897ee5fd7c02b"
+    },
+    {
+      "id": "AP-PLAN-001",
+      "version": 1,
+      "sha256": "d1edf160323fe69e814c3055461c054a5def761000c27874df75e04c1dd195e3"
+    },
+    {
+      "id": "AP-CI-001",
+      "version": 1,
+      "sha256": "78f1662259cd83f33d22ff4ddd0859ab0d4f704ba4f38756eef40a8b9b787bec"
+    },
+    {
+      "id": "AP-EXCEPTION-001",
+      "version": 1,
+      "sha256": "f66749229dbbc005e1c3103bfed86cf95169d7b32466c72fd8442e841cadb268"
+    },
+    {
+      "id": "AP-GIT-001",
+      "version": 1,
+      "sha256": "624740f796eddd5adcaf657e8f1aa3ba229c146e4b34c816940a5543d74ba46f"
+    }
+  ],
+  "exceptions": [],
+  "overlay": {
+    "sha256": "6761bfead3f2e87d429b3e38ee92fe6f726d5889c9db3ec5b6bc04c2535afb62"
+  }
+}
