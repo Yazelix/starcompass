@@ -247,5 +247,5 @@ The scorecard counts tracked project text and code, excluding `.beads/` state.
 | Rust checker and package manifest | 1,141 |
 | Tests | 377 |
 | Enforcement skills | 175 |
-| Repository policy and docs | 1,016 |
-| **Total** | **3,388** |
+| Repository policy and docs | 1,017 |
+| **Total** | **3,389** |
