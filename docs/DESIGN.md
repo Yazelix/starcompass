@@ -16,14 +16,17 @@ current source URL when deliberately upgraded.
 
 ## The durable unit is a protocol
 
-Each rule has a permanent ID, an integer version, a title, and canonical
-Markdown. The generated index records the file hash. Profiles refer only to IDs,
-so wording has one owner and profile composition cannot create hidden copies.
+Each rule has a permanent ID, a positive unsigned integer version, a title, and
+canonical Markdown. The generated index records the file hash. Profiles refer
+only to IDs, so wording has one owner and profile composition cannot create
+hidden copies.
 
 Protocol versions describe compatibility at the rule level. Every canonical file
 change requires a bump because automation cannot safely distinguish editorial
 wording from a semantic change. The history gate also prevents removal or reuse
-of an ID. Git commits identify the exact catalog, profiles, and rendering
+of an ID. It first resolves the requested base to a commit, then reads that
+commit's historical index; worktree or index pseudo-revisions cannot satisfy the
+gate. Git commits identify the exact catalog, profiles, and rendering
 implementation used for an import. Consumers record both because neither
 replaces the other.
 

@@ -9,7 +9,7 @@ use std::{
     process::Command,
 };
 
-pub const SOURCE_REPOSITORY: &str = "https://github.com/luccahuguet/starcompass";
+const SOURCE_REPOSITORY: &str = "https://github.com/luccahuguet/starcompass";
 
 type Result<T> = std::result::Result<T, Error>;
 
@@ -28,8 +28,6 @@ impl fmt::Display for Error {
     }
 }
 
-impl std::error::Error for Error {}
-
 impl From<std::io::Error> for Error {
     fn from(error: std::io::Error) -> Self {
         Self(error.to_string())
@@ -42,7 +40,7 @@ impl From<serde_json::Error> for Error {
     }
 }
 
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Debug)]
 struct Protocol {
     id: String,
     version: u64,
@@ -81,7 +79,7 @@ struct IndexRecord {
     sha256: String,
 }
 
-#[derive(Clone, Debug, Deserialize, PartialEq, Eq, Serialize)]
+#[derive(Debug, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
 struct Profile {
     schema: u64,
@@ -120,7 +118,7 @@ where
     String::deserialize(deserializer).map(Some)
 }
 
-#[derive(Clone, Debug, Deserialize, PartialEq, Eq, Serialize)]
+#[derive(Debug, Deserialize, PartialEq, Eq, Serialize)]
 #[serde(deny_unknown_fields)]
 struct Manifest {
     schema: u64,
@@ -131,14 +129,14 @@ struct Manifest {
     overlay: Overlay,
 }
 
-#[derive(Clone, Debug, Deserialize, PartialEq, Eq, Serialize)]
+#[derive(Debug, Deserialize, PartialEq, Eq, Serialize)]
 #[serde(deny_unknown_fields)]
 struct Source {
     repository: String,
     commit: String,
 }
 
-#[derive(Clone, Debug, Deserialize, PartialEq, Eq, Serialize)]
+#[derive(Debug, Deserialize, PartialEq, Eq, Serialize)]
 #[serde(deny_unknown_fields)]
 struct ImportRecord {
     id: String,
@@ -146,7 +144,7 @@ struct ImportRecord {
     sha256: String,
 }
 
-#[derive(Clone, Debug, Deserialize, PartialEq, Eq, Serialize)]
+#[derive(Debug, Deserialize, PartialEq, Eq, Serialize)]
 #[serde(deny_unknown_fields)]
 struct Overlay {
     sha256: String,
@@ -246,13 +244,13 @@ fn parse_protocol(root: &Path, path: &Path) -> Result<Protocol> {
             path.display()
         )));
     }
-    let version = metadata["version"].parse::<i64>().map_err(|_| {
+    let version = metadata["version"].parse::<u64>().map_err(|_| {
         Error::new(format!(
             "protocol version must be an integer in {}",
             path.display()
         ))
     })?;
-    if version < 1 {
+    if version == 0 {
         return Err(Error::new(format!(
             "protocol version must be positive in {}",
             path.display()
@@ -275,7 +273,7 @@ fn parse_protocol(root: &Path, path: &Path) -> Result<Protocol> {
         .join("/");
     Ok(Protocol {
         id: id.into(),
-        version: version as u64,
+        version,
         title: metadata["title"].into(),
         path: relative,
         sha256: digest(&raw),
@@ -324,9 +322,7 @@ fn load_protocols(root: &Path) -> Result<BTreeMap<String, Protocol>> {
     let mut protocols = BTreeMap::new();
     for path in source_files(root, "protocols", "md")? {
         let protocol = parse_protocol(root, &path)?;
-        if protocols.insert(protocol.id.clone(), protocol).is_some() {
-            return Err(Error::new("duplicate protocol ID"));
-        }
+        protocols.insert(protocol.id.clone(), protocol);
     }
     Ok(protocols)
 }
@@ -401,9 +397,7 @@ fn load_profiles(
             }
         }
         used.extend(profile.protocols.iter().cloned());
-        if profiles.insert(profile.name.clone(), profile).is_some() {
-            return Err(Error::new("duplicate profile name"));
-        }
+        profiles.insert(profile.name.clone(), profile);
     }
     let unused = protocols
         .keys()
@@ -445,6 +439,9 @@ fn validate_version_transition(previous: &ProtocolIndex, current: &ProtocolIndex
         .iter()
         .map(|record| (&record.id, record))
         .collect::<BTreeMap<_, _>>();
+    if before.len() != previous.protocols.len() {
+        return Err(Error::new("base revision has an invalid protocol index"));
+    }
     let after = current
         .protocols
         .iter()
@@ -803,10 +800,16 @@ fn git(root: &Path, arguments: &[&str]) -> Result<String> {
 }
 
 fn index_at_revision(root: &Path, revision: &str) -> Result<ProtocolIndex> {
-    if revision.starts_with('-') {
-        return Err(Error::new("Git revision must not begin with '-'"));
+    if revision.is_empty() || revision.starts_with('-') {
+        return Err(Error::new("invalid Git revision"));
     }
-    let reference = format!("{revision}:protocols/index.json");
+    let object = format!("{revision}^{{commit}}");
+    let commit = git(root, &["rev-parse", "--verify", &object])
+        .map_err(|_| Error::new(format!("invalid Git revision: {revision}")))?;
+    if !valid_commit_id(&commit) {
+        return Err(Error::new(format!("invalid Git revision: {revision}")));
+    }
+    let reference = format!("{commit}:protocols/index.json");
     let raw = git(root, &["show", &reference])?;
     serde_json::from_str(&raw)
         .map_err(|_| Error::new(format!("{revision} has an invalid protocol index")))
@@ -905,7 +908,7 @@ fn command_render(
     source_repository: &str,
 ) -> Result<String> {
     require_clean_source(root)?;
-    let overlay = fs::read_to_string(overlay_path)?;
+    let overlay = read_text(overlay_path)?;
     let exceptions = exceptions_path.map(read_json).transpose()?;
     let (manifest, agents) = assemble_import(
         root,
@@ -932,7 +935,7 @@ fn command_check(
     agents_path: &Path,
 ) -> Result<String> {
     require_clean_source(root)?;
-    let overlay = fs::read_to_string(overlay_path)?;
+    let overlay = read_text(overlay_path)?;
     let exceptions: ExceptionsDocument = read_json(exceptions_path)?;
     let manifest: Manifest = read_json(manifest_path)?;
     let agents = read_text(agents_path)?;
@@ -1055,7 +1058,10 @@ where
                 .map_err(|_| Error::new("arguments must be valid UTF-8"))
         })
         .collect::<Result<Vec<_>>>()?;
-    if matches!(arguments.first().map(String::as_str), Some("-h" | "--help")) {
+    if arguments
+        .iter()
+        .any(|argument| matches!(argument.as_str(), "-h" | "--help"))
+    {
         return Ok(help());
     }
     if arguments.is_empty() {
@@ -1067,12 +1073,6 @@ where
         .ok_or_else(|| Error::new("missing command"))?
         .clone();
     arguments.remove(0);
-    if arguments
-        .iter()
-        .any(|argument| matches!(argument.as_str(), "-h" | "--help"))
-    {
-        return Ok(help());
-    }
     match command.as_str() {
         "validate" => {
             reject_extra(&arguments)?;
@@ -1193,6 +1193,23 @@ mod tests {
         for invalid in ["AP--001", "AP-lower-001", "AP-SCOPE-01", "SCOPE-001"] {
             assert!(!valid_protocol_id(invalid));
         }
+    }
+
+    #[test]
+    fn protocol_versions_fill_the_declared_unsigned_range() {
+        let directory = TestDirectory::copy_catalog();
+        let path = directory.0.join("protocols/AP-SCOPE-001.md");
+        let text = fs::read_to_string(&path).unwrap().replacen(
+            "version: 1",
+            "version: 9223372036854775808",
+            1,
+        );
+        fs::write(&path, text).unwrap();
+
+        assert_eq!(
+            parse_protocol(&directory.0, &path).unwrap().version,
+            9_223_372_036_854_775_808
+        );
     }
 
     #[test]
@@ -1351,12 +1368,23 @@ mod tests {
                 .contains("cannot be removed")
         );
 
+        let mut duplicate = current.clone();
+        duplicate.protocols.push(current.protocols[0].clone());
         assert!(
-            command_version_check(&root(), "--no-patch")
+            validate_version_transition(&duplicate, &current)
                 .unwrap_err()
                 .to_string()
-                .contains("must not begin with '-'")
+                .contains("invalid protocol index")
         );
+
+        for revision in ["", "--no-patch"] {
+            assert!(
+                command_version_check(&root(), revision)
+                    .unwrap_err()
+                    .to_string()
+                    .contains("invalid Git revision")
+            );
+        }
     }
 
     #[cfg(unix)]

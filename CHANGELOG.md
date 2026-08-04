@@ -26,7 +26,9 @@
 
 ### Fixed
 
-- Reject explicit null review conditions, year-zero exception dates, and
-  option-like Git base revisions.
+- Reject explicit null review conditions, year-zero exception dates, empty or
+  option-like Git base revisions, and duplicate IDs in historical indexes.
 - Restore fresh `0644` generated files on Unix and report catalog entry errors
   instead of silently omitting them.
+- Accept the full unsigned protocol-version range and recognize global help
+  regardless of whether `--root` precedes it.

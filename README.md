@@ -175,8 +175,9 @@ and reports it separately from the mechanical result.
 Protocol IDs use `AP-<AREA>-<NUMBER>` and are permanent. Every change to a
 canonical protocol file bumps its positive integer version because an automated
 history gate cannot safely distinguish editorial from semantic wording. Run
-`version-check` before `index`. Important rationale and rejected alternatives
-live in Beads.
+`version-check` before `index`. Its base must be a non-empty Git revision that
+resolves to a commit; the checker reads the historical index from that exact
+commit. Important rationale and rejected alternatives live in Beads.
 
 Consumers upgrade intentionally:
 
@@ -248,7 +249,7 @@ The scorecard counts tracked project text and code, excluding `.beads/` state.
 | Protocols and generated index | 575 |
 | Profiles | 104 |
 | Rust checker and package manifest | 1,155 |
-| Tests | 406 |
+| Tests | 448 |
 | Enforcement skills | 175 |
-| Repository policy and docs | 1,028 |
-| **Total** | **3,443** |
+| Repository policy and docs | 1,034 |
+| **Total** | **3,491** |
