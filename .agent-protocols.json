@@ -2,7 +2,7 @@
   "schema": 1,
   "source": {
     "repository": "https://github.com/luccahuguet/starcompass",
-    "commit": "1c8f95f00ff9048f24c015cc799642f880f19354"
+    "commit": "9822be230cdf6508da6599238af9de68ea148712"
   },
   "profiles": [
     "greenfield"
@@ -50,8 +50,8 @@
     },
     {
       "id": "AP-PLAN-001",
-      "version": 1,
-      "sha256": "d1edf160323fe69e814c3055461c054a5def761000c27874df75e04c1dd195e3"
+      "version": 4,
+      "sha256": "5bc0426788693717e8af011277d9358c65899e839d7c0c71299003ec0d8acc4b"
     },
     {
       "id": "AP-CI-001",
@@ -65,12 +65,12 @@
     },
     {
       "id": "AP-GIT-001",
-      "version": 1,
-      "sha256": "624740f796eddd5adcaf657e8f1aa3ba229c146e4b34c816940a5543d74ba46f"
+      "version": 3,
+      "sha256": "16d27b0df7ccc94880bb31020e822e32b37503f43c2cf7a69de333300cbfdacf"
     }
   ],
   "exceptions": [],
   "overlay": {
-    "sha256": "86691c45ed207f7c49ac7053e5356a560267cbae8d273fa001caa57ea5a4fd2c"
+    "sha256": "cbf212a77b25eaa67ac85aada573229b75d922c9fb0e30b1fc42bd094eedf061"
   }
 }

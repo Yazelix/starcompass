@@ -17,9 +17,9 @@ It provides:
 The repository is private while the format and broader consumer adoption are
 incubating. It has no hosted CI. Local verification is the current proof surface.
 
-Starcompass is the project and repository identity. Stable technical format
-names remain unchanged: protocol IDs use `AP-*`, consumer files use
-`.agent-protocols.*`, and the protocol skills retain their existing IDs.
+Starcompass is the project and repository identity. `AP` means Agent Protocol,
+the publisher-neutral namespace for IDs such as `AP-SCOPE-001`. Consumer files
+use `.agent-protocols.*`, and the protocol skills retain their existing IDs.
 
 ## Model
 
@@ -260,5 +260,5 @@ and lockfiles.
 | Rust checker and package manifest | 1,193 |
 | Tests | 498 |
 | Enforcement skills | 175 |
-| Repository policy and docs | 1,072 |
-| **Total** | **3,638** |
+| Repository policy and docs | 1,094 |
+| **Total** | **3,660** |
