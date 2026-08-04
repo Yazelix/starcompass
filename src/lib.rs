@@ -170,6 +170,29 @@ fn read_text(path: &Path) -> Result<String> {
     }
 }
 
+fn require_catalog_path(
+    path: &Path,
+    kind: &str,
+    expected: fn(&fs::FileType) -> bool,
+) -> Result<()> {
+    let file_type = fs::symlink_metadata(path)
+        .map_err(|error| {
+            Error::new(format!(
+                "cannot read catalog source {}: {error}",
+                path.display()
+            ))
+        })?
+        .file_type();
+    if expected(&file_type) {
+        Ok(())
+    } else {
+        Err(Error::new(format!(
+            "catalog source must be a {kind}: {}",
+            path.display()
+        )))
+    }
+}
+
 fn read_json<T: DeserializeOwned>(path: &Path) -> Result<T> {
     let text = read_text(path)?;
     serde_json::from_str(&text)
@@ -298,16 +321,21 @@ fn valid_protocol_id(id: &str) -> bool {
 
 fn source_files(root: &Path, directory_name: &str, extension: &str) -> Result<Vec<PathBuf>> {
     let directory = root.join(directory_name);
-    let mut paths = fs::read_dir(&directory)
-        .map_err(|_| {
-            Error::new(format!(
-                "no {directory_name} found in {}",
-                directory.display()
-            ))
-        })?
-        .map(|entry| entry.map(|entry| entry.path()))
-        .collect::<std::io::Result<Vec<_>>>()?;
-    paths.retain(|path| path.extension() == Some(OsStr::new(extension)));
+    require_catalog_path(&directory, "real directory", fs::FileType::is_dir)?;
+    let entries = fs::read_dir(&directory).map_err(|error| {
+        Error::new(format!(
+            "cannot read catalog source {}: {error}",
+            directory.display(),
+        ))
+    })?;
+    let mut paths = Vec::new();
+    for entry in entries {
+        let path = entry?.path();
+        if path.extension() == Some(OsStr::new(extension)) {
+            require_catalog_path(&path, "regular file", fs::FileType::is_file)?;
+            paths.push(path);
+        }
+    }
     paths.sort();
     if paths.is_empty() {
         return Err(Error::new(format!(
@@ -416,7 +444,9 @@ fn validate_repository(
     root: &Path,
 ) -> Result<(BTreeMap<String, Protocol>, BTreeMap<String, Profile>)> {
     let protocols = load_protocols(root)?;
-    let actual: ProtocolIndex = read_json(&root.join("protocols/index.json"))?;
+    let index_path = root.join("protocols/index.json");
+    require_catalog_path(&index_path, "regular file", fs::FileType::is_file)?;
+    let actual: ProtocolIndex = read_json(&index_path)?;
     let wanted = ProtocolIndex {
         schema: 1,
         protocols: protocols.values().map(Protocol::index_record).collect(),
@@ -907,6 +937,15 @@ fn command_render(
     agents_path: &Path,
     source_repository: &str,
 ) -> Result<String> {
+    let outputs = [manifest_path, agents_path];
+    if manifest_path == agents_path
+        || outputs.contains(&overlay_path)
+        || exceptions_path.is_some_and(|path| path == overlay_path || outputs.contains(&path))
+    {
+        return Err(Error::new(
+            "render inputs and outputs must use distinct paths",
+        ));
+    }
     require_clean_source(root)?;
     let overlay = read_text(overlay_path)?;
     let exceptions = exceptions_path.map(read_json).transpose()?;
@@ -1068,11 +1107,10 @@ where
         return Err(Error::new("missing command; run `starcompass --help`"));
     }
     let root = parse_root(&mut arguments)?;
-    let command = arguments
-        .first()
-        .ok_or_else(|| Error::new("missing command"))?
-        .clone();
-    arguments.remove(0);
+    if arguments.is_empty() {
+        return Err(Error::new("missing command"));
+    }
+    let command = arguments.remove(0);
     match command.as_str() {
         "validate" => {
             reject_extra(&arguments)?;
@@ -1201,14 +1239,14 @@ mod tests {
         let path = directory.0.join("protocols/AP-SCOPE-001.md");
         let text = fs::read_to_string(&path).unwrap().replacen(
             "version: 1",
-            "version: 9223372036854775808",
+            "version: 18446744073709551615",
             1,
         );
         fs::write(&path, text).unwrap();
 
         assert_eq!(
             parse_protocol(&directory.0, &path).unwrap().version,
-            9_223_372_036_854_775_808
+            u64::MAX
         );
     }
 
@@ -1280,11 +1318,13 @@ mod tests {
             .iter()
             .map(|protocol| protocol.id.as_str())
             .collect::<Vec<_>>();
+        let delivery = ids.iter().position(|id| *id == "AP-DELIVERY-001").unwrap();
+        let promotion = ids.iter().position(|id| *id == "AP-PROMOTION-001").unwrap();
+        assert!(delivery < promotion);
         assert!(
-            ids.iter().position(|id| *id == "AP-DELIVERY-001")
-                < ids.iter().position(|id| *id == "AP-PROMOTION-001")
+            agents.find("### AP-DELIVERY-001 ").unwrap()
+                < agents.find("### AP-PROMOTION-001 ").unwrap()
         );
-        assert!(agents.find("### AP-DELIVERY-001 ") < agents.find("### AP-PROMOTION-001 "));
     }
 
     #[test]
@@ -1429,6 +1469,54 @@ mod tests {
                 .to_string()
                 .contains("unknown protocols")
         );
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn catalog_rejects_symlinked_sources() {
+        use std::os::unix::fs::symlink;
+
+        for relative in [
+            "protocols/AP-SCOPE-001.md",
+            "profiles/greenfield.json",
+            "protocols/index.json",
+            "protocols",
+        ] {
+            let directory = TestDirectory::copy_catalog();
+            let path = directory.0.join(relative);
+            let external = directory.0.join("external");
+            fs::rename(&path, &external).unwrap();
+            symlink(&external, &path).unwrap();
+
+            assert!(
+                validate_repository(&directory.0)
+                    .unwrap_err()
+                    .to_string()
+                    .contains("catalog source")
+            );
+        }
+    }
+
+    #[test]
+    fn render_rejects_colliding_paths_before_writing() {
+        let directory = TestDirectory::copy_catalog();
+        let shared = directory.0.join("shared");
+
+        let error = command_render(
+            &root(),
+            &["greenfield".into()],
+            &root().join(".agent-protocols.local.md"),
+            None,
+            &shared,
+            &shared,
+            SOURCE_REPOSITORY,
+        )
+        .unwrap_err();
+        assert_eq!(
+            error.to_string(),
+            "render inputs and outputs must use distinct paths"
+        );
+        assert!(!shared.exists());
     }
 
     #[test]

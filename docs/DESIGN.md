@@ -21,6 +21,11 @@ canonical Markdown. The generated index records the file hash. Profiles refer
 only to IDs, so wording has one owner and profile composition cannot create
 hidden copies.
 
+Catalog directories must be real directories, while protocol and profile
+sources and the generated index must be regular files in the selected checkout.
+Following symlinks would let a clean commit claim mutable bytes that Git records
+only as a target path.
+
 Protocol versions describe compatibility at the rule level. Every canonical file
 change requires a bump because automation cannot safely distinguish editorial
 wording from a semantic change. The history gate also prevents removal or reuse
@@ -133,10 +138,11 @@ The direct dependency gate selects exact releases:
 The standard library owns the fixed CLI, diagnostics, Git subprocesses, and
 test fixtures. `clap`, `lexopt`, `pico-args`, `anyhow`, `thiserror`,
 `assert_cmd`, and `tempfile` do not remove enough local behavior to justify
-their cost. The measured lock graph contains four direct crates and 31 registry
-packages across normal, build, and platform-specific metadata. Serialization,
-hashing, and atomic replacement each have one narrow call boundary, so a future
-replacement does not change the Markdown or JSON compatibility surface.
+their cost. The measured lock graph contains four direct crates and 35 registry
+package instances across normal, build, and platform-specific metadata.
+Serialization, hashing, and atomic replacement each have one narrow call
+boundary, so a future replacement does not change the Markdown or JSON
+compatibility surface.
 
 ## Skill boundary
 

@@ -151,6 +151,13 @@ cargo run --locked --quiet -- check \
 refuse a dirty protocol, profile, or checker source because an uncommitted change
 cannot be represented by the recorded Git commit.
 
+Canonical protocol and profile directories must be real directories, while
+their source files and `protocols/index.json` must be regular files. Symlinks
+and special files are rejected because their bytes are not owned by the
+recorded Git revision. `render` also requires its overlay, optional exceptions,
+manifest, and `AGENTS.md` paths to be distinct so an output cannot replace
+another input or output.
+
 Writes use atomic replacement. On Unix, generated files are fresh owner-written
 artifacts with mode `0644`, matching the established consumer format.
 
@@ -160,6 +167,7 @@ The checker rejects:
 
 - malformed, duplicate, unindexed, stale, orphaned, removed, or unversioned
   protocol changes;
+- symlinked or special catalog sources;
 - malformed profiles and unknown or duplicate profile members;
 - malformed or out-of-profile exceptions;
 - a source checkout different from the manifest's full Git SHA;
@@ -242,14 +250,15 @@ cargo run --locked --quiet --manifest-path "$PINNED_STARCOMPASS/Cargo.toml" -- \
 
 ## LOC scorecard
 
-The scorecard counts tracked project text and code, excluding `.beads/` state.
+The scorecard counts tracked project text and code, excluding `.beads/` state
+and lockfiles.
 
 | Surface | LOC |
 | --- | ---: |
 | Protocols and generated index | 575 |
 | Profiles | 104 |
-| Rust checker and package manifest | 1,155 |
-| Tests | 448 |
+| Rust checker and package manifest | 1,193 |
+| Tests | 498 |
 | Enforcement skills | 175 |
-| Repository policy and docs | 1,034 |
-| **Total** | **3,491** |
+| Repository policy and docs | 1,052 |
+| **Total** | **3,597** |

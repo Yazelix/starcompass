@@ -32,3 +32,6 @@
   instead of silently omitting them.
 - Accept the full unsigned protocol-version range and recognize global help
   regardless of whether `--root` precedes it.
+- Reject symlinked or special catalog sources before external bytes can be
+  mistaken for pinned content, and colliding render paths before one artifact
+  overwrites another.
