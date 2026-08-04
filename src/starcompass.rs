@@ -5,7 +5,7 @@ use std::{
     ffi::{OsStr, OsString},
     fmt, fs,
     io::Write,
-    path::{Path, PathBuf},
+    path::{Component, Path, PathBuf},
     process::Command,
 };
 
@@ -118,7 +118,7 @@ where
     String::deserialize(deserializer).map(Some)
 }
 
-#[derive(Debug, Deserialize, PartialEq, Eq, Serialize)]
+#[derive(Clone, Debug, Deserialize, PartialEq, Eq, Serialize)]
 #[serde(deny_unknown_fields)]
 struct Manifest {
     schema: u64,
@@ -129,14 +129,14 @@ struct Manifest {
     overlay: Overlay,
 }
 
-#[derive(Debug, Deserialize, PartialEq, Eq, Serialize)]
+#[derive(Clone, Debug, Deserialize, PartialEq, Eq, Serialize)]
 #[serde(deny_unknown_fields)]
 struct Source {
     repository: String,
     commit: String,
 }
 
-#[derive(Debug, Deserialize, PartialEq, Eq, Serialize)]
+#[derive(Clone, Debug, Deserialize, PartialEq, Eq, Serialize)]
 #[serde(deny_unknown_fields)]
 struct ImportRecord {
     id: String,
@@ -144,7 +144,7 @@ struct ImportRecord {
     sha256: String,
 }
 
-#[derive(Debug, Deserialize, PartialEq, Eq, Serialize)]
+#[derive(Clone, Debug, Deserialize, PartialEq, Eq, Serialize)]
 #[serde(deny_unknown_fields)]
 struct Overlay {
     sha256: String,
@@ -373,6 +373,12 @@ fn load_profiles(
     let mut used = BTreeSet::new();
     for path in source_files(root, "profiles", "json")? {
         let profile: Profile = read_json(&path)?;
+        if !valid_inline_code(&profile.name) {
+            return Err(Error::new(format!(
+                "profile name must be non-empty single-line text without backticks: {}",
+                path.display()
+            )));
+        }
         if path.file_name() != Some(OsStr::new(&format!("{}.json", profile.name))) {
             return Err(Error::new(format!(
                 "profile name must match filename: {}",
@@ -488,9 +494,7 @@ fn validate_version_transition(previous: &ProtocolIndex, current: &ProtocolIndex
         )));
     }
     for (id, old) in before {
-        let Some(new) = after.get(id) else {
-            continue;
-        };
+        let new = after.get(id).expect("removed protocol IDs were rejected");
         if new.version < old.version {
             return Err(Error::new(format!("{id} version regressed")));
         }
@@ -501,13 +505,7 @@ fn validate_version_transition(previous: &ProtocolIndex, current: &ProtocolIndex
     Ok(())
 }
 
-fn validate_exceptions(
-    document: Option<&ExceptionsDocument>,
-    selected: &BTreeSet<String>,
-) -> Result<Vec<Exception>> {
-    let Some(document) = document else {
-        return Ok(Vec::new());
-    };
+fn validate_exceptions(document: &ExceptionsDocument, selected: &BTreeSet<String>) -> Result<()> {
     if document.schema != 1 {
         return Err(Error::new(
             "exceptions document must use schema 1 and an exceptions list",
@@ -552,7 +550,7 @@ fn validate_exceptions(
             )));
         }
     }
-    Ok(document.exceptions.clone())
+    Ok(())
 }
 
 fn valid_date(value: &str) -> bool {
@@ -594,20 +592,23 @@ fn assemble_import(
     root: &Path,
     profile_names: &[String],
     overlay: &str,
-    exceptions_document: Option<&ExceptionsDocument>,
+    exceptions_document: &ExceptionsDocument,
     source_repository: &str,
     source_commit: &str,
 ) -> Result<(Manifest, String)> {
     let (protocols, profiles) = validate_repository(root)?;
-    if profile_names.is_empty() || profile_names.iter().any(String::is_empty) {
-        return Err(Error::new("choose one or more unique profiles"));
+    if profile_names.is_empty()
+        || profile_names.iter().any(|name| !valid_inline_code(name))
+        || profile_names.iter().collect::<BTreeSet<_>>().len() != profile_names.len()
+    {
+        return Err(Error::new(
+            "choose one or more unique single-line profiles without backticks",
+        ));
     }
-    let unique_profiles = profile_names.iter().collect::<BTreeSet<_>>();
-    if unique_profiles.len() != profile_names.len() {
-        return Err(Error::new("choose one or more unique profiles"));
-    }
-    if source_repository.trim().is_empty() {
-        return Err(Error::new("source repository must be a non-empty string"));
+    if !valid_inline_code(source_repository) {
+        return Err(Error::new(
+            "source repository must be non-empty single-line text without backticks",
+        ));
     }
     let unknown = profile_names
         .iter()
@@ -635,7 +636,7 @@ fn assemble_import(
             }
         }
     }
-    let exceptions = validate_exceptions(exceptions_document, &seen)?;
+    validate_exceptions(exceptions_document, &seen)?;
     let manifest = Manifest {
         schema: 1,
         source: Source {
@@ -651,7 +652,7 @@ fn assemble_import(
                 sha256: protocol.sha256.clone(),
             })
             .collect(),
-        exceptions,
+        exceptions: exceptions_document.exceptions.clone(),
         overlay: Overlay {
             sha256: digest(overlay.as_bytes()),
         },
@@ -660,11 +661,14 @@ fn assemble_import(
     Ok((manifest, agents))
 }
 
-fn markdown_cell(value: &str) -> String {
-    value.replace('|', "\\|").replace('\n', " ")
+fn markdown_text(value: &str) -> String {
+    value
+        .replace('|', "\\|")
+        .replace("\r\n", " ")
+        .replace(['\r', '\n'], " ")
 }
 
-fn render_agents(manifest: &Manifest, protocols: &[&Protocol], overlay: &str) -> String {
+fn render_import_record(manifest: &Manifest) -> String {
     let mut lines = vec![
         "# Agent Guidelines".into(),
         String::new(),
@@ -702,21 +706,26 @@ fn render_agents(manifest: &Manifest, protocols: &[&Protocol], overlay: &str) ->
         lines.push("No local exceptions.".into());
     } else {
         for exception in &manifest.exceptions {
-            let review = exception
-                .review_condition
-                .as_deref()
-                .unwrap_or("none recorded");
+            let mut review = markdown_text(
+                exception
+                    .review_condition
+                    .as_deref()
+                    .unwrap_or("none recorded"),
+            );
+            if !review.ends_with(['.', '!', '?']) {
+                review.push('.');
+            }
             lines.push(format!(
                 "- `{}` in {}: {}",
                 exception.protocol,
-                markdown_cell(&exception.scope),
-                markdown_cell(&exception.reason)
+                markdown_text(&exception.scope),
+                markdown_text(&exception.reason)
             ));
             lines.push(format!(
-                "  Approved by {} on {}; review condition: {}.",
-                markdown_cell(&exception.approved_by),
+                "  Approved by {} on {}; review condition: {}",
+                markdown_text(&exception.approved_by),
                 exception.approved_at,
-                markdown_cell(review)
+                review
             ));
         }
     }
@@ -725,52 +734,163 @@ fn render_agents(manifest: &Manifest, protocols: &[&Protocol], overlay: &str) ->
         "## Canonical protocols".into(),
         String::new(),
     ]);
-    for protocol in protocols {
-        lines.extend([
-            format!("### {} — {}", protocol.id, protocol.title),
-            String::new(),
-            protocol.body.clone(),
-            String::new(),
-        ]);
-    }
-    lines.extend([
-        "## Repository-local rules".into(),
-        String::new(),
-        match overlay.trim() {
-            "" => "No additional local rules.".into(),
-            local => local.into(),
-        },
-        String::new(),
-    ]);
-    lines.join("\n")
+    lines.join("\n") + "\n"
 }
 
-fn validate_manifest(
+fn render_local_rules(overlay: &str) -> String {
+    [
+        "## Repository-local rules",
+        "",
+        match overlay.trim() {
+            "" => "No additional local rules.",
+            local => local,
+        },
+        "",
+    ]
+    .join("\n")
+}
+
+fn render_agents(manifest: &Manifest, protocols: &[&Protocol], overlay: &str) -> String {
+    let mut output = render_import_record(manifest);
+    for protocol in protocols {
+        output.push_str(&format!(
+            "### {} — {}\n\n{}\n\n",
+            protocol.id, protocol.title, protocol.body
+        ));
+    }
+    output.push_str(&render_local_rules(overlay));
+    output
+}
+
+fn valid_lower_hex(value: &str, length: usize) -> bool {
+    value.len() == length
+        && value
+            .bytes()
+            .all(|byte| byte.is_ascii_digit() || (b'a'..=b'f').contains(&byte))
+}
+
+fn valid_inline_code(value: &str) -> bool {
+    !value.trim().is_empty() && !value.contains(['`', '\r', '\n'])
+}
+
+fn validate_consumer_import(
+    manifest: &Manifest,
+    overlay: &str,
+    exceptions_document: &ExceptionsDocument,
+    agents: &str,
+) -> Result<()> {
+    if manifest.schema != 1 {
+        return Err(Error::new("import manifest must use schema 1"));
+    }
+    if !valid_inline_code(&manifest.source.repository) {
+        return Err(Error::new(
+            "manifest source repository must be non-empty single-line text without backticks",
+        ));
+    }
+    if !valid_commit_id(&manifest.source.commit) {
+        return Err(Error::new(
+            "manifest source commit must be a full lowercase 40-character Git SHA",
+        ));
+    }
+    if manifest.profiles.is_empty()
+        || manifest
+            .profiles
+            .iter()
+            .any(|profile| !valid_inline_code(profile))
+        || manifest.profiles.iter().collect::<BTreeSet<_>>().len() != manifest.profiles.len()
+    {
+        return Err(Error::new(
+            "manifest profiles must be a non-empty list of unique single-line strings without backticks",
+        ));
+    }
+    if manifest.protocols.is_empty() {
+        return Err(Error::new("manifest protocols must be a non-empty list"));
+    }
+    let mut selected = BTreeSet::new();
+    for (index, protocol) in manifest.protocols.iter().enumerate() {
+        if !valid_protocol_id(&protocol.id) {
+            return Err(Error::new(format!(
+                "manifest protocol {} has an invalid ID",
+                index + 1
+            )));
+        }
+        if !selected.insert(protocol.id.clone()) {
+            return Err(Error::new(format!(
+                "manifest contains duplicate protocol ID {}",
+                protocol.id
+            )));
+        }
+        if protocol.version == 0 {
+            return Err(Error::new(format!(
+                "manifest protocol {} must have a positive version",
+                protocol.id
+            )));
+        }
+        if !valid_lower_hex(&protocol.sha256, 64) {
+            return Err(Error::new(format!(
+                "manifest protocol {} must have a lowercase SHA-256 digest",
+                protocol.id
+            )));
+        }
+    }
+    if manifest.overlay.sha256 != digest(overlay.as_bytes()) {
+        return Err(Error::new(
+            "import manifest overlay drifted from the overlay file",
+        ));
+    }
+    validate_exceptions(exceptions_document, &selected)?;
+    if exceptions_document.exceptions != manifest.exceptions {
+        return Err(Error::new(
+            "exceptions authoring file drifted from the import manifest",
+        ));
+    }
+
+    let prefix = render_import_record(manifest);
+    if !agents.starts_with(&prefix) {
+        return Err(Error::new(
+            "AGENTS.md drifted in its protocol import record",
+        ));
+    }
+    let suffix = render_local_rules(overlay);
+    if !agents.ends_with(&suffix) {
+        return Err(Error::new(
+            "AGENTS.md drifted in its repository-local rules",
+        ));
+    }
+    if agents.len() < prefix.len() + suffix.len()
+        || agents[prefix.len()..agents.len() - suffix.len()]
+            .trim()
+            .is_empty()
+    {
+        return Err(Error::new(
+            "AGENTS.md canonical protocol section must be non-empty",
+        ));
+    }
+    Ok(())
+}
+
+fn validate_source_import(
     root: &Path,
     manifest: &Manifest,
     overlay: &str,
-    source_commit: Option<&str>,
-) -> Result<String> {
-    if manifest.schema != 1 {
-        return Err(Error::new("import manifest has invalid fields or schema"));
-    }
-    if let Some(commit) = source_commit {
-        if manifest.source.commit != commit {
-            return Err(Error::new(format!(
-                "source checkout is {commit}, but the manifest pins {}",
-                manifest.source.commit
-            )));
-        }
+    agents: &str,
+    source_commit: &str,
+) -> Result<()> {
+    if manifest.source.commit != source_commit {
+        return Err(Error::new(format!(
+            "source checkout is {source_commit}, but the manifest pins {}",
+            manifest.source.commit
+        )));
     }
     let exceptions = ExceptionsDocument {
         schema: 1,
         exceptions: manifest.exceptions.clone(),
     };
-    let (wanted, agents) = assemble_import(
+    let (wanted, wanted_agents) = assemble_import(
         root,
         &manifest.profiles,
         overlay,
-        Some(&exceptions),
+        &exceptions,
         &manifest.source.repository,
         &manifest.source.commit,
     )?;
@@ -778,31 +898,6 @@ fn validate_manifest(
         return Err(Error::new(
             "import manifest drifted from its profile, protocols, or overlay",
         ));
-    }
-    Ok(agents)
-}
-
-fn check_import(
-    root: &Path,
-    manifest: &Manifest,
-    overlay: &str,
-    agents: &str,
-    source_commit: Option<&str>,
-    exceptions_document: Option<&ExceptionsDocument>,
-) -> Result<()> {
-    let wanted_agents = validate_manifest(root, manifest, overlay, source_commit)?;
-    if let Some(document) = exceptions_document {
-        let selected = manifest
-            .protocols
-            .iter()
-            .map(|protocol| protocol.id.clone())
-            .collect::<BTreeSet<_>>();
-        let exceptions = validate_exceptions(Some(document), &selected)?;
-        if exceptions != manifest.exceptions {
-            return Err(Error::new(
-                "exceptions authoring file drifted from the import manifest",
-            ));
-        }
     }
     if agents != wanted_agents {
         return Err(Error::new(
@@ -856,10 +951,7 @@ fn source_head(root: &Path) -> Result<String> {
 }
 
 fn valid_commit_id(value: &str) -> bool {
-    value.len() == 40
-        && value
-            .bytes()
-            .all(|byte| byte.is_ascii_digit() || (b'a'..=b'f').contains(&byte))
+    valid_lower_hex(value, 40)
 }
 
 fn require_clean_source(root: &Path) -> Result<()> {
@@ -881,6 +973,45 @@ fn require_clean_source(root: &Path) -> Result<()> {
         return Err(Error::new(
             "protocol sources are dirty; commit them before rendering or checking",
         ));
+    }
+    Ok(())
+}
+
+fn path_identity(path: &Path) -> Result<PathBuf> {
+    let absolute = std::path::absolute(path)?;
+    let (ancestor, mut identity) = absolute
+        .ancestors()
+        .find_map(|ancestor| {
+            ancestor
+                .canonicalize()
+                .ok()
+                .map(|identity| (ancestor, identity))
+        })
+        .ok_or_else(|| Error::new(format!("cannot resolve path: {}", path.display())))?;
+    for component in absolute
+        .strip_prefix(ancestor)
+        .expect("ancestor came from this path")
+        .components()
+    {
+        match component {
+            Component::Normal(name) => identity.push(name),
+            Component::ParentDir => {
+                identity.pop();
+            }
+            _ => {}
+        }
+    }
+    Ok(identity)
+}
+
+fn require_distinct_paths<'a>(paths: impl IntoIterator<Item = &'a Path>) -> Result<()> {
+    let mut identities = BTreeSet::new();
+    for path in paths {
+        if !identities.insert(path_identity(path)?) {
+            return Err(Error::new(
+                "render inputs and outputs must use distinct paths",
+            ));
+        }
     }
     Ok(())
 }
@@ -932,28 +1063,20 @@ fn command_render(
     root: &Path,
     profiles: &[String],
     overlay_path: &Path,
-    exceptions_path: Option<&Path>,
+    exceptions_path: &Path,
     manifest_path: &Path,
     agents_path: &Path,
     source_repository: &str,
 ) -> Result<String> {
-    let outputs = [manifest_path, agents_path];
-    if manifest_path == agents_path
-        || outputs.contains(&overlay_path)
-        || exceptions_path.is_some_and(|path| path == overlay_path || outputs.contains(&path))
-    {
-        return Err(Error::new(
-            "render inputs and outputs must use distinct paths",
-        ));
-    }
+    require_distinct_paths([overlay_path, exceptions_path, manifest_path, agents_path])?;
     require_clean_source(root)?;
     let overlay = read_text(overlay_path)?;
-    let exceptions = exceptions_path.map(read_json).transpose()?;
+    let exceptions = read_json(exceptions_path)?;
     let (manifest, agents) = assemble_import(
         root,
         profiles,
         &overlay,
-        exceptions.as_ref(),
+        &exceptions,
         source_repository,
         &source_head(root)?,
     )?;
@@ -973,24 +1096,35 @@ fn command_check(
     manifest_path: &Path,
     agents_path: &Path,
 ) -> Result<String> {
-    require_clean_source(root)?;
     let overlay = read_text(overlay_path)?;
     let exceptions: ExceptionsDocument = read_json(exceptions_path)?;
     let manifest: Manifest = read_json(manifest_path)?;
     let agents = read_text(agents_path)?;
-    check_import(
-        root,
-        &manifest,
-        &overlay,
-        &agents,
-        Some(&source_head(root)?),
-        Some(&exceptions),
-    )?;
+    validate_consumer_import(&manifest, &overlay, &exceptions, &agents)?;
+    require_clean_source(root)?;
+    validate_source_import(root, &manifest, &overlay, &agents, &source_head(root)?)?;
     Ok(format!(
         "valid: {} matches {}",
         agents_path.display(),
         manifest_path.display()
     ))
+}
+
+fn command_check_consumer(
+    overlay_path: &Path,
+    exceptions_path: &Path,
+    manifest_path: &Path,
+    agents_path: &Path,
+) -> Result<String> {
+    let overlay = read_text(overlay_path)?;
+    let exceptions: ExceptionsDocument = read_json(exceptions_path)?;
+    let manifest: Manifest = read_json(manifest_path)?;
+    let agents = read_text(agents_path)?;
+    validate_consumer_import(&manifest, &overlay, &exceptions, &agents)?;
+    Ok(
+        "valid: consumer files agree; canonical protocol prose and manifest protocol digests were not verified against source"
+            .into(),
+    )
 }
 
 fn parse_root(arguments: &mut Vec<String>) -> Result<PathBuf> {
@@ -1057,7 +1191,11 @@ fn take_options(arguments: &mut Vec<String>, name: &str) -> Result<Vec<String>> 
 }
 
 fn take_option(arguments: &mut Vec<String>, name: &str) -> Result<Option<String>> {
-    Ok(take_options(arguments, name)?.into_iter().last())
+    let mut values = take_options(arguments, name)?;
+    if values.len() > 1 {
+        return Err(Error::new(format!("{name} may be used only once")));
+    }
+    Ok(values.pop())
 }
 
 fn require_option(arguments: &mut Vec<String>, name: &str) -> Result<String> {
@@ -1075,20 +1213,12 @@ fn reject_extra(arguments: &[String]) -> Result<()> {
     }
 }
 
-pub fn run<I, S>(arguments: I) -> std::result::Result<String, String>
+pub(crate) fn run<I, S>(arguments: I) -> std::result::Result<String, String>
 where
     I: IntoIterator<Item = S>,
     S: Into<OsString>,
 {
-    run_inner(arguments).map_err(|error| error.to_string())
-}
-
-fn run_inner<I, S>(arguments: I) -> Result<String>
-where
-    I: IntoIterator<Item = S>,
-    S: Into<OsString>,
-{
-    let mut arguments = arguments
+    arguments
         .into_iter()
         .map(|argument| {
             argument
@@ -1096,7 +1226,12 @@ where
                 .into_string()
                 .map_err(|_| Error::new("arguments must be valid UTF-8"))
         })
-        .collect::<Result<Vec<_>>>()?;
+        .collect::<Result<Vec<_>>>()
+        .and_then(run_inner)
+        .map_err(|error| error.to_string())
+}
+
+fn run_inner(mut arguments: Vec<String>) -> Result<String> {
     if arguments
         .iter()
         .any(|argument| matches!(argument.as_str(), "-h" | "--help"))
@@ -1105,6 +1240,15 @@ where
     }
     if arguments.is_empty() {
         return Err(Error::new("missing command; run `starcompass --help`"));
+    }
+    if arguments.first().map(String::as_str) == Some("check-consumer") {
+        arguments.remove(0);
+        let overlay = PathBuf::from(require_option(&mut arguments, "--overlay")?);
+        let exceptions = PathBuf::from(require_option(&mut arguments, "--exceptions")?);
+        let manifest = PathBuf::from(require_option(&mut arguments, "--manifest")?);
+        let agents = PathBuf::from(require_option(&mut arguments, "--agents")?);
+        reject_extra(&arguments)?;
+        return command_check_consumer(&overlay, &exceptions, &manifest, &agents);
     }
     let root = parse_root(&mut arguments)?;
     if arguments.is_empty() {
@@ -1137,7 +1281,7 @@ where
                 return Err(Error::new("missing required --profile"));
             }
             let overlay = PathBuf::from(require_option(&mut arguments, "--overlay")?);
-            let exceptions = take_option(&mut arguments, "--exceptions")?.map(PathBuf::from);
+            let exceptions = PathBuf::from(require_option(&mut arguments, "--exceptions")?);
             let manifest = PathBuf::from(require_option(&mut arguments, "--manifest-out")?);
             let agents = PathBuf::from(require_option(&mut arguments, "--agents-out")?);
             let repository = take_option(&mut arguments, "--source-repository")?
@@ -1147,7 +1291,7 @@ where
                 &root,
                 &profiles,
                 &overlay,
-                exceptions.as_deref(),
+                &exceptions,
                 &manifest,
                 &agents,
                 &repository,
@@ -1161,12 +1305,13 @@ where
             reject_extra(&arguments)?;
             command_check(&root, &overlay, &exceptions, &manifest, &agents)
         }
+        "check-consumer" => Err(Error::new("--root is not valid with check-consumer")),
         _ => Err(Error::new(format!("unknown command: {command}"))),
     }
 }
 
 fn help() -> String {
-    "usage: starcompass [--root PATH] {index,validate,version-check,render,check}\n\nIndex, render, and verify agent-protocol imports."
+    "usage:\n  starcompass [--root PATH] {index,validate,version-check,render,check}\n  starcompass check-consumer --overlay PATH --exceptions PATH --manifest PATH --agents PATH\n\nIndex, render, and verify agent-protocol imports."
         .into()
 }
 
@@ -1176,6 +1321,10 @@ mod tests {
     use std::sync::atomic::{AtomicU64, Ordering};
 
     const COMMIT: &str = "0123456789abcdef0123456789abcdef01234567";
+    const EMPTY_EXCEPTIONS: ExceptionsDocument = ExceptionsDocument {
+        schema: 1,
+        exceptions: Vec::new(),
+    };
     static NEXT_DIRECTORY: AtomicU64 = AtomicU64::new(0);
 
     struct TestDirectory(PathBuf);
@@ -1274,7 +1423,7 @@ mod tests {
                 &root(),
                 &names,
                 "Local truth.\n",
-                None,
+                &EMPTY_EXCEPTIONS,
                 SOURCE_REPOSITORY,
                 COMMIT,
             )
@@ -1283,7 +1432,7 @@ mod tests {
                 &root(),
                 &names,
                 "Local truth.\n",
-                None,
+                &EMPTY_EXCEPTIONS,
                 SOURCE_REPOSITORY,
                 COMMIT,
             )
@@ -1300,6 +1449,28 @@ mod tests {
                 assert!(first.1.contains(&format!("### {} ", imported.id)));
             }
         }
+
+        for (repository, profiles) in [
+            (
+                "https://example.test/repo`\n\n## Injected",
+                vec!["greenfield".into()],
+            ),
+            (SOURCE_REPOSITORY, vec!["greenfield`\n\n## Injected".into()]),
+        ] {
+            assert!(
+                assemble_import(
+                    &root(),
+                    &profiles,
+                    "Local truth.\n",
+                    &EMPTY_EXCEPTIONS,
+                    repository,
+                    COMMIT,
+                )
+                .unwrap_err()
+                .to_string()
+                .contains("single-line")
+            );
+        }
     }
 
     #[test]
@@ -1308,7 +1479,7 @@ mod tests {
             &root(),
             &["release".into()],
             "Local truth.\n",
-            None,
+            &EMPTY_EXCEPTIONS,
             SOURCE_REPOSITORY,
             COMMIT,
         )
@@ -1329,22 +1500,27 @@ mod tests {
 
     #[test]
     fn exceptions_are_explicit_and_scoped_to_the_profile() {
-        let document = ExceptionsDocument {
+        let mut document = ExceptionsDocument {
             schema: 1,
             exceptions: vec![exception("AP-CI-001", "private alpha")],
         };
+        document.exceptions[0].reason = "Recorded\r\nexception.".into();
         let (manifest, agents) = assemble_import(
             &root(),
             &["greenfield".into()],
             "Local truth.\n",
-            Some(&document),
+            &document,
             SOURCE_REPOSITORY,
             COMMIT,
         )
         .unwrap();
         assert_eq!(manifest.exceptions, document.exceptions);
         assert!(agents.contains("Recorded exception."));
+        assert!(!agents.contains('\r'));
         assert!(agents.contains("Approved by user on 2026-08-04"));
+        assert!(agents.lines().any(|line| {
+            line == "  Approved by user on 2026-08-04; review condition: Review later."
+        }));
 
         let mut null_review = serde_json::to_value(&document).unwrap();
         null_review["exceptions"][0]["review_condition"] = serde_json::Value::Null;
@@ -1354,7 +1530,7 @@ mod tests {
         year_zero.exceptions[0].approved_at = "0000-01-01".into();
         let selected = BTreeSet::from(["AP-CI-001".into()]);
         assert!(
-            validate_exceptions(Some(&year_zero), &selected)
+            validate_exceptions(&year_zero, &selected)
                 .unwrap_err()
                 .to_string()
                 .contains("YYYY-MM-DD")
@@ -1369,7 +1545,7 @@ mod tests {
                 &root(),
                 &["greenfield".into()],
                 "Local truth.\n",
-                Some(&invalid),
+                &invalid,
                 SOURCE_REPOSITORY,
                 COMMIT,
             )
@@ -1447,7 +1623,7 @@ mod tests {
     }
 
     #[test]
-    fn catalog_rejects_stale_protocols_and_unknown_profile_members() {
+    fn catalog_rejects_stale_protocols_and_invalid_profiles() {
         let stale = TestDirectory::copy_catalog();
         let path = stale.0.join("protocols/AP-SCOPE-001.md");
         fs::write(&path, fs::read_to_string(&path).unwrap() + "\nDrift.\n").unwrap();
@@ -1468,6 +1644,23 @@ mod tests {
                 .unwrap_err()
                 .to_string()
                 .contains("unknown protocols")
+        );
+
+        let unrenderable = TestDirectory::copy_catalog();
+        let old_path = unrenderable.0.join("profiles/greenfield.json");
+        let mut profile: Profile = read_json(&old_path).unwrap();
+        profile.name = "green`field".into();
+        fs::write(
+            unrenderable.0.join("profiles/green`field.json"),
+            json_text(&profile).unwrap(),
+        )
+        .unwrap();
+        fs::remove_file(old_path).unwrap();
+        assert!(
+            validate_repository(&unrenderable.0)
+                .unwrap_err()
+                .to_string()
+                .contains("profile name")
         );
     }
 
@@ -1500,15 +1693,19 @@ mod tests {
     #[test]
     fn render_rejects_colliding_paths_before_writing() {
         let directory = TestDirectory::copy_catalog();
-        let shared = directory.0.join("shared");
-
+        let overlay = directory.0.join("overlay");
+        let exceptions = directory.0.join("exceptions");
+        fs::create_dir(directory.0.join("sub")).unwrap();
+        let alias = directory.0.join("sub").join("..").join("overlay");
+        let agents = directory.0.join("AGENTS.md");
+        fs::write(&overlay, "Local truth.\n").unwrap();
         let error = command_render(
             &root(),
             &["greenfield".into()],
-            &root().join(".agent-protocols.local.md"),
-            None,
-            &shared,
-            &shared,
+            &overlay,
+            &exceptions,
+            &alias,
+            &agents,
             SOURCE_REPOSITORY,
         )
         .unwrap_err();
@@ -1516,7 +1713,8 @@ mod tests {
             error.to_string(),
             "render inputs and outputs must use distinct paths"
         );
-        assert!(!shared.exists());
+        assert_eq!(fs::read_to_string(overlay).unwrap(), "Local truth.\n");
+        assert!(!agents.exists());
     }
 
     #[test]
@@ -1529,55 +1727,38 @@ mod tests {
             &root(),
             &["greenfield".into()],
             "Local truth.\n",
-            Some(&empty),
+            &empty,
             SOURCE_REPOSITORY,
             COMMIT,
         )
         .unwrap();
-        check_import(
-            &root(),
-            &manifest,
-            "Local truth.\n",
-            &agents,
-            Some(COMMIT),
-            Some(&empty),
-        )
-        .unwrap();
+        validate_consumer_import(&manifest, "Local truth.\n", &empty, &agents).unwrap();
+        validate_source_import(&root(), &manifest, "Local truth.\n", &agents, COMMIT).unwrap();
 
         assert!(
-            check_import(
-                &root(),
+            validate_consumer_import(
                 &manifest,
                 "Local truth.\n",
+                &empty,
                 &(agents.clone() + "manual edit\n"),
-                Some(COMMIT),
-                Some(&empty),
             )
             .unwrap_err()
             .to_string()
             .contains("AGENTS.md drifted")
         );
         assert!(
-            check_import(
-                &root(),
-                &manifest,
-                "Changed local truth.\n",
-                &agents,
-                Some(COMMIT),
-                Some(&empty),
-            )
-            .unwrap_err()
-            .to_string()
-            .contains("manifest drifted")
+            validate_consumer_import(&manifest, "Changed local truth.\n", &empty, &agents,)
+                .unwrap_err()
+                .to_string()
+                .contains("overlay drifted")
         );
         assert!(
-            check_import(
+            validate_source_import(
                 &root(),
                 &manifest,
                 "Local truth.\n",
                 &agents,
-                Some(&"f".repeat(40)),
-                Some(&empty),
+                &"f".repeat(40),
             )
             .unwrap_err()
             .to_string()
@@ -1589,18 +1770,90 @@ mod tests {
             exceptions: vec![exception("AP-CI-001", "alpha")],
         };
         assert!(
-            check_import(
-                &root(),
-                &manifest,
-                "Local truth.\n",
-                &agents,
-                Some(COMMIT),
-                Some(&changed),
-            )
-            .unwrap_err()
-            .to_string()
-            .contains("authoring file drifted")
+            validate_consumer_import(&manifest, "Local truth.\n", &changed, &agents,)
+                .unwrap_err()
+                .to_string()
+                .contains("authoring file drifted")
         );
+
+        let changed_prose = agents.replacen(
+            "The user decides product and project scope.",
+            "The user still decides product and project scope.",
+            1,
+        );
+        assert_ne!(changed_prose, agents);
+        validate_consumer_import(&manifest, "Local truth.\n", &empty, &changed_prose).unwrap();
+        assert!(
+            validate_source_import(&root(), &manifest, "Local truth.\n", &changed_prose, COMMIT,)
+                .unwrap_err()
+                .to_string()
+                .contains("AGENTS.md drifted")
+        );
+    }
+
+    #[test]
+    fn consumer_manifest_rejects_invalid_self_describing_fields() {
+        let exceptions = ExceptionsDocument {
+            schema: 1,
+            exceptions: Vec::new(),
+        };
+        let (manifest, agents) = assemble_import(
+            &root(),
+            &["greenfield".into()],
+            "Local truth.\n",
+            &exceptions,
+            SOURCE_REPOSITORY,
+            COMMIT,
+        )
+        .unwrap();
+        let rejected = |changed: &Manifest, expected: &str| {
+            assert!(
+                validate_consumer_import(changed, "Local truth.\n", &exceptions, &agents)
+                    .unwrap_err()
+                    .to_string()
+                    .contains(expected)
+            );
+        };
+
+        let mut changed = manifest.clone();
+        changed.schema = 2;
+        rejected(&changed, "schema 1");
+
+        let mut changed = manifest.clone();
+        changed.source.repository.clear();
+        rejected(&changed, "repository");
+
+        let mut changed = manifest.clone();
+        changed.source.repository = "https://example.test/repo`\n\n## Injected".into();
+        rejected(&changed, "single-line");
+
+        let mut changed = manifest.clone();
+        changed.source.commit.make_ascii_uppercase();
+        rejected(&changed, "source commit");
+
+        let mut changed = manifest.clone();
+        changed.profiles.push(changed.profiles[0].clone());
+        rejected(&changed, "profiles");
+
+        let mut changed = manifest.clone();
+        changed.profiles[0] = "greenfield`\n\n## Injected".into();
+        rejected(&changed, "single-line");
+
+        let mut changed = manifest.clone();
+        changed.protocols[0].id = "not-a-protocol".into();
+        rejected(&changed, "invalid ID");
+
+        let mut changed = manifest.clone();
+        changed.protocols.push(changed.protocols[0].clone());
+        rejected(&changed, "duplicate protocol ID");
+
+        let mut changed = manifest.clone();
+        changed.protocols[0].version = 0;
+        rejected(&changed, "positive version");
+
+        let mut changed = manifest;
+        changed.protocols[0].sha256.make_ascii_uppercase();
+        rejected(&changed, "lowercase SHA-256");
     }
 
     #[test]
@@ -1609,7 +1862,7 @@ mod tests {
             &root(),
             &["greenfield".into(), "terminal-engine".into()],
             "Local truth.\n",
-            None,
+            &EMPTY_EXCEPTIONS,
             SOURCE_REPOSITORY,
             COMMIT,
         )

@@ -80,16 +80,35 @@ An overlay adds repository detail without weakening canonical requirements. An
 exception narrows, replaces, or suspends one imported protocol. Conflating them
 would hide policy changes in ordinary local instructions.
 
-The exception authoring file and generated manifest are both checked. This makes
-an unrendered approval change visible instead of letting the manifest silently
-remain authoritative.
+`render` requires the exception authoring file. Both check commands compare it
+with the generated manifest, exposing approval changes that have not been
+rendered.
 
 ## Structural integrity is not compliance
 
-The checker is deterministic and deliberately narrow. It can prove that the
-catalog, composition, metadata, inputs, and generated output agree. It cannot
-prove that an agent read or obeyed instructions, that an approval claim is true,
-or that source code follows the protocols.
+The checker has two deterministic proof tiers. `check-consumer` needs only the
+overlay, exception input, manifest, and generated `AGENTS.md`. It validates
+their schemas and locally derivable relationships, reproduces the import record
+and final local-rule framing, and treats the canonical protocol section as
+opaque. It neither reads nor discovers a source root.
+The renderer rejects backticks and line endings in inline import metadata and
+folds exception line endings. These constraints keep self-consistent inputs from
+injecting Markdown blocks through generated framing.
+Catalog validation applies the same profile-name grammar, so every accepted
+profile can appear in the import record.
+
+Before rendering, the checker canonicalizes each path's longest existing
+ancestor and normalizes the unresolved suffix. This catches parent traversal and
+symlink aliases without creating missing output directories during validation.
+
+Source-backed `check` invokes the consumer proof first, then uses the exact
+pinned checkout to reconstruct the catalog, composition, protocol digests,
+canonical prose, and complete generated file. Keeping the narrow proof inside
+the full proof gives the consumer format one interpretation owner without
+claiming that self-reported hashes authenticate unavailable source.
+
+Neither tier can prove that an agent read or obeyed instructions, that an
+approval claim is true, or that source code follows the protocols.
 
 The audit skill preserves this boundary by reporting mechanical drift and
 semantic ambiguity separately. Runtime enforcement, telemetry, and agent-action
@@ -150,8 +169,10 @@ The direct dependency gate selects exact releases:
 The standard library owns the fixed CLI, diagnostics, Git subprocesses, and
 test fixtures. `clap`, `lexopt`, `pico-args`, `anyhow`, `thiserror`,
 `assert_cmd`, and `tempfile` do not remove enough local behavior to justify
-their cost. The measured lock graph contains four direct crates and 35 registry
-package instances across normal, build, and platform-specific metadata.
+their cost. The parser permits repeated `--profile` arguments and rejects
+repeated scalar options before command I/O. The measured lock graph contains
+four direct crates and 35 registry package instances across normal, build, and
+platform-specific metadata.
 Serialization, hashing, and atomic replacement each have one narrow call
 boundary, so a future replacement does not change the Markdown or JSON
 compatibility surface.
@@ -179,6 +200,27 @@ renders the next self-adoption. The exact-pinned checkout also runs the
 structural check. This uses the public profile, manifest, renderer, and checker
 without a special self-hosting mode or exception.
 
-The repository starts private and without hosted CI. This keeps early format
-iteration and GitHub Actions cost explicit. Publication, licensing, releases,
-and hosted checks require later user decisions.
+The repository is private, sets `publish = false`, and has no hosted CI. This
+keeps early format iteration and GitHub Actions cost explicit. Publication,
+licensing, releases, supported targets, credentials, and hosted checks require
+user approval.
+
+The source-independent checker makes distribution useful but does not select a
+channel. The decision gate compares:
+
+| Candidate | Consumer fit | Irreversible or recurring cost |
+| --- | --- | --- |
+| crates.io binary package | `cargo install --locked starcompass --version X.Y.Z` builds for the consumer host and needs no Starcompass Git access | Publishes the packaged source permanently; requires a license choice, package metadata, a crates.io token, SemVer/MSRV ownership, and consumer compile time |
+| Public checksum-pinned binary | Fast cold CI with an explicit version, target triple, and independently pinned SHA-256 | Requires a public artifact location, one build per supported target, checksum publication, replacement/revocation policy, and release ownership; a downloadable asset is not immutable by URL alone |
+| Authenticated private binary | Preserves repository and artifact privacy | Every consumer needs read credentials; cross-repository Actions and forks need explicit token/secret behavior; revocation can break cold CI |
+| No distribution | Adds no publication, licensing, credential, or release surface | Consumers must build from an available checkout, so private cold CI remains blocked |
+
+The package disables Cargo library auto-discovery and exposes only the
+executable target. `src/starcompass.rs` remains a private module for separation
+and unit tests. crates.io is the leading candidate because Cargo supplies host
+compilation, exact-version installation, and lockfile use without a target matrix. Its
+permanent source publication and licensing consequence keep it unselected until
+the user approves them. A public prebuilt binary is the fallback when consumer
+compile cost becomes material enough to justify release targets and artifact
+maintenance. Authenticated private artifacts and copied or vendored checkers do
+not fit unattended downstream adoption.

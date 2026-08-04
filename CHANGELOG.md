@@ -23,6 +23,8 @@
 - Generated `AGENTS.md` files identify their editable consumer-owned inputs.
 - Exact-pinned `greenfield` self-adoption through the ordinary consumer format
   and a two-revision bootstrap sequence for canonical source changes.
+- Source-independent `check-consumer` validation for manifest, overlay,
+  exception, generated import-record, and repository-local-rule agreement.
 
 ### Fixed
 
@@ -33,8 +35,17 @@
 - Accept the full unsigned protocol-version range and recognize global help
   regardless of whether `--root` precedes it.
 - Reject symlinked or special catalog sources before external bytes can be
-  mistaken for pinned content, and colliding render paths before one artifact
-  overwrites another.
+  mistaken for pinned content, and resolve render-path identities so aliases
+  cannot overwrite inputs or each other.
+- Reject catalog profile names and import source or profile values that can
+  break inline-code framing, and fold exception line endings without admitting
+  carriage-return Markdown blocks.
+- Reject repeated singular CLI options before command I/O and avoid duplicating
+  terminal punctuation in exception review conditions.
+- Require `render` to receive the exception authoring file used by both check
+  commands, including an empty document when the consumer has no exceptions.
+- Disable Cargo library auto-discovery so the package exposes only the selected
+  binary interface.
 
 ### Changed
 
@@ -42,3 +53,5 @@
   history for evidence. `AP-GIT-001` folds same-unit corrections into the
   current task's unpublished commit; pushed or externally pinned revisions get
   follow-up commits.
+- Source-backed `check` composes the consumer-local proof with exact source HEAD,
+  catalog, protocol digest, canonical prose, and complete generated-file proof.

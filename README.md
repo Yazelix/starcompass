@@ -9,7 +9,7 @@ It provides:
 - five ordered, composable profiles;
 - deterministic, self-contained `AGENTS.md` rendering;
 - exact source-commit, protocol-version, overlay, and exception records;
-- a typed Rust structural drift checker and renderer;
+- typed Rust source-backed and source-independent drift checks plus rendering;
 - two Codex skills dedicated only to applying and auditing the protocols; and
 - self-adoption of the `greenfield` profile through the ordinary consumer
   format.
@@ -29,8 +29,9 @@ overlay and exception input, and renders both the canonical and local text into
 one complete `AGENTS.md`.
 
 The consumer therefore does not need this repository or network access while an
-agent works. The source checkout is required only when importing, updating, or
-checking the pin.
+agent works or while its four local import files are checked for agreement. A
+source checkout is required only when importing, updating, or authenticating the
+pin and canonical protocol text.
 
 Profiles compose by ordered union: the first appearance of a protocol sets its
 position and later duplicates are ignored.
@@ -73,7 +74,7 @@ or exception input and render again. During first adoption, preserve every rule
 from the existing `AGENTS.md` in the overlay before replacing the original with
 generated output.
 
-An empty exception input is:
+`render` requires an exception input; use this document when none exist:
 
 ```json
 {
@@ -102,12 +103,17 @@ An exception has five required fields and one optional review condition:
 
 An overlay adds local detail. An exception narrows, replaces, or suspends an
 imported requirement and therefore requires explicit approval.
+The renderer requires non-empty, single-line repository and profile values
+without backticks because the import record uses inline code spans. It folds
+exception line endings into spaces and adds review-condition punctuation only
+when the author omitted it.
 
 ## Commands
 
 Build a standalone local binary with `cargo build --locked --release`; the
 result is `target/release/starcompass`. During incubation, Starcompass does not
-publish release artifacts or an installer.
+publish release artifacts or an installer. Cargo exposes no library target;
+`src/starcompass.rs` is a private module of the executable.
 
 Validate the source catalog:
 
@@ -136,8 +142,11 @@ cargo run --locked --quiet -- render \
   --agents-out /path/to/consumer/AGENTS.md
 ```
 
+Only `--profile` may be repeated. Other command options are singular; the CLI
+rejects duplicates before reading or writing files.
+
 Check the consumer using a Starcompass checkout at the exact commit pinned
-in its manifest:
+in its manifest when the complete source-backed proof is required:
 
 ```sh
 cargo run --locked --quiet -- check \
@@ -147,6 +156,23 @@ cargo run --locked --quiet -- check \
   --agents /path/to/consumer/AGENTS.md
 ```
 
+Check every relationship derivable from the four consumer files without a
+Starcompass checkout, Git repository, catalog, credentials, or network:
+
+```sh
+starcompass check-consumer \
+  --overlay /path/to/consumer/.agent-protocols.local.md \
+  --exceptions /path/to/consumer/.agent-protocols.exceptions.json \
+  --manifest /path/to/consumer/.agent-protocols.json \
+  --agents /path/to/consumer/AGENTS.md
+```
+
+`check-consumer` validates manifest structure, overlay hashing, exception
+parity, the generated import record, and the complete repository-local suffix.
+It treats the canonical protocol section as opaque and reports that it did not
+verify canonical prose or manifest protocol digests against source. It does not
+accept `--root`.
+
 `validate` and `index` can run during source development. `render` and `check`
 refuse a dirty protocol, profile, or checker source because an uncommitted change
 cannot be represented by the recorded Git commit.
@@ -154,29 +180,38 @@ cannot be represented by the recorded Git commit.
 Canonical protocol and profile directories must be real directories, while
 their source files and `protocols/index.json` must be regular files. Symlinks
 and special files are rejected because their bytes are not owned by the
-recorded Git revision. `render` also requires its overlay, optional exceptions,
-manifest, and `AGENTS.md` paths to be distinct so an output cannot replace
-another input or output.
+recorded Git revision. Before writing, `render` resolves the overlay, optional
+exceptions, manifest, and `AGENTS.md` paths and rejects aliases that identify
+the same location. Parent-directory traversal or a symlink cannot let an output
+replace another input or output.
 
 Writes use atomic replacement. On Unix, generated files are fresh owner-written
 artifacts with mode `0644`, matching the established consumer format.
 
-## What the checker proves
+## What the checks prove
 
-The checker rejects:
+The source-independent `check-consumer` command rejects:
+
+- malformed manifest, source, profile, protocol, digest, or exception records;
+- overlay or exception-input drift from the manifest;
+- generated source, commit, profile, schema, import-table, or local-rule drift;
+- an empty canonical protocol section.
+
+The source-backed `check` command composes that proof with the pinned checkout
+and additionally rejects:
 
 - malformed, duplicate, unindexed, stale, orphaned, removed, or unversioned
   protocol changes;
 - symlinked or special catalog sources;
-- malformed profiles and unknown or duplicate profile members;
-- malformed or out-of-profile exceptions;
+- malformed or unrenderable profiles and unknown or duplicate profile members;
 - a source checkout different from the manifest's full Git SHA;
-- protocol, profile, overlay, exception-input, manifest, or generated-file drift.
+- protocol, profile, canonical prose, manifest, or complete generated-file
+  drift.
 
-It does not prove that an agent followed the prose, that a repository's code
-satisfies the rules, or that an exception was truthfully approved. The
-`audit-agent-protocols` skill performs the human-semantic part of an import audit
-and reports it separately from the mechanical result.
+Neither command proves that an agent followed the prose, that a repository's
+code satisfies the rules, or that an exception was truthfully approved. The
+`audit-agent-protocols` skill performs the human-semantic part of an import
+audit and reports it separately from the mechanical result.
 
 ## Protocol lifecycle
 
@@ -200,7 +235,7 @@ Consumers upgrade intentionally:
 ```text
 protocols/                 canonical Markdown and generated index
 profiles/                  ordered JSON protocol sets
-src/lib.rs                 index, render, and drift-check owner
+src/starcompass.rs         index, render, and drift-check owner
 src/main.rs                `starcompass` process boundary
 tests/                     focused contract tests
 skills/                    protocol-only Codex skills
@@ -230,6 +265,11 @@ cargo fmt --check
 cargo check --locked
 cargo test --locked
 cargo clippy --locked --all-targets -- -D warnings
+target/debug/starcompass check-consumer \
+  --overlay .agent-protocols.local.md \
+  --exceptions .agent-protocols.exceptions.json \
+  --manifest .agent-protocols.json \
+  --agents AGENTS.md
 python3 /home/lucca/.codex/skills/.system/skill-creator/scripts/quick_validate.py skills/apply-agent-protocols
 python3 /home/lucca/.codex/skills/.system/skill-creator/scripts/quick_validate.py skills/audit-agent-protocols
 git diff --check
@@ -257,8 +297,8 @@ and lockfiles.
 | --- | ---: |
 | Protocols and generated index | 596 |
 | Profiles | 104 |
-| Rust checker and package manifest | 1,193 |
-| Tests | 498 |
+| Rust checker and package manifest | 1,341 |
+| Tests | 739 |
 | Enforcement skills | 175 |
-| Repository policy and docs | 1,094 |
-| **Total** | **3,660** |
+| Repository policy and docs | 1,189 |
+| **Total** | **4,144** |
