@@ -16,6 +16,13 @@
       "sha256": "0aa692f4c52542111149b691b7d0c015a0c16523cd620a67b0cf335f3284da82"
     },
     {
+      "id": "AP-DELIVERY-001",
+      "version": 1,
+      "title": "Installed artifact and fresh-session proof",
+      "path": "protocols/AP-DELIVERY-001.md",
+      "sha256": "5e424f8f1adf9dc86864e3c0e209b47ed577e17baa74e3ac2219e2209a4ff80b"
+    },
+    {
       "id": "AP-DEPENDENCY-001",
       "version": 1,
       "title": "Dependency gate",
@@ -98,6 +105,13 @@
       "title": "Portable core with explicit platform seams",
       "path": "protocols/AP-PORTABILITY-001.md",
       "sha256": "d2800376013bbe1ade3449f835daf8780e60d4c08a79a7f733d4a651c4d6d887"
+    },
+    {
+      "id": "AP-PROMOTION-001",
+      "version": 1,
+      "title": "Exact-revision channel promotion",
+      "path": "protocols/AP-PROMOTION-001.md",
+      "sha256": "d75780b1ee1dd658f32c80ff5edda5bff342212569029d0eb3bdc382f471d66e"
     },
     {
       "id": "AP-PROOF-001",

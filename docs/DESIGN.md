@@ -38,6 +38,22 @@ Profiles contain shared rules only. Repository-specific commands, branches,
 tools, paths, ownership, and release rules belong in the consumer overlay. A
 consumer can alter canonical behavior only through an explicit exception.
 
+## Delivery proof precedes promotion
+
+The optional `release` profile separates proving a delivered artifact from
+changing who receives it. `AP-DELIVERY-001` owns installation, identity, and
+fresh-session evidence. `AP-PROMOTION-001` owns ordered channel movement and
+requires the exact already-proved revision. Promotion cannot manufacture proof.
+
+The model adopts the reusable mechanism from Yazelix Nova's
+[`AGENTS.md`](https://github.com/luccahuguet/yazelix/blob/303d4bea457cf669035aabce8848b39c96287785/AGENTS.md):
+one linear history, promotion-only accepted channels, exact-revision
+fast-forwards, fresh-session dogfood for interaction changes, and additive
+reverts that traverse the normal promotion path. Starcompass does not import
+Nova's branch names, weekly cadence, Nix commands, platform checks, or runtime
+ownership. Consumers declare those local details and explicitly choose whether
+the release profile applies.
+
 ## Self-contained output beats remote inclusion
 
 Agents must be able to read the complete active policy from the local

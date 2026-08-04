@@ -4,12 +4,15 @@
 
 ### Added
 
-- Nineteen stable-ID, individually versioned canonical protocols.
+- Twenty-one stable-ID, individually versioned canonical protocols.
 - Starcompass project and repository identity with stable protocol and
   consumer-format names.
 - Minimum-sufficient-implementation discipline with Ponytail as its adopted,
   upstream-owned agent integration.
-- Composable `greenfield`, `fork`, `orchestrator`, and `terminal-engine` profiles.
+- Installed-artifact and fresh-session delivery proof plus exact-revision
+  channel promotion.
+- Composable `greenfield`, `fork`, `orchestrator`, `release`, and
+  `terminal-engine` profiles.
 - Dependency-free catalog indexing, self-contained `AGENTS.md` rendering, and
   pinned structural drift detection.
 - History checks for permanent protocol IDs and mandatory version increments.

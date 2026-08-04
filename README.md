@@ -5,14 +5,14 @@ agent projects without turning `AGENTS.md` into a remote dependency.
 
 It provides:
 
-- 19 individually identified and versioned protocols;
-- four ordered, composable profiles;
+- 21 individually identified and versioned protocols;
+- five ordered, composable profiles;
 - deterministic, self-contained `AGENTS.md` rendering;
 - exact source-commit, protocol-version, overlay, and exception records;
 - a dependency-free structural drift checker;
 - two Codex skills dedicated only to applying and auditing the protocols.
 
-The repository is private while the format and first consumer adoption are
+The repository is private while the format and broader consumer adoption are
 incubating. It has no hosted CI. Local verification is the current proof surface.
 
 Starcompass is the project and repository identity. Stable technical format
@@ -46,11 +46,16 @@ or claim that its instructions were followed.
 | `greenfield` | Small new projects | dependency, proof, planning, and bounded-CI gates |
 | `fork` | Maintained downstream forks | minimal delta and upstream/removal discipline |
 | `orchestrator` | Thin composition layers | orchestrator ownership, one active frontier, portability |
+| `release` | Products with ordered release channels | installed-artifact proof, fresh-session dogfood, exact-revision promotion |
 | `terminal-engine` | Terminal/session engines | terminal authority, lifecycle, failure, and portability |
 
-A project may combine roles, for example `greenfield` plus `terminal-engine`.
-Profile selection remains a product-scope decision; the renderer does not infer
-it from repository contents.
+A project may combine roles, for example `greenfield` plus `terminal-engine`
+plus `release`. The release profile is opt-in: it does not create branches or
+prescribe channel names, cadence, packaging commands, or platform support.
+`AP-DELIVERY-001` proves the delivered artifact and fresh-session experience;
+`AP-PROMOTION-001` advances that exact proved revision through the
+consumer-declared channel order. Profile selection remains a product-scope
+decision; the renderer does not infer it from repository contents.
 
 ## Consumer layout
 
@@ -205,10 +210,10 @@ The scorecard counts tracked project text and code, excluding `.beads/` state.
 
 | Surface | LOC |
 | --- | ---: |
-| Protocols and generated index | 505 |
-| Profiles | 83 |
+| Protocols and generated index | 575 |
+| Profiles | 104 |
 | Checker | 620 |
-| Tests | 234 |
+| Tests | 252 |
 | Enforcement skills | 162 |
-| Repository policy and docs | 481 |
-| **Total** | **2,085** |
+| Repository policy and docs | 505 |
+| **Total** | **2,218** |

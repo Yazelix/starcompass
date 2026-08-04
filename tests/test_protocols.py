@@ -19,9 +19,10 @@ class ProtocolRepositoryTests(unittest.TestCase):
     ) -> None:
         canonical, profiles = protocols.validate_repository(ROOT)
 
-        self.assertEqual(19, len(canonical))
+        self.assertEqual(21, len(canonical))
         self.assertEqual(
-            {"fork", "greenfield", "orchestrator", "terminal-engine"}, set(profiles)
+            {"fork", "greenfield", "orchestrator", "release", "terminal-engine"},
+            set(profiles),
         )
         for profile in profiles:
             first = protocols.assemble_import(
@@ -48,6 +49,23 @@ class ProtocolRepositoryTests(unittest.TestCase):
             self.assertIn("## Repository-local rules\n\nLocal truth.", agents)
             for imported in manifest["protocols"]:
                 self.assertIn(f"### {imported['id']} ", agents)
+
+    def test_release_profile_requires_delivery_proof_before_promotion(self) -> None:
+        manifest, agents = protocols.assemble_import(
+            ROOT,
+            ["release"],
+            "Local truth.\n",
+            None,
+            protocols.SOURCE_REPOSITORY,
+            COMMIT,
+        )
+
+        ids = [item["id"] for item in manifest["protocols"]]
+        self.assertLess(ids.index("AP-DELIVERY-001"), ids.index("AP-PROMOTION-001"))
+        self.assertLess(
+            agents.index("### AP-DELIVERY-001 "),
+            agents.index("### AP-PROMOTION-001 "),
+        )
 
     def test_exception_is_explicit_in_manifest_and_self_contained_agents(self) -> None:
         exceptions = {
