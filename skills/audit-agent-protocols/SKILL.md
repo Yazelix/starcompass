@@ -21,11 +21,15 @@ from semantic review and from claims about historical agent compliance.
 
 ## Mechanical Audit
 
-Run in the pinned source checkout:
+Run the validation and check entrypoints documented by the pinned source
+revision; historical pins retain their historical implementation. For current
+Rust revisions:
 
 ```sh
-python3 scripts/protocols.py validate
-python3 scripts/protocols.py check \
+cargo run --locked --quiet --manifest-path "$STARCOMPASS/Cargo.toml" -- \
+  --root "$STARCOMPASS" validate
+cargo run --locked --quiet --manifest-path "$STARCOMPASS/Cargo.toml" -- \
+  --root "$STARCOMPASS" check \
   --overlay <consumer>/.agent-protocols.local.md \
   --exceptions <consumer>/.agent-protocols.exceptions.json \
   --manifest <consumer>/.agent-protocols.json \

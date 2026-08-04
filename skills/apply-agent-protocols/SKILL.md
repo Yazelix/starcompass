@@ -14,7 +14,14 @@ an exact source commit.
 1. Read the consumer repository's complete `AGENTS.md` and inspect its worktree.
 2. Locate the Starcompass checkout containing this skill. Read its complete
    `AGENTS.md`, `README.md`, selected profiles, and affected protocol files.
-3. Run `python3 scripts/protocols.py validate` in that checkout.
+3. Run the pinned checkout's `starcompass validate` command. For current Rust
+   revisions:
+
+   ```sh
+   cargo run --locked --quiet --manifest-path "$STARCOMPASS/Cargo.toml" -- \
+     --root "$STARCOMPASS" validate
+   ```
+
 4. Require a clean source checkout and a full Git commit. Never render from
    uncommitted protocol, profile, or checker changes.
 
@@ -47,7 +54,8 @@ temporary. Never invent approval from repository history or chat implication.
 From the clean Starcompass checkout, run:
 
 ```sh
-python3 scripts/protocols.py render \
+cargo run --locked --quiet --manifest-path "$STARCOMPASS/Cargo.toml" -- \
+  --root "$STARCOMPASS" render \
   --profile <profile> \
   --overlay <consumer>/.agent-protocols.local.md \
   --exceptions <consumer>/.agent-protocols.exceptions.json \
@@ -67,7 +75,8 @@ Verify that its repository-local section preserves the overlay.
 Then run:
 
 ```sh
-python3 scripts/protocols.py check \
+cargo run --locked --quiet --manifest-path "$STARCOMPASS/Cargo.toml" -- \
+  --root "$STARCOMPASS" check \
   --overlay <consumer>/.agent-protocols.local.md \
   --exceptions <consumer>/.agent-protocols.exceptions.json \
   --manifest <consumer>/.agent-protocols.json \

@@ -13,8 +13,8 @@
   channel promotion.
 - Composable `greenfield`, `fork`, `orchestrator`, `release`, and
   `terminal-engine` profiles.
-- Dependency-free catalog indexing, self-contained `AGENTS.md` rendering, and
-  pinned structural drift detection.
+- Typed Rust catalog indexing, self-contained `AGENTS.md` rendering, pinned
+  structural drift detection, and atomic cross-platform output replacement.
 - History checks for permanent protocol IDs and mandatory version increments.
 - Explicit local overlay and approved-exception inputs and import records.
 - Focused contract tests for composition, validation, exception handling, and

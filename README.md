@@ -9,7 +9,7 @@ It provides:
 - five ordered, composable profiles;
 - deterministic, self-contained `AGENTS.md` rendering;
 - exact source-commit, protocol-version, overlay, and exception records;
-- a dependency-free structural drift checker;
+- a typed Rust structural drift checker and renderer;
 - two Codex skills dedicated only to applying and auditing the protocols; and
 - self-adoption of the `greenfield` profile through the ordinary consumer
   format.
@@ -105,25 +105,29 @@ imported requirement and therefore requires explicit approval.
 
 ## Commands
 
+Build a standalone local binary with `cargo build --locked --release`; the
+result is `target/release/starcompass`. During incubation, Starcompass does not
+publish release artifacts or an installer.
+
 Validate the source catalog:
 
 ```sh
-python3 scripts/protocols.py validate
+cargo run --locked --quiet -- validate
 ```
 
 After changing protocol source or metadata, validate the version transition
 before regenerating its indexed hashes:
 
 ```sh
-python3 scripts/protocols.py version-check --base HEAD
-python3 scripts/protocols.py index
-python3 scripts/protocols.py validate
+cargo run --locked --quiet -- version-check --base HEAD
+cargo run --locked --quiet -- index
+cargo run --locked --quiet -- validate
 ```
 
 From a clean, committed Starcompass checkout, render a consumer:
 
 ```sh
-python3 scripts/protocols.py render \
+cargo run --locked --quiet -- render \
   --profile greenfield \
   --profile terminal-engine \
   --overlay /path/to/consumer/.agent-protocols.local.md \
@@ -136,7 +140,7 @@ Check the consumer using a Starcompass checkout at the exact commit pinned
 in its manifest:
 
 ```sh
-python3 scripts/protocols.py check \
+cargo run --locked --quiet -- check \
   --overlay /path/to/consumer/.agent-protocols.local.md \
   --exceptions /path/to/consumer/.agent-protocols.exceptions.json \
   --manifest /path/to/consumer/.agent-protocols.json \
@@ -184,7 +188,8 @@ Consumers upgrade intentionally:
 ```text
 protocols/                 canonical Markdown and generated index
 profiles/                  ordered JSON protocol sets
-scripts/protocols.py       index, render, and drift-check owner
+src/lib.rs                 index, render, and drift-check owner
+src/main.rs                `starcompass` process boundary
 tests/                     focused contract tests
 skills/                    protocol-only Codex skills
 docs/DESIGN.md             architecture decisions and boundaries
@@ -209,9 +214,10 @@ profile, checker mode, or exception.
 ## Verification
 
 ```sh
-python3 scripts/protocols.py validate
-python3 scripts/protocols.py version-check --base HEAD
-python3 -m unittest discover -s tests -v
+cargo fmt --check
+cargo check --locked
+cargo test --locked
+cargo clippy --locked --all-targets -- -D warnings
 python3 /home/lucca/.codex/skills/.system/skill-creator/scripts/quick_validate.py skills/apply-agent-protocols
 python3 /home/lucca/.codex/skills/.system/skill-creator/scripts/quick_validate.py skills/audit-agent-protocols
 git diff --check
@@ -222,7 +228,8 @@ The self-import check must use a clean checkout at the source commit recorded in
 
 ```sh
 PINNED_STARCOMPASS=/path/to/clean/checkout-at-the-manifest-source-commit
-python3 "$PINNED_STARCOMPASS/scripts/protocols.py" check \
+cargo run --locked --quiet --manifest-path "$PINNED_STARCOMPASS/Cargo.toml" -- \
+  --root "$PINNED_STARCOMPASS" check \
   --overlay .agent-protocols.local.md \
   --exceptions .agent-protocols.exceptions.json \
   --manifest .agent-protocols.json \
@@ -237,8 +244,8 @@ The scorecard counts tracked project text and code, excluding `.beads/` state.
 | --- | ---: |
 | Protocols and generated index | 575 |
 | Profiles | 104 |
-| Checker | 620 |
-| Tests | 252 |
-| Enforcement skills | 162 |
-| Repository policy and docs | 991 |
-| **Total** | **2,704** |
+| Rust checker and package manifest | 1,141 |
+| Tests | 377 |
+| Enforcement skills | 175 |
+| Repository policy and docs | 1,016 |
+| **Total** | **3,388** |

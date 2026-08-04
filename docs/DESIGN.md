@@ -103,20 +103,36 @@ attest third-party runtime integrations.
 
 ## Dependency decision
 
-The checker uses Python 3's standard library.
+The checker is a Rust 2024 binary with Rust 1.85 as its minimum toolchain. Rust
+was selected while the implementation and compatibility surface were still
+small: a distributable binary, typed schemas, and one language across the wider
+stack outweigh the build cost. The 620-line Python implementation served as the
+byte-parity oracle and was removed after the Rust contract tests matched its
+manifest, exception, index, and `AGENTS.md` output. Go would also provide a
+single binary but would add a second compiled language to the stack. POSIX shell
+is too brittle for nested JSON, Unicode, atomic writes, and precise validation.
 
-- Rust would provide a strong distributable binary but would impose a build and
-  toolchain on every early consumer for a small metadata tool.
-- POSIX shell would be widely available but brittle for nested JSON, Unicode,
-  deterministic rendering, and actionable validation errors.
-- YAML or TOML would be pleasant for authors but require either another parser
-  dependency or a restricted home-grown dialect.
-- Markdown protocol sources plus JSON metadata keep human prose readable and
-  machine input unambiguous with no package installation.
+The direct dependency gate selects exact releases:
 
-The exit cost is intentionally low: schemas are documented, the output is plain
-Markdown and JSON, and no consumer runtime depends on the Python implementation.
-A future compiled checker can replace it without changing protocol ownership.
+- `serde` 1.0.229 with derive and `serde_json` 1.0.151 own typed JSON schemas and
+  deterministic serialization. A handwritten parser and the untyped `json`
+  crate duplicate or weaken schema ownership; `simd-json` solves irrelevant
+  throughput pressure.
+- `sha2` 0.11.0 with default features disabled owns portable SHA-256. Owned
+  cryptography, an external command, `ring`, and system crypto broaden the
+  correctness or platform surface.
+- `atomic-write-file` 0.3.0 owns all-old-or-all-new replacement across Unix,
+  Windows, and WASI. A standard-library temp-and-rename path diverges on Windows;
+  `tempfile` owns a broader lifecycle, and direct bindings create local platform
+  code.
+
+The standard library owns the fixed CLI, diagnostics, Git subprocesses, and
+test fixtures. `clap`, `lexopt`, `pico-args`, `anyhow`, `thiserror`,
+`assert_cmd`, and `tempfile` do not remove enough local behavior to justify
+their cost. The measured lock graph contains four direct crates and 31 registry
+packages across normal, build, and platform-specific metadata. Serialization,
+hashing, and atomic replacement each have one narrow call boundary, so a future
+replacement does not change the Markdown or JSON compatibility surface.
 
 ## Skill boundary
 
