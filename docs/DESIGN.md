@@ -95,6 +95,18 @@ The audit skill preserves this boundary by reporting mechanical drift and
 semantic ambiguity separately. Runtime enforcement, telemetry, and agent-action
 attestation are outside the initial scope.
 
+## Planning records outcomes
+
+Beads exports one mutable snapshot per issue. Agents keep its contract,
+decisions, constraints, acceptance evidence, and material failures aligned with
+the accepted result. Append-only audit records retain chronology when later
+work needs it as evidence.
+
+Review corrections update the owning issue and the current task's unpublished
+commit. Agents refresh local SHA-pinned artifacts after amendment and add
+follow-up commits after publication or an external pin. A separate issue records
+only a material finding outside the owning scope or one worth scheduling.
+
 ## Adopt upstream implementations without cloning them
 
 The catalog owns stable, self-contained invariants. When an upstream project

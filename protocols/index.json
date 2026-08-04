@@ -66,10 +66,10 @@
     },
     {
       "id": "AP-GIT-001",
-      "version": 1,
+      "version": 3,
       "title": "Safe repository history",
       "path": "protocols/AP-GIT-001.md",
-      "sha256": "624740f796eddd5adcaf657e8f1aa3ba229c146e4b34c816940a5543d74ba46f"
+      "sha256": "16d27b0df7ccc94880bb31020e822e32b37503f43c2cf7a69de333300cbfdacf"
     },
     {
       "id": "AP-MINIMAL-001",
@@ -94,10 +94,10 @@
     },
     {
       "id": "AP-PLAN-001",
-      "version": 1,
+      "version": 4,
       "title": "Durable planning state",
       "path": "protocols/AP-PLAN-001.md",
-      "sha256": "d1edf160323fe69e814c3055461c054a5def761000c27874df75e04c1dd195e3"
+      "sha256": "5bc0426788693717e8af011277d9358c65899e839d7c0c71299003ec0d8acc4b"
     },
     {
       "id": "AP-PORTABILITY-001",

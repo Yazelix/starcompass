@@ -35,3 +35,10 @@
 - Reject symlinked or special catalog sources before external bytes can be
   mistaken for pinned content, and colliding render paths before one artifact
   overwrites another.
+
+### Changed
+
+- `AP-PLAN-001` makes issue fields mutable current state and reserves append-only
+  history for evidence. `AP-GIT-001` folds same-unit corrections into the
+  current task's unpublished commit; pushed or externally pinned revisions get
+  follow-up commits.

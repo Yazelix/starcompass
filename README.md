@@ -255,10 +255,10 @@ and lockfiles.
 
 | Surface | LOC |
 | --- | ---: |
-| Protocols and generated index | 575 |
+| Protocols and generated index | 596 |
 | Profiles | 104 |
 | Rust checker and package manifest | 1,193 |
 | Tests | 498 |
 | Enforcement skills | 175 |
-| Repository policy and docs | 1,052 |
-| **Total** | **3,597** |
+| Repository policy and docs | 1,072 |
+| **Total** | **3,638** |
