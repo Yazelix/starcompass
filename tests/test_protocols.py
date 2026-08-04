@@ -43,6 +43,7 @@ class ProtocolRepositoryTests(unittest.TestCase):
             self.assertEqual(first, second)
             manifest, agents = first
             self.assertIn(f"- Profiles: `{profile}`", agents)
+            self.assertIn("Do not edit this generated file directly.", agents)
             self.assertIn("## Repository-local rules\n\nLocal truth.", agents)
             for imported in manifest["protocols"]:
                 self.assertIn(f"### {imported['id']} ", agents)

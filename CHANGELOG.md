@@ -13,3 +13,4 @@
 - Focused contract tests for composition, validation, exception handling, and
   drift.
 - Protocol-only apply and audit Codex skills.
+- Generated `AGENTS.md` files identify their editable consumer-owned inputs.

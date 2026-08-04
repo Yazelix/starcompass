@@ -354,6 +354,8 @@ def render_agents(
         "",
         "This file is self-contained. Canonical protocol text was rendered into it;",
         "the source repository is needed only to update or verify the import.",
+        "Do not edit this generated file directly. Edit `.agent-protocols.local.md`",
+        "or `.agent-protocols.exceptions.json`, then render from the pinned source.",
         "",
         "## Protocol import record",
         "",

@@ -195,8 +195,8 @@ The scorecard counts tracked project text and code, excluding `.beads/` state.
 | --- | ---: |
 | Protocols and generated index | 471 |
 | Profiles | 79 |
-| Checker | 618 |
-| Tests | 232 |
+| Checker | 620 |
+| Tests | 233 |
 | Enforcement skills | 162 |
-| Repository policy and docs | 433 |
-| **Total** | **1,995** |
+| Repository policy and docs | 434 |
+| **Total** | **1,999** |
