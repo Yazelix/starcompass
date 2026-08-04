@@ -124,7 +124,8 @@ The direct dependency gate selects exact releases:
 - `atomic-write-file` 0.3.0 owns all-old-or-all-new replacement across Unix,
   Windows, and WASI. A standard-library temp-and-rename path diverges on Windows;
   `tempfile` owns a broader lifecycle, and direct bindings create local platform
-  code.
+  code. On Unix, Starcompass disables existing-file metadata preservation and
+  sets mode `0644` to retain the established fresh-output contract.
 
 The standard library owns the fixed CLI, diagnostics, Git subprocesses, and
 test fixtures. `clap`, `lexopt`, `pico-args`, `anyhow`, `thiserror`,

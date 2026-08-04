@@ -23,3 +23,10 @@
 - Generated `AGENTS.md` files identify their editable consumer-owned inputs.
 - Exact-pinned `greenfield` self-adoption through the ordinary consumer format
   and a two-revision bootstrap sequence for canonical source changes.
+
+### Fixed
+
+- Reject explicit null review conditions, year-zero exception dates, and
+  option-like Git base revisions.
+- Restore fresh `0644` generated files on Unix and report catalog entry errors
+  instead of silently omitting them.

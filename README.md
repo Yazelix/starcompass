@@ -151,6 +151,9 @@ cargo run --locked --quiet -- check \
 refuse a dirty protocol, profile, or checker source because an uncommitted change
 cannot be represented by the recorded Git commit.
 
+Writes use atomic replacement. On Unix, generated files are fresh owner-written
+artifacts with mode `0644`, matching the established consumer format.
+
 ## What the checker proves
 
 The checker rejects:
@@ -244,8 +247,8 @@ The scorecard counts tracked project text and code, excluding `.beads/` state.
 | --- | ---: |
 | Protocols and generated index | 575 |
 | Profiles | 104 |
-| Rust checker and package manifest | 1,141 |
-| Tests | 377 |
+| Rust checker and package manifest | 1,155 |
+| Tests | 406 |
 | Enforcement skills | 175 |
-| Repository policy and docs | 1,017 |
-| **Total** | **3,389** |
+| Repository policy and docs | 1,028 |
+| **Total** | **3,443** |

@@ -53,14 +53,6 @@ struct Protocol {
 }
 
 impl Protocol {
-    fn import_record(&self) -> ImportRecord {
-        ImportRecord {
-            id: self.id.clone(),
-            version: self.version,
-            sha256: self.sha256.clone(),
-        }
-    }
-
     fn index_record(&self) -> IndexRecord {
         IndexRecord {
             id: self.id.clone(),
@@ -112,9 +104,20 @@ struct Exception {
     approved_by: String,
     protocol: String,
     reason: String,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(
+        default,
+        deserialize_with = "present_string",
+        skip_serializing_if = "Option::is_none"
+    )]
     review_condition: Option<String>,
     scope: String,
+}
+
+fn present_string<'de, D>(deserializer: D) -> std::result::Result<Option<String>, D::Error>
+where
+    D: serde::Deserializer<'de>,
+{
+    String::deserialize(deserializer).map(Some)
 }
 
 #[derive(Clone, Debug, Deserialize, PartialEq, Eq, Serialize)]
@@ -159,14 +162,18 @@ fn digest(data: &[u8]) -> String {
     output
 }
 
-fn read_json<T: DeserializeOwned>(path: &Path) -> Result<T> {
-    let text = match fs::read_to_string(path) {
-        Ok(text) => text,
+fn read_text(path: &Path) -> Result<String> {
+    match fs::read_to_string(path) {
+        Ok(text) => Ok(text),
         Err(error) if error.kind() == std::io::ErrorKind::NotFound => {
-            return Err(Error::new(format!("missing file: {}", path.display())));
+            Err(Error::new(format!("missing file: {}", path.display())))
         }
-        Err(error) => return Err(error.into()),
-    };
+        Err(error) => Err(error.into()),
+    }
+}
+
+fn read_json<T: DeserializeOwned>(path: &Path) -> Result<T> {
+    let text = read_text(path)?;
     serde_json::from_str(&text)
         .map_err(|error| Error::new(format!("invalid JSON in {}: {error}", path.display())))
 }
@@ -291,22 +298,31 @@ fn valid_protocol_id(id: &str) -> bool {
         && number.bytes().all(|byte| byte.is_ascii_digit())
 }
 
-fn load_protocols(root: &Path) -> Result<BTreeMap<String, Protocol>> {
-    let directory = root.join("protocols");
+fn source_files(root: &Path, directory_name: &str, extension: &str) -> Result<Vec<PathBuf>> {
+    let directory = root.join(directory_name);
     let mut paths = fs::read_dir(&directory)
-        .map_err(|_| Error::new(format!("no protocols found in {}", directory.display())))?
-        .filter_map(|entry| entry.ok().map(|entry| entry.path()))
-        .filter(|path| path.extension() == Some(OsStr::new("md")))
-        .collect::<Vec<_>>();
+        .map_err(|_| {
+            Error::new(format!(
+                "no {directory_name} found in {}",
+                directory.display()
+            ))
+        })?
+        .map(|entry| entry.map(|entry| entry.path()))
+        .collect::<std::io::Result<Vec<_>>>()?;
+    paths.retain(|path| path.extension() == Some(OsStr::new(extension)));
     paths.sort();
     if paths.is_empty() {
         return Err(Error::new(format!(
-            "no protocols found in {}",
+            "no {directory_name} found in {}",
             directory.display()
         )));
     }
+    Ok(paths)
+}
+
+fn load_protocols(root: &Path) -> Result<BTreeMap<String, Protocol>> {
     let mut protocols = BTreeMap::new();
-    for path in paths {
+    for path in source_files(root, "protocols", "md")? {
         let protocol = parse_protocol(root, &path)?;
         if protocols.insert(protocol.id.clone(), protocol).is_some() {
             return Err(Error::new("duplicate protocol ID"));
@@ -329,23 +345,9 @@ fn load_profiles(
     root: &Path,
     protocols: &BTreeMap<String, Protocol>,
 ) -> Result<BTreeMap<String, Profile>> {
-    let directory = root.join("profiles");
-    let mut paths = fs::read_dir(&directory)
-        .map_err(|_| Error::new(format!("no profiles found in {}", directory.display())))?
-        .filter_map(|entry| entry.ok().map(|entry| entry.path()))
-        .filter(|path| path.extension() == Some(OsStr::new("json")))
-        .collect::<Vec<_>>();
-    paths.sort();
-    if paths.is_empty() {
-        return Err(Error::new(format!(
-            "no profiles found in {}",
-            directory.display()
-        )));
-    }
-
     let mut profiles = BTreeMap::new();
     let mut used = BTreeSet::new();
-    for path in paths {
+    for path in source_files(root, "profiles", "json")? {
         let profile: Profile = read_json(&path)?;
         if path.file_name() != Some(OsStr::new(&format!("{}.json", profile.name))) {
             return Err(Error::new(format!(
@@ -541,6 +543,9 @@ fn valid_date(value: &str) -> bool {
     let Ok(year) = value[..4].parse::<u32>() else {
         return false;
     };
+    if year == 0 {
+        return false;
+    }
     let Ok(month) = value[5..7].parse::<u32>() else {
         return false;
     };
@@ -588,29 +593,21 @@ fn assemble_import(
             profiles.keys().collect::<Vec<_>>()
         )));
     }
-    if source_commit.len() != 40
-        || !source_commit
-            .bytes()
-            .all(|byte| byte.is_ascii_digit() || (b'a'..=b'f').contains(&byte))
-    {
+    if !valid_commit_id(source_commit) {
         return Err(Error::new(
             "source commit must be a full lowercase 40-character Git SHA",
         ));
     }
 
-    let mut selected_ids = Vec::new();
+    let mut selected = Vec::new();
     let mut seen = BTreeSet::new();
     for name in profile_names {
         for id in &profiles[name].protocols {
             if seen.insert(id.clone()) {
-                selected_ids.push(id.clone());
+                selected.push(&protocols[id]);
             }
         }
     }
-    let selected = selected_ids
-        .iter()
-        .map(|id| &protocols[id])
-        .collect::<Vec<_>>();
     let exceptions = validate_exceptions(exceptions_document, &seen)?;
     let manifest = Manifest {
         schema: 1,
@@ -621,7 +618,11 @@ fn assemble_import(
         profiles: profile_names.to_vec(),
         protocols: selected
             .iter()
-            .map(|protocol| protocol.import_record())
+            .map(|protocol| ImportRecord {
+                id: protocol.id.clone(),
+                version: protocol.version,
+                sha256: protocol.sha256.clone(),
+            })
             .collect(),
         exceptions,
         overlay: Overlay {
@@ -722,17 +723,17 @@ fn validate_manifest(
     manifest: &Manifest,
     overlay: &str,
     source_commit: Option<&str>,
-) -> Result<(Manifest, String)> {
+) -> Result<String> {
     if manifest.schema != 1 {
         return Err(Error::new("import manifest has invalid fields or schema"));
     }
-    if let Some(commit) = source_commit
-        && manifest.source.commit != commit
-    {
-        return Err(Error::new(format!(
-            "source checkout is {commit}, but the manifest pins {}",
-            manifest.source.commit
-        )));
+    if let Some(commit) = source_commit {
+        if manifest.source.commit != commit {
+            return Err(Error::new(format!(
+                "source checkout is {commit}, but the manifest pins {}",
+                manifest.source.commit
+            )));
+        }
     }
     let exceptions = ExceptionsDocument {
         schema: 1,
@@ -751,7 +752,7 @@ fn validate_manifest(
             "import manifest drifted from its profile, protocols, or overlay",
         ));
     }
-    Ok((wanted, agents))
+    Ok(agents)
 }
 
 fn check_import(
@@ -762,7 +763,7 @@ fn check_import(
     source_commit: Option<&str>,
     exceptions_document: Option<&ExceptionsDocument>,
 ) -> Result<()> {
-    let (_, wanted_agents) = validate_manifest(root, manifest, overlay, source_commit)?;
+    let wanted_agents = validate_manifest(root, manifest, overlay, source_commit)?;
     if let Some(document) = exceptions_document {
         let selected = manifest
             .protocols
@@ -802,6 +803,9 @@ fn git(root: &Path, arguments: &[&str]) -> Result<String> {
 }
 
 fn index_at_revision(root: &Path, revision: &str) -> Result<ProtocolIndex> {
+    if revision.starts_with('-') {
+        return Err(Error::new("Git revision must not begin with '-'"));
+    }
     let reference = format!("{revision}:protocols/index.json");
     let raw = git(root, &["show", &reference])?;
     serde_json::from_str(&raw)
@@ -810,16 +814,19 @@ fn index_at_revision(root: &Path, revision: &str) -> Result<ProtocolIndex> {
 
 fn source_head(root: &Path) -> Result<String> {
     let head = git(root, &["rev-parse", "HEAD"])?;
-    if head.len() != 40
-        || !head
-            .bytes()
-            .all(|byte| byte.is_ascii_digit() || (b'a'..=b'f').contains(&byte))
-    {
+    if !valid_commit_id(&head) {
         return Err(Error::new(
             "source repository does not have a full Git HEAD",
         ));
     }
     Ok(head)
+}
+
+fn valid_commit_id(value: &str) -> bool {
+    value.len() == 40
+        && value
+            .bytes()
+            .all(|byte| byte.is_ascii_digit() || (b'a'..=b'f').contains(&byte))
 }
 
 fn require_clean_source(root: &Path) -> Result<()> {
@@ -846,12 +853,28 @@ fn require_clean_source(root: &Path) -> Result<()> {
 }
 
 fn atomic_write(path: &Path, content: &str) -> Result<()> {
-    if let Some(parent) = path.parent()
-        && !parent.as_os_str().is_empty()
+    if let Some(parent) = path
+        .parent()
+        .filter(|parent| !parent.as_os_str().is_empty())
     {
         fs::create_dir_all(parent)?;
     }
-    let mut file = atomic_write_file::AtomicWriteFile::options().open(path)?;
+    let options = atomic_write_file::OpenOptions::new();
+    #[cfg(unix)]
+    let options = {
+        use atomic_write_file::unix::OpenOptionsExt as _;
+
+        let mut options = options;
+        options.preserve_mode(false).try_preserve_owner(false);
+        options
+    };
+    let mut file = options.open(path)?;
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::PermissionsExt as _;
+
+        file.set_permissions(fs::Permissions::from_mode(0o644))?;
+    }
     file.write_all(content.as_bytes())?;
     file.commit()?;
     Ok(())
@@ -912,16 +935,7 @@ fn command_check(
     let overlay = fs::read_to_string(overlay_path)?;
     let exceptions: ExceptionsDocument = read_json(exceptions_path)?;
     let manifest: Manifest = read_json(manifest_path)?;
-    let agents = match fs::read_to_string(agents_path) {
-        Ok(agents) => agents,
-        Err(error) if error.kind() == std::io::ErrorKind::NotFound => {
-            return Err(Error::new(format!(
-                "missing file: {}",
-                agents_path.display()
-            )));
-        }
-        Err(error) => return Err(error.into()),
-    };
+    let agents = read_text(agents_path)?;
     check_import(
         root,
         &manifest,
@@ -961,10 +975,10 @@ fn discover_root() -> Result<PathBuf> {
     if let Ok(current) = std::env::current_dir() {
         candidates.push(current);
     }
-    if let Ok(executable) = std::env::current_exe()
-        && let Some(parent) = executable.parent()
-    {
-        candidates.push(parent.to_path_buf());
+    if let Ok(executable) = std::env::current_exe() {
+        if let Some(parent) = executable.parent() {
+            candidates.push(parent.to_path_buf());
+        }
     }
     for candidate in candidates {
         for ancestor in candidate.ancestors() {
@@ -1182,17 +1196,6 @@ mod tests {
     }
 
     #[test]
-    fn json_format_matches_the_compatibility_surface() {
-        assert_eq!(
-            json_text(&Overlay {
-                sha256: "abc".into()
-            })
-            .unwrap(),
-            "{\n  \"sha256\": \"abc\"\n}\n"
-        );
-    }
-
-    #[test]
     fn repository_and_profiles_render_deterministically() {
         let (protocols, profiles) = validate_repository(&root()).unwrap();
         assert_eq!(protocols.len(), 21);
@@ -1286,6 +1289,20 @@ mod tests {
         assert!(agents.contains("Recorded exception."));
         assert!(agents.contains("Approved by user on 2026-08-04"));
 
+        let mut null_review = serde_json::to_value(&document).unwrap();
+        null_review["exceptions"][0]["review_condition"] = serde_json::Value::Null;
+        assert!(serde_json::from_value::<ExceptionsDocument>(null_review).is_err());
+
+        let mut year_zero = document.clone();
+        year_zero.exceptions[0].approved_at = "0000-01-01".into();
+        let selected = BTreeSet::from(["AP-CI-001".into()]);
+        assert!(
+            validate_exceptions(Some(&year_zero), &selected)
+                .unwrap_err()
+                .to_string()
+                .contains("YYYY-MM-DD")
+        );
+
         let invalid = ExceptionsDocument {
             schema: 1,
             exceptions: vec![exception("AP-TERMINAL-001", "all")],
@@ -1332,6 +1349,32 @@ mod tests {
                 .unwrap_err()
                 .to_string()
                 .contains("cannot be removed")
+        );
+
+        assert!(
+            command_version_check(&root(), "--no-patch")
+                .unwrap_err()
+                .to_string()
+                .contains("must not begin with '-'")
+        );
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn atomic_output_restores_the_unix_mode_contract() {
+        use std::os::unix::fs::PermissionsExt;
+
+        let directory = TestDirectory::copy_catalog();
+        let path = directory.0.join("output");
+        fs::write(&path, "old").unwrap();
+        fs::set_permissions(&path, fs::Permissions::from_mode(0o600)).unwrap();
+
+        atomic_write(&path, "new").unwrap();
+
+        assert_eq!(fs::read_to_string(&path).unwrap(), "new");
+        assert_eq!(
+            fs::metadata(path).unwrap().permissions().mode() & 0o777,
+            0o644
         );
     }
 
