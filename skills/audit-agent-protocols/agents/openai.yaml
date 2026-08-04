@@ -1,4 +1,4 @@
 interface:
-  display_name: "Audit Agent Protocols"
+  display_name: "Audit Starcompass Protocols"
   short_description: "Audit protocol imports and local exceptions"
   default_prompt: "Use $audit-agent-protocols to check this repository for protocol drift and exception problems."

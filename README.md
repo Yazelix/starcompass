@@ -1,11 +1,11 @@
-# agent-protocols
+# Starcompass
 
-agent-protocols is a canonical source for development rules shared across coding
+Starcompass is a canonical source for development rules shared across coding
 agent projects without turning `AGENTS.md` into a remote dependency.
 
 It provides:
 
-- 18 individually identified and versioned protocols;
+- 19 individually identified and versioned protocols;
 - four ordered, composable profiles;
 - deterministic, self-contained `AGENTS.md` rendering;
 - exact source-commit, protocol-version, overlay, and exception records;
@@ -14,6 +14,10 @@ It provides:
 
 The repository is private while the format and first consumer adoption are
 incubating. It has no hosted CI. Local verification is the current proof surface.
+
+Starcompass is the project and repository identity. Stable technical format
+names remain unchanged: protocol IDs use `AP-*`, consumer files use
+`.agent-protocols.*`, and the protocol skills retain their existing IDs.
 
 ## Model
 
@@ -28,6 +32,14 @@ checking the pin.
 
 Profiles compose by ordered union: the first appearance of a protocol sets its
 position and later duplicates are ignored.
+
+Every profile includes `AP-MINIMAL-001`. Ponytail is its adopted agent-side
+implementation where the host supports it. Consumers use the
+[upstream project](https://github.com/DietrichGebert/ponytail/tree/16f29800fd2681bdf24f3eb4ccffe38be3baec6b)
+directly; Starcompass does not copy its modes, hooks, skills, or host
+adapters. The protocol remains self-contained so its invariant still applies
+offline or when Ponytail is unavailable. The checker does not install Ponytail
+or claim that its instructions were followed.
 
 | Profile | Intended role | Specialized protocols |
 | --- | --- | --- |
@@ -101,7 +113,7 @@ python3 scripts/protocols.py index
 python3 scripts/protocols.py validate
 ```
 
-From a clean, committed agent-protocols checkout, render a consumer:
+From a clean, committed Starcompass checkout, render a consumer:
 
 ```sh
 python3 scripts/protocols.py render \
@@ -113,7 +125,7 @@ python3 scripts/protocols.py render \
   --agents-out /path/to/consumer/AGENTS.md
 ```
 
-Check the consumer using an agent-protocols checkout at the exact commit pinned
+Check the consumer using a Starcompass checkout at the exact commit pinned
 in its manifest:
 
 ```sh
@@ -193,10 +205,10 @@ The scorecard counts tracked project text and code, excluding `.beads/` state.
 
 | Surface | LOC |
 | --- | ---: |
-| Protocols and generated index | 471 |
-| Profiles | 79 |
+| Protocols and generated index | 505 |
+| Profiles | 83 |
 | Checker | 620 |
-| Tests | 233 |
+| Tests | 234 |
 | Enforcement skills | 162 |
-| Repository policy and docs | 434 |
-| **Total** | **1,999** |
+| Repository policy and docs | 481 |
+| **Total** | **2,085** |

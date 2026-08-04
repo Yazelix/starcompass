@@ -1,9 +1,9 @@
 ---
 name: apply-agent-protocols
-description: Apply or update a pinned agent-protocols profile in a repository while preserving its local rules. Use when the user asks to adopt, import, render, upgrade, or synchronize canonical agent protocols, AGENTS.md rules, protocol profiles, or recorded local exceptions.
+description: Apply or update a pinned Starcompass profile in a repository while preserving its local rules. Use when the user asks to adopt, import, render, upgrade, or synchronize canonical agent protocols, AGENTS.md rules, protocol profiles, or recorded local exceptions.
 ---
 
-# Apply Agent Protocols
+# Apply Starcompass Protocols
 
 Render canonical protocols into a consumer's self-contained `AGENTS.md`. Keep
 the repository's own rules in a separate overlay and pin every imported rule to
@@ -12,7 +12,7 @@ an exact source commit.
 ## Preconditions
 
 1. Read the consumer repository's complete `AGENTS.md` and inspect its worktree.
-2. Locate the agent-protocols checkout containing this skill. Read its complete
+2. Locate the Starcompass checkout containing this skill. Read its complete
    `AGENTS.md`, `README.md`, selected profiles, and affected protocol files.
 3. Run `python3 scripts/protocols.py validate` in that checkout.
 4. Require a clean source checkout and a full Git commit. Never render from
@@ -44,7 +44,7 @@ temporary. Never invent approval from repository history or chat implication.
 
 ## Render
 
-From the clean agent-protocols checkout, run:
+From the clean Starcompass checkout, run:
 
 ```sh
 python3 scripts/protocols.py render \
@@ -80,7 +80,7 @@ those actions.
 
 ## Updating an Existing Import
 
-First verify the current files with an agent-protocols checkout at the manifest's
+First verify the current files with a Starcompass checkout at the manifest's
 pinned commit. Inspect the protocol, version, profile, and checker diff between
 that commit and the proposed source commit. Re-evaluate exceptions whose target
 changed. Render only after the user has chosen any semantic profile or exception

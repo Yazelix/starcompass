@@ -2,3 +2,6 @@ __pycache__/
 *.py[cod]
 .coverage
 .DS_Store
+
+# bv (beads viewer) local config and caches
+.bv/

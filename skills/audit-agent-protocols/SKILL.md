@@ -1,9 +1,9 @@
 ---
 name: audit-agent-protocols
-description: Audit a repository's pinned agent-protocol import for structural drift, missing metadata, ambiguous local exceptions, and direct rule conflicts. Use when the user asks to verify, check, review, or diagnose AGENTS.md protocol integrity or whether canonical agent rules remain correctly imported.
+description: Audit a repository's pinned Starcompass import for structural drift, missing metadata, ambiguous local exceptions, and direct rule conflicts. Use when the user asks to verify, check, review, or diagnose AGENTS.md protocol integrity or whether canonical agent rules remain correctly imported.
 ---
 
-# Audit Agent Protocols
+# Audit Starcompass Protocols
 
 Audit without changing the consumer. Separate machine-provable import integrity
 from semantic review and from claims about historical agent compliance.
@@ -13,7 +13,7 @@ from semantic review and from claims about historical agent compliance.
 1. Read the consumer's full `AGENTS.md`, `.agent-protocols.json`,
    `.agent-protocols.local.md`, and `.agent-protocols.exceptions.json`.
 2. Inspect repository status and instructions. Do not clean or rewrite drift.
-3. Locate an agent-protocols checkout at the exact source commit recorded in the
+3. Locate a Starcompass checkout at the exact source commit recorded in the
    manifest. If it is unavailable, report structural verification as blocked;
    do not substitute the latest checkout.
 4. Read the source repository's complete `AGENTS.md`, selected profiles, imported

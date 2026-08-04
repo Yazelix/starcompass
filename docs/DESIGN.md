@@ -1,4 +1,18 @@
-# Design decisions
+# Starcompass design decisions
+
+## Name and compatibility boundary
+
+Starcompass is the project identity. The name describes a common source of
+direction that helps agents navigate project-specific decisions without taking
+scope away from the user. “Star” distinguishes the project from the many tools
+named Compass and keeps it adjacent to the wider Yazelix constellation without
+making Starcompass specific to that stack.
+
+Branding does not silently rename compatibility surfaces. Permanent `AP-*`
+protocol IDs, `.agent-protocols.*` consumer files, and existing skill IDs keep
+their technical names. New import manifests record the Starcompass repository
+URL. Existing manifests remain exact historical import records and receive the
+current source URL when deliberately upgraded.
 
 ## The durable unit is a protocol
 
@@ -56,6 +70,20 @@ or that source code follows the protocols.
 The audit skill preserves this boundary by reporting mechanical drift and
 semantic ambiguity separately. Runtime enforcement, telemetry, and agent-action
 attestation are outside the initial scope.
+
+## Adopt upstream implementations without cloning them
+
+The catalog owns stable, self-contained invariants. When an upstream project
+already owns a strong portable implementation, that project retains ownership
+of its runtime integration, modes, hooks, skills, and host adapters. A canonical
+protocol records the reviewed upstream revision and enough local wording to
+remain usable without network access.
+
+`AP-MINIMAL-001` follows this boundary with Ponytail. Consumers use Ponytail
+directly where supported; Starcompass does not vendor or reproduce its
+adapter surface. A fork is justified only after a recorded incompatibility
+cannot reasonably be fixed upstream. The structural checker does not install or
+attest third-party runtime integrations.
 
 ## Dependency decision
 

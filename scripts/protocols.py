@@ -18,7 +18,7 @@ from typing import Any, Sequence
 
 
 ROOT = Path(__file__).resolve().parents[1]
-SOURCE_REPOSITORY = "https://github.com/luccahuguet/agent-protocols"
+SOURCE_REPOSITORY = "https://github.com/luccahuguet/starcompass"
 PROTOCOL_ID = re.compile(r"AP-[A-Z][A-Z0-9-]*-[0-9]{3}")
 COMMIT_ID = re.compile(r"[0-9a-f]{40}")
 FRONTMATTER_FIELDS = {"id", "version", "title"}

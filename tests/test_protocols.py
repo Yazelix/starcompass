@@ -19,7 +19,7 @@ class ProtocolRepositoryTests(unittest.TestCase):
     ) -> None:
         canonical, profiles = protocols.validate_repository(ROOT)
 
-        self.assertEqual(18, len(canonical))
+        self.assertEqual(19, len(canonical))
         self.assertEqual(
             {"fork", "greenfield", "orchestrator", "terminal-engine"}, set(profiles)
         )
@@ -43,6 +43,7 @@ class ProtocolRepositoryTests(unittest.TestCase):
             self.assertEqual(first, second)
             manifest, agents = first
             self.assertIn(f"- Profiles: `{profile}`", agents)
+            self.assertIn("### AP-MINIMAL-001 ", agents)
             self.assertIn("Do not edit this generated file directly.", agents)
             self.assertIn("## Repository-local rules\n\nLocal truth.", agents)
             for imported in manifest["protocols"]:

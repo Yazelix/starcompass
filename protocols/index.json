@@ -65,6 +65,13 @@
       "sha256": "624740f796eddd5adcaf657e8f1aa3ba229c146e4b34c816940a5543d74ba46f"
     },
     {
+      "id": "AP-MINIMAL-001",
+      "version": 1,
+      "title": "Minimum sufficient implementation",
+      "path": "protocols/AP-MINIMAL-001.md",
+      "sha256": "256c158cc8b226e4baf96d5590531ea180edc9717338dac0fe51a34dd037791f"
+    },
+    {
       "id": "AP-ORCHESTRATOR-001",
       "version": 1,
       "title": "Thin orchestrator ownership",

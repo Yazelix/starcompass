@@ -1,8 +1,8 @@
 # Agent Guidelines
 
-agent-protocols is the canonical source for small, composable development
-protocols used by coding agents. It publishes stable protocol IDs, profiles,
-rendered self-contained `AGENTS.md` files, and structural drift checks.
+Starcompass is the canonical source for small, composable development protocols
+used by coding agents. It publishes stable protocol IDs, profiles, rendered
+self-contained `AGENTS.md` files, and structural drift checks.
 
 ## Core Rule
 
