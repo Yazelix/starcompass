@@ -8,7 +8,7 @@ or `.agent-protocols.exceptions.json`, then render from the pinned source.
 ## Protocol import record
 
 - Source: `https://github.com/luccahuguet/starcompass`
-- Source commit: `ebb5db700e4438dab69af627292f91c6b4c75f47`
+- Source commit: `f41e799db9d78277f18409985287e96a6fc80f51`
 - Profiles: `greenfield`
 - Manifest: `.agent-protocols.json` (schema 1)
 
@@ -16,7 +16,7 @@ or `.agent-protocols.exceptions.json`, then render from the pinned source.
 | --- | ---: | --- |
 | `AP-SCOPE-001` | 1 | `b3f7e012df0708d4baf8957e3c315878a9eb8cd7fddf637dfde1506609d08444` |
 | `AP-CONTRACT-001` | 1 | `0aa692f4c52542111149b691b7d0c015a0c16523cd620a67b0cf335f3284da82` |
-| `AP-REFERENCE-001` | 1 | `3d72ac864b050af7783493245be59450c39db940d736ea6fb60269cd21f7927b` |
+| `AP-REFERENCE-001` | 2 | `ecb28af3796a9964dd98c037463a33b7444d9c39a0365783fb0e9ae9fc007b9c` |
 | `AP-MINIMAL-001` | 1 | `256c158cc8b226e4baf96d5590531ea180edc9717338dac0fe51a34dd037791f` |
 | `AP-DEPENDENCY-001` | 1 | `a389ff9054708574c52ec5e5dd7fc3e2d13b125d2218c70062f50a86761981ca` |
 | `AP-OWNERSHIP-001` | 1 | `bdc09117f79b0d8dbe78e2dd8673a2463398aa31880fe27209fd6cc47f58bbf7` |
@@ -80,6 +80,20 @@ Required practice:
 - Record the concrete mechanism adopted, rejected, or left unresolved.
 - Distinguish direct source evidence from inference.
 - Revisit the evidence when the proposed shape changes materially.
+- Apply source-license wording to the actors, uses, and conditions it actually
+  names. Do not infer that an independent user or project acts on behalf of,
+  for the benefit of, or under the direction of an agent or tool provider
+  merely because the user selected that provider's service. Examples
+  introduced by words such as “including” remain scoped by the condition they
+  illustrate.
+- Distinguish inspecting public source for ideas from copying, adapting,
+  redistributing, selecting a dependency, or incorporating the source. A
+  restriction on one of those actions does not silently erase required source
+  inspection when the requested research itself remains permitted.
+- If license interpretation would exclude required evidence, identify the
+  exact clause, actor, beneficiary, direction, and requested use. Resolve a
+  material ambiguity with the user instead of broadening the restriction by
+  association or substituting reputation and secondary summaries for source.
 
 Reference review is a decision gate, not a requirement to copy the reference.
 
