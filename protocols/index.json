@@ -122,10 +122,10 @@
     },
     {
       "id": "AP-REFERENCE-001",
-      "version": 1,
+      "version": 2,
       "title": "Evidence before code shape",
       "path": "protocols/AP-REFERENCE-001.md",
-      "sha256": "3d72ac864b050af7783493245be59450c39db940d736ea6fb60269cd21f7927b"
+      "sha256": "ecb28af3796a9964dd98c037463a33b7444d9c39a0365783fb0e9ae9fc007b9c"
     },
     {
       "id": "AP-SCOPE-001",

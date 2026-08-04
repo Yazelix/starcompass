@@ -51,6 +51,9 @@
 
 ### Changed
 
+- `AP-REFERENCE-001` applies source-license conditions to their actual actors
+  and uses, distinguishes inspection from reuse, and prevents provider
+  association from replacing required source evidence.
 - `AP-PLAN-001` makes issue fields mutable current state and reserves append-only
   history for evidence. `AP-GIT-001` folds same-unit corrections into the
   current task's unpublished commit; pushed or externally pinned revisions get

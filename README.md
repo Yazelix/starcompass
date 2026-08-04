@@ -36,6 +36,12 @@ pin and canonical protocol text.
 Profiles compose by ordered union: the first appearance of a protocol sets its
 position and later duplicates are ignored.
 
+`AP-REFERENCE-001` requires direct evidence and exact license interpretation.
+It distinguishes public-source inspection for ideas from copying, dependency
+selection, adaptation, and redistribution, and it forbids treating an
+independent user as acting for an agent provider merely because the user chose
+that provider's tool.
+
 Every profile includes `AP-MINIMAL-001`. Ponytail is its adopted agent-side
 implementation where the host supports it. Consumers use the
 [upstream project](https://github.com/DietrichGebert/ponytail/tree/16f29800fd2681bdf24f3eb4ccffe38be3baec6b)
@@ -296,10 +302,10 @@ and lockfiles.
 
 | Surface | LOC |
 | --- | ---: |
-| Protocols and generated index | 596 |
+| Protocols and generated index | 610 |
 | Profiles | 104 |
 | Rust checker and package manifest | 1,347 |
 | Tests | 739 |
 | Enforcement skills | 175 |
-| Repository policy, docs, and licenses | 1,419 |
-| **Total** | **4,380** |
+| Repository policy, docs, and licenses | 1,428 |
+| **Total** | **4,403** |
