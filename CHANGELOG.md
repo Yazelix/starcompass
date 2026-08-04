@@ -51,6 +51,9 @@
 
 ### Changed
 
+- `AP-PLAN-001` limits one uninterrupted agent run to one Bead, requires a stop
+  after its completion or handoff, and defers follow-up issue creation to a
+  later run.
 - `AP-REFERENCE-001` applies source-license conditions to their actual actors
   and uses, distinguishes inspection from reuse, and prevents provider
   association from replacing required source evidence.

@@ -10,6 +10,7 @@ It provides:
 - deterministic, self-contained `AGENTS.md` rendering;
 - exact source-commit, protocol-version, overlay, and exception records;
 - typed Rust source-backed and source-independent drift checks plus rendering;
+- a one-Bead maximum for each uninterrupted agent run;
 - two Codex skills dedicated only to applying and auditing the protocols; and
 - self-adoption of the `greenfield` profile through the ordinary consumer
   format.
@@ -302,10 +303,10 @@ and lockfiles.
 
 | Surface | LOC |
 | --- | ---: |
-| Protocols and generated index | 610 |
+| Protocols and generated index | 624 |
 | Profiles | 104 |
 | Rust checker and package manifest | 1,347 |
 | Tests | 739 |
 | Enforcement skills | 175 |
-| Repository policy, docs, and licenses | 1,442 |
-| **Total** | **4,417** |
+| Repository policy, docs, and licenses | 1,446 |
+| **Total** | **4,435** |

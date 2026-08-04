@@ -94,10 +94,10 @@
     },
     {
       "id": "AP-PLAN-001",
-      "version": 4,
+      "version": 5,
       "title": "Durable planning state",
       "path": "protocols/AP-PLAN-001.md",
-      "sha256": "5bc0426788693717e8af011277d9358c65899e839d7c0c71299003ec0d8acc4b"
+      "sha256": "f9f91e87b6f76f9a3a31005fdcba06fe1534ca1555379db720dbeca31d5a594b"
     },
     {
       "id": "AP-PORTABILITY-001",
