@@ -1,0 +1,202 @@
+# agent-protocols
+
+agent-protocols is a canonical source for development rules shared across coding
+agent projects without turning `AGENTS.md` into a remote dependency.
+
+It provides:
+
+- 18 individually identified and versioned protocols;
+- four ordered, composable profiles;
+- deterministic, self-contained `AGENTS.md` rendering;
+- exact source-commit, protocol-version, overlay, and exception records;
+- a dependency-free structural drift checker;
+- two Codex skills dedicated only to applying and auditing the protocols.
+
+The repository is private while the format and first consumer adoption are
+incubating. It has no hosted CI. Local verification is the current proof surface.
+
+## Model
+
+Canonical protocol prose lives in `protocols/AP-*.md`. Profiles contain only
+ordered protocol IDs. A consumer selects one or more profiles, owns a local
+overlay and exception input, and renders both the canonical and local text into
+one complete `AGENTS.md`.
+
+The consumer therefore does not need this repository or network access while an
+agent works. The source checkout is required only when importing, updating, or
+checking the pin.
+
+Profiles compose by ordered union: the first appearance of a protocol sets its
+position and later duplicates are ignored.
+
+| Profile | Intended role | Specialized protocols |
+| --- | --- | --- |
+| `greenfield` | Small new projects | dependency, proof, planning, and bounded-CI gates |
+| `fork` | Maintained downstream forks | minimal delta and upstream/removal discipline |
+| `orchestrator` | Thin composition layers | orchestrator ownership, one active frontier, portability |
+| `terminal-engine` | Terminal/session engines | terminal authority, lifecycle, failure, and portability |
+
+A project may combine roles, for example `greenfield` plus `terminal-engine`.
+Profile selection remains a product-scope decision; the renderer does not infer
+it from repository contents.
+
+## Consumer layout
+
+| File | Owner | Purpose |
+| --- | --- | --- |
+| `.agent-protocols.local.md` | Consumer | Repository-specific instructions that add to the canonical rules |
+| `.agent-protocols.exceptions.json` | Consumer | Explicit approved changes to imported rules, including an empty list when none exist |
+| `.agent-protocols.json` | Renderer | Exact source, profile, protocol, exception, and overlay record |
+| `AGENTS.md` | Renderer | Self-contained instructions read by coding agents |
+
+Do not hand-edit the generated manifest or `AGENTS.md`. Change the local overlay
+or exception input and render again. During first adoption, preserve every rule
+from the existing `AGENTS.md` in the overlay before replacing the original with
+generated output.
+
+An empty exception input is:
+
+```json
+{
+  "schema": 1,
+  "exceptions": []
+}
+```
+
+An exception has five required fields and one optional review condition:
+
+```json
+{
+  "schema": 1,
+  "exceptions": [
+    {
+      "protocol": "AP-CI-001",
+      "scope": "private alpha",
+      "reason": "Hosted jobs are disabled while cost is measured.",
+      "approved_by": "user",
+      "approved_at": "2026-08-04",
+      "review_condition": "Review before public beta."
+    }
+  ]
+}
+```
+
+An overlay adds local detail. An exception narrows, replaces, or suspends an
+imported requirement and therefore requires explicit approval.
+
+## Commands
+
+Validate the source catalog:
+
+```sh
+python3 scripts/protocols.py validate
+```
+
+After changing protocol source or metadata, validate the version transition
+before regenerating its indexed hashes:
+
+```sh
+python3 scripts/protocols.py version-check --base HEAD
+python3 scripts/protocols.py index
+python3 scripts/protocols.py validate
+```
+
+From a clean, committed agent-protocols checkout, render a consumer:
+
+```sh
+python3 scripts/protocols.py render \
+  --profile greenfield \
+  --profile terminal-engine \
+  --overlay /path/to/consumer/.agent-protocols.local.md \
+  --exceptions /path/to/consumer/.agent-protocols.exceptions.json \
+  --manifest-out /path/to/consumer/.agent-protocols.json \
+  --agents-out /path/to/consumer/AGENTS.md
+```
+
+Check the consumer using an agent-protocols checkout at the exact commit pinned
+in its manifest:
+
+```sh
+python3 scripts/protocols.py check \
+  --overlay /path/to/consumer/.agent-protocols.local.md \
+  --exceptions /path/to/consumer/.agent-protocols.exceptions.json \
+  --manifest /path/to/consumer/.agent-protocols.json \
+  --agents /path/to/consumer/AGENTS.md
+```
+
+`validate` and `index` can run during source development. `render` and `check`
+refuse a dirty protocol, profile, or checker source because an uncommitted change
+cannot be represented by the recorded Git commit.
+
+## What the checker proves
+
+The checker rejects:
+
+- malformed, duplicate, unindexed, stale, orphaned, removed, or unversioned
+  protocol changes;
+- malformed profiles and unknown or duplicate profile members;
+- malformed or out-of-profile exceptions;
+- a source checkout different from the manifest's full Git SHA;
+- protocol, profile, overlay, exception-input, manifest, or generated-file drift.
+
+It does not prove that an agent followed the prose, that a repository's code
+satisfies the rules, or that an exception was truthfully approved. The
+`audit-agent-protocols` skill performs the human-semantic part of an import audit
+and reports it separately from the mechanical result.
+
+## Protocol lifecycle
+
+Protocol IDs use `AP-<AREA>-<NUMBER>` and are permanent. Every change to a
+canonical protocol file bumps its positive integer version because an automated
+history gate cannot safely distinguish editorial from semantic wording. Run
+`version-check` before `index`. Important rationale and rejected alternatives
+live in Beads.
+
+Consumers upgrade intentionally:
+
+1. verify the old import at its pinned source commit;
+2. inspect protocol, profile, and checker differences;
+3. reconsider affected exceptions;
+4. render from the chosen clean commit;
+5. run the drift check and the consumer's own verification.
+
+## Repository layout
+
+```text
+protocols/                 canonical Markdown and generated index
+profiles/                  ordered JSON protocol sets
+scripts/protocols.py       index, render, and drift-check owner
+tests/                     focused contract tests
+skills/                    protocol-only Codex skills
+docs/DESIGN.md             architecture decisions and boundaries
+.beads/                    durable planning state managed through br
+```
+
+The source repository's own `AGENTS.md` is a hand-authored bootstrap document.
+It is not rendered from itself because embedding its current commit would create
+a self-referential pin.
+
+## Verification
+
+```sh
+python3 scripts/protocols.py validate
+python3 scripts/protocols.py version-check --base HEAD
+python3 -m unittest discover -s tests -v
+python3 /home/lucca/.codex/skills/.system/skill-creator/scripts/quick_validate.py skills/apply-agent-protocols
+python3 /home/lucca/.codex/skills/.system/skill-creator/scripts/quick_validate.py skills/audit-agent-protocols
+git diff --check
+```
+
+## LOC scorecard
+
+The scorecard counts tracked project text and code, excluding `.beads/` state.
+
+| Surface | LOC |
+| --- | ---: |
+| Protocols and generated index | 471 |
+| Profiles | 79 |
+| Checker | 618 |
+| Tests | 232 |
+| Enforcement skills | 162 |
+| Repository policy and docs | 433 |
+| **Total** | **1,995** |

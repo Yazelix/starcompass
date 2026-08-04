@@ -1,0 +1,4 @@
+interface:
+  display_name: "Apply Agent Protocols"
+  short_description: "Render and update pinned agent protocol imports"
+  default_prompt: "Use $apply-agent-protocols to apply a pinned protocol profile to this repository."

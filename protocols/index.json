@@ -1,0 +1,131 @@
+{
+  "schema": 1,
+  "protocols": [
+    {
+      "id": "AP-CI-001",
+      "version": 1,
+      "title": "Bounded continuous integration",
+      "path": "protocols/AP-CI-001.md",
+      "sha256": "78f1662259cd83f33d22ff4ddd0859ab0d4f704ba4f38756eef40a8b9b787bec"
+    },
+    {
+      "id": "AP-CONTRACT-001",
+      "version": 1,
+      "title": "Contract-driven changes",
+      "path": "protocols/AP-CONTRACT-001.md",
+      "sha256": "0aa692f4c52542111149b691b7d0c015a0c16523cd620a67b0cf335f3284da82"
+    },
+    {
+      "id": "AP-DEPENDENCY-001",
+      "version": 1,
+      "title": "Dependency gate",
+      "path": "protocols/AP-DEPENDENCY-001.md",
+      "sha256": "a389ff9054708574c52ec5e5dd7fc3e2d13b125d2218c70062f50a86761981ca"
+    },
+    {
+      "id": "AP-EXCEPTION-001",
+      "version": 1,
+      "title": "Explicit local exceptions",
+      "path": "protocols/AP-EXCEPTION-001.md",
+      "sha256": "f66749229dbbc005e1c3103bfed86cf95169d7b32466c72fd8442e841cadb268"
+    },
+    {
+      "id": "AP-FAILURE-001",
+      "version": 1,
+      "title": "Designed lifecycle and failure semantics",
+      "path": "protocols/AP-FAILURE-001.md",
+      "sha256": "38df47dd773c7a85161309a1947dd97afcce93a5bdefc82f1c971475d228482e"
+    },
+    {
+      "id": "AP-FORK-001",
+      "version": 1,
+      "title": "Minimal isolated fork delta",
+      "path": "protocols/AP-FORK-001.md",
+      "sha256": "c8137dfbdc699c78cf7d8cd8a7dff7280b4013a84ed65c9234e7fb6511ca4563"
+    },
+    {
+      "id": "AP-FORK-002",
+      "version": 1,
+      "title": "Upstream and removal discipline",
+      "path": "protocols/AP-FORK-002.md",
+      "sha256": "d896c5c45cf1615da683fa7503365d8d58286d4b7198ffc49ef9b9a0631b9ef1"
+    },
+    {
+      "id": "AP-FRONTIER-001",
+      "version": 1,
+      "title": "One active integration frontier",
+      "path": "protocols/AP-FRONTIER-001.md",
+      "sha256": "60e397fa4862afe902792501ffc6d2a82c94479877196b4278e7283a20111fe0"
+    },
+    {
+      "id": "AP-GIT-001",
+      "version": 1,
+      "title": "Safe repository history",
+      "path": "protocols/AP-GIT-001.md",
+      "sha256": "624740f796eddd5adcaf657e8f1aa3ba229c146e4b34c816940a5543d74ba46f"
+    },
+    {
+      "id": "AP-ORCHESTRATOR-001",
+      "version": 1,
+      "title": "Thin orchestrator ownership",
+      "path": "protocols/AP-ORCHESTRATOR-001.md",
+      "sha256": "6228280f59c46dae79e45986d3848f071fd57699c8ce548ec2f7e503689e09c8"
+    },
+    {
+      "id": "AP-OWNERSHIP-001",
+      "version": 1,
+      "title": "One owner per invariant",
+      "path": "protocols/AP-OWNERSHIP-001.md",
+      "sha256": "bdc09117f79b0d8dbe78e2dd8673a2463398aa31880fe27209fd6cc47f58bbf7"
+    },
+    {
+      "id": "AP-PLAN-001",
+      "version": 1,
+      "title": "Durable planning state",
+      "path": "protocols/AP-PLAN-001.md",
+      "sha256": "d1edf160323fe69e814c3055461c054a5def761000c27874df75e04c1dd195e3"
+    },
+    {
+      "id": "AP-PORTABILITY-001",
+      "version": 1,
+      "title": "Portable core with explicit platform seams",
+      "path": "protocols/AP-PORTABILITY-001.md",
+      "sha256": "d2800376013bbe1ade3449f835daf8780e60d4c08a79a7f733d4a651c4d6d887"
+    },
+    {
+      "id": "AP-PROOF-001",
+      "version": 1,
+      "title": "Explicit proof lifecycle",
+      "path": "protocols/AP-PROOF-001.md",
+      "sha256": "1af235a56e9711d55362d869fa4057f1658d0aa7fe766030be0897ee5fd7c02b"
+    },
+    {
+      "id": "AP-REFERENCE-001",
+      "version": 1,
+      "title": "Evidence before code shape",
+      "path": "protocols/AP-REFERENCE-001.md",
+      "sha256": "3d72ac864b050af7783493245be59450c39db940d736ea6fb60269cd21f7927b"
+    },
+    {
+      "id": "AP-SCOPE-001",
+      "version": 1,
+      "title": "User-owned scope",
+      "path": "protocols/AP-SCOPE-001.md",
+      "sha256": "b3f7e012df0708d4baf8957e3c315878a9eb8cd7fddf637dfde1506609d08444"
+    },
+    {
+      "id": "AP-TERMINAL-001",
+      "version": 1,
+      "title": "Terminal state authority",
+      "path": "protocols/AP-TERMINAL-001.md",
+      "sha256": "a8632561b2ff959b1e0ee2abc07f4bce13af289e0a23574cc51aef740e3d9605"
+    },
+    {
+      "id": "AP-TEST-001",
+      "version": 1,
+      "title": "Strong and few tests",
+      "path": "protocols/AP-TEST-001.md",
+      "sha256": "363da7c542521be22233a4cc3373c0d3c3c5a9a0cf37f633cd5029545f4a3bee"
+    }
+  ]
+}

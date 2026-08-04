@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "name": "fork",
+  "description": "Maintained downstream forks with a minimal, auditable, removable delta.",
+  "protocols": [
+    "AP-SCOPE-001",
+    "AP-CONTRACT-001",
+    "AP-REFERENCE-001",
+    "AP-OWNERSHIP-001",
+    "AP-TEST-001",
+    "AP-PROOF-001",
+    "AP-PLAN-001",
+    "AP-CI-001",
+    "AP-FORK-001",
+    "AP-FORK-002",
+    "AP-EXCEPTION-001",
+    "AP-GIT-001"
+  ]
+}

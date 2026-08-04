@@ -1,0 +1,21 @@
+{
+  "schema": 1,
+  "name": "terminal-engine",
+  "description": "Terminal and session engines with explicit state, transport, lifecycle, and recovery contracts.",
+  "protocols": [
+    "AP-SCOPE-001",
+    "AP-CONTRACT-001",
+    "AP-REFERENCE-001",
+    "AP-DEPENDENCY-001",
+    "AP-OWNERSHIP-001",
+    "AP-TEST-001",
+    "AP-PROOF-001",
+    "AP-PLAN-001",
+    "AP-CI-001",
+    "AP-PORTABILITY-001",
+    "AP-TERMINAL-001",
+    "AP-FAILURE-001",
+    "AP-EXCEPTION-001",
+    "AP-GIT-001"
+  ]
+}
