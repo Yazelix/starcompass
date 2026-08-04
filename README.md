@@ -14,8 +14,8 @@ It provides:
 - self-adoption of the `greenfield` profile through the ordinary consumer
   format.
 
-The repository is private while the format and broader consumer adoption are
-incubating. It has no hosted CI. Local verification is the current proof surface.
+The source repository is public under either the MIT or Apache-2.0 license. It
+has no hosted CI; local verification is the current proof surface.
 
 Starcompass is the project and repository identity. `AP` means Agent Protocol,
 the publisher-neutral namespace for IDs such as `AP-SCOPE-001`. Consumer files
@@ -111,9 +111,10 @@ when the author omitted it.
 ## Commands
 
 Build a standalone local binary with `cargo build --locked --release`; the
-result is `target/release/starcompass`. During incubation, Starcompass does not
-publish release artifacts or an installer. Cargo exposes no library target;
-`src/starcompass.rs` is a private module of the executable.
+result is `target/release/starcompass`. Starcompass distributes its source
+through GitHub and does not publish release artifacts or an installer. Cargo
+exposes no library target; `src/starcompass.rs` is a private module of the
+executable.
 
 Validate the source catalog:
 
@@ -297,8 +298,8 @@ and lockfiles.
 | --- | ---: |
 | Protocols and generated index | 596 |
 | Profiles | 104 |
-| Rust checker and package manifest | 1,341 |
+| Rust checker and package manifest | 1,347 |
 | Tests | 739 |
 | Enforcement skills | 175 |
-| Repository policy and docs | 1,189 |
-| **Total** | **4,144** |
+| Repository policy, docs, and licenses | 1,419 |
+| **Total** | **4,380** |

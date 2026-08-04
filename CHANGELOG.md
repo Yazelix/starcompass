@@ -25,6 +25,8 @@
   and a two-revision bootstrap sequence for canonical source changes.
 - Source-independent `check-consumer` validation for manifest, overlay,
   exception, generated import-record, and repository-local-rule agreement.
+- Public source distribution under either the MIT or Apache-2.0 license, with
+  repository and package-discovery metadata.
 
 ### Fixed
 
@@ -55,3 +57,5 @@
   follow-up commits.
 - Source-backed `check` composes the consumer-local proof with exact source HEAD,
   catalog, protocol digest, canonical prose, and complete generated-file proof.
+- Exact public Git revisions are the initial distribution surface; crates.io,
+  prebuilt binaries, and hosted CI remain separate release gates.

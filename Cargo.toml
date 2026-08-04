@@ -3,6 +3,12 @@ name = "starcompass"
 version = "0.1.0"
 edition = "2024"
 rust-version = "1.85"
+description = "Canonical, composable development protocols for coding agents"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/luccahuguet/starcompass"
+homepage = "https://github.com/luccahuguet/starcompass"
+readme = "README.md"
+exclude = [".beads/"]
 publish = false
 autolib = false
 

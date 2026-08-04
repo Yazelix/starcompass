@@ -200,27 +200,30 @@ renders the next self-adoption. The exact-pinned checkout also runs the
 structural check. This uses the public profile, manifest, renderer, and checker
 without a special self-hosting mode or exception.
 
-The repository is private, sets `publish = false`, and has no hosted CI. This
-keeps early format iteration and GitHub Actions cost explicit. Publication,
-licensing, releases, supported targets, credentials, and hosted checks require
-user approval.
+The repository is public under `MIT OR Apache-2.0`, sets `publish = false`, and
+has no hosted CI. Public source at exact Git revisions is the selected initial
+distribution surface. Crate or binary releases, supported targets, credentials,
+and hosted checks remain separate approval gates.
 
 The source-independent checker makes distribution useful but does not select a
 channel. The decision gate compares:
 
 | Candidate | Consumer fit | Irreversible or recurring cost |
 | --- | --- | --- |
-| crates.io binary package | `cargo install --locked starcompass --version X.Y.Z` builds for the consumer host and needs no Starcompass Git access | Publishes the packaged source permanently; requires a license choice, package metadata, a crates.io token, SemVer/MSRV ownership, and consumer compile time |
+| Public Git source (selected) | Exact commits expose the complete catalog, renderer, checker, and history without credentials | Consumers need Git and a Rust build for cold use; a branch name is mutable, so imports must keep pinning full commits |
+| crates.io binary package | `cargo install --locked starcompass --version X.Y.Z` builds the source-independent checker for the consumer host without Starcompass Git access | Publishes the packaged source permanently; requires a crates.io token, SemVer/MSRV ownership, and consumer compile time; source-backed commands still need the canonical catalog |
 | Public checksum-pinned binary | Fast cold CI with an explicit version, target triple, and independently pinned SHA-256 | Requires a public artifact location, one build per supported target, checksum publication, replacement/revocation policy, and release ownership; a downloadable asset is not immutable by URL alone |
 | Authenticated private binary | Preserves repository and artifact privacy | Every consumer needs read credentials; cross-repository Actions and forks need explicit token/secret behavior; revocation can break cold CI |
-| No distribution | Adds no publication, licensing, credential, or release surface | Consumers must build from an available checkout, so private cold CI remains blocked |
 
 The package disables Cargo library auto-discovery and exposes only the
 executable target. `src/starcompass.rs` remains a private module for separation
-and unit tests. crates.io is the leading candidate because Cargo supplies host
-compilation, exact-version installation, and lockfile use without a target matrix. Its
-permanent source publication and licensing consequence keep it unselected until
-the user approves them. A public prebuilt binary is the fallback when consumer
-compile cost becomes material enough to justify release targets and artifact
-maintenance. Authenticated private artifacts and copied or vendored checkers do
-not fit unattended downstream adoption.
+and unit tests. crates.io is the leading artifact candidate because Cargo
+supplies host compilation, exact-version installation, and lockfile use without
+a target matrix. A crate-installed binary would make `check-consumer`
+source-independent, while `render`, source-backed `check`, `validate`, and
+`index` still require the canonical catalog from a checkout. Its permanent
+source publication and release-contract consequences keep it unselected. A
+public prebuilt binary is the fallback when consumer compile cost becomes
+material enough to justify release targets and artifact maintenance.
+Authenticated private artifacts and copied or vendored checkers do not fit
+unattended downstream adoption.
