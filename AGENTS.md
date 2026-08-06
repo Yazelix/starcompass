@@ -8,7 +8,7 @@ or `.agent-protocols.exceptions.json`, then render from the pinned source.
 ## Protocol import record
 
 - Source: `https://github.com/luccahuguet/starcompass`
-- Source commit: `2077f8664ed99092a1b08683d46e9296503012e2`
+- Source commit: `3834e410ac4336fe36b6ccafdcbb142457d09422`
 - Profiles: `greenfield`
 - Manifest: `.agent-protocols.json` (schema 1)
 
@@ -22,8 +22,8 @@ or `.agent-protocols.exceptions.json`, then render from the pinned source.
 | `AP-OWNERSHIP-001` | 2 | `d218a4e0625b659ec366284110bdfce02bd66cb229ab6ba07f2317092ea13053` |
 | `AP-TEST-001` | 3 | `58b5837cb679e958192b366bb15d6e34649f5a91ff9f4accdc7edb4ef5cdb873` |
 | `AP-PROOF-001` | 4 | `2762fdf80ba2a36bb1e8844a44959bea7a6309dcd7a5796029a06a7ad9c26692` |
-| `AP-PLAN-001` | 7 | `08f20ccd2ef806f4611cde601d9f1c77096392c4804313bb4311672b239f417d` |
-| `AP-CI-001` | 2 | `415b53ada91dd8f0689c0d82ae5abada8862212cf3a8c67c6124fea1d025918f` |
+| `AP-PLAN-001` | 8 | `6f8acada188da990ef0c5d51e57d9da1190d2ff03cfb5d9be7f8922c27061b06` |
+| `AP-CI-001` | 3 | `c7cb65a81ce8434d02f2d19306bf93358f3624d0b77886bc91d4de93f7a779ba` |
 | `AP-EXCEPTION-001` | 2 | `2c4f00299922edac83286821af07ad485e5a630bca6acbbce918d87614abb395` |
 | `AP-GIT-001` | 4 | `d0256104641213289fd4628289689f9dacfbfb8c98f8428bba265590e1be6a95` |
 
@@ -165,8 +165,8 @@ use one shape:
 
 Do not combine these shapes in one run.
 
-Bind implementation before the first issue write or code edit. When its issue
-completes, blocks, or hands off, return without starting another. Report
+Bind implementation work to its issue before planning or code writes. When that
+issue completes, blocks, or hands off, return without starting another. Report
 unapproved findings; create separate issues only for material out-of-scope or
 independently schedulable work, and outside an authorized batch defer creation.
 
@@ -179,11 +179,12 @@ before handoff. Use the designated issue tool; never edit its storage directly.
 
 ### AP-CI-001 — Bounded continuous integration
 
-Before hosted automation, name the protected contract and why local proof is
+Before hosted automation, name its contract and why local proof is
 insufficient. Bound triggers, jobs, timeouts, permissions, artifacts, cache,
-concurrency, forks, and secrets; prefer one cheap deterministic job. Record when
-to expand, reduce, or remove it. Confidence must justify financial, latency,
-security, and maintenance cost, including private minutes and storage.
+concurrency; specify fork and secret behavior. Prefer one cheap deterministic
+job. Record when to expand, reduce, or remove. Confidence must justify its
+financial, latency, security, and maintenance costs, including private minutes
+and storage.
 
 ### AP-EXCEPTION-001 — Explicit local exceptions
 
