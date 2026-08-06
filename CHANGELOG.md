@@ -54,12 +54,21 @@
 
 ### Changed
 
+- `AP-SCOPE-001` keeps inspection, audit, diagnosis, explanation, and
+  recommendation non-mutating unless the user also chooses a change, and
+  preserves user-owned inputs and artifacts from implicit replacement or
+  deletion.
 - `AP-CONTRACT-001` selects the contract with the fewest unsupported guarantees
-  or restrictions and leaves reasonable future behavior unspecified.
+  or restrictions, leaves reasonable future behavior unspecified, and treats
+  current user-facing documentation as a contract surface.
 - `AP-MINIMAL-001` evaluates minimality after contract and ownership selection,
   across total system and lifecycle cost. Ponytail remains a fallible runtime
   bias and cannot justify preserving a wrong owner or merely minimizing the
-  current diff.
+  current diff. Durable agent context uses the narrowest useful scope, avoids
+  duplicate or generic wording, and loads details only when needed.
+- `AP-TEST-001` uses representative isolated task trials for consequential
+  agent-instruction changes and keeps structural validation distinct from
+  behavioral compliance.
 - `AP-PLAN-001` permits one owning implementation issue or a user-authorized
   bounded planning-only batch and prevents a run from combining both shapes.
 - `AP-REFERENCE-001` applies source-license conditions to their actual actors

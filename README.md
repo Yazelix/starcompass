@@ -45,10 +45,17 @@ Protocol frontmatter omits `status` while active and uses `status: retired` for
 the irreversible transition; retirement changes the canonical file and
 therefore requires a version bump.
 
+`AP-SCOPE-001` treats inspection, audit, diagnosis, explanation, and
+recommendation as non-mutating requests unless the user also chooses a change.
+It preserves user-owned inputs and artifacts unless replacing or deleting the
+exact target is required by the requested outcome.
+
 `AP-CONTRACT-001` selects the contract with the fewest unsupported guarantees or
 restrictions that fits the user request and available evidence. It leaves
 reasonable future behavior unspecified unless the request or evidence requires
-a commitment.
+a commitment. User-facing documentation, help, examples, and configuration
+descriptions remain aligned with their current behavior and identify planned,
+partial, or gated surfaces honestly.
 
 `AP-PLAN-001` keeps an implementation run on one owning issue. An explicit user
 request may authorize a bounded planning-only batch over a named or accepted
@@ -70,7 +77,14 @@ architectural authority: accepted contracts, correct ownership, evidence, and
 net system complexity determine the valid shape before patch size is minimized.
 The protocol remains self-contained so its invariant still applies offline or
 when Ponytail is unavailable. The checker does not install Ponytail or claim
-that its instructions were followed.
+that its instructions were followed. Durable agent context is included in
+lifecycle cost: instructions use the narrowest useful scope, avoid duplicate or
+generic wording, and load detailed references only when needed.
+
+`AP-TEST-001` uses representative isolated task trials for consequential
+changes to agent instructions, prompts, and skills. Structural validation of
+their schema, rendering, or discovery does not prove agent behavior or
+compliance.
 
 | Profile | Intended role | Specialized protocols |
 | --- | --- | --- |
@@ -334,10 +348,10 @@ and lockfiles.
 
 | Surface | LOC |
 | --- | ---: |
-| Protocols and generated index | 660 |
+| Protocols and generated index | 677 |
 | Profiles | 104 |
 | Rust checker and package manifest | 1,405 |
-| Tests | 825 |
+| Tests | 826 |
 | Enforcement skills | 175 |
-| Repository policy, docs, and licenses | 1,545 |
-| **Total** | **4,714** |
+| Repository policy, docs, and licenses | 1,574 |
+| **Total** | **4,761** |

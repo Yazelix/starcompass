@@ -1,6 +1,6 @@
 ---
 id: AP-TEST-001
-version: 1
+version: 2
 title: Strong and few tests
 ---
 
@@ -14,6 +14,11 @@ Required practice:
   when the expected behavior can be stated before implementation.
 - Choose contract-first integration checks for layout, runtime integration,
   architecture choices, forks, and dogfooding surfaces.
+- For consequential changes to agent instructions, prompts, or skills, use
+  representative task trials with enough isolation that the expected
+  conclusion is not supplied by the test context.
+- Treat schema, rendering, discovery, and other structural checks as proof of
+  those structures, not of agent behavior or compliance.
 - Delete or merge tests that duplicate another proof, assert implementation
   trivia, or preserve scaffolding.
 - Test observable effects rather than mirroring literals, defaults, or source

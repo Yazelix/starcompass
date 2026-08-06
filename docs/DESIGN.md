@@ -207,6 +207,14 @@ skills have independent lifecycles and belong elsewhere. Co-location is not a
 claim that skills are canonical protocol text; skills must reference the catalog
 and checker rather than copy protocol wording.
 
+Durable agent context is part of system lifecycle cost. Instructions belong at
+the narrowest scope that needs them, retain non-obvious constraints and reusable
+workflows that change behavior, and load detailed references only for relevant
+tasks. Generic model capability and policy already owned elsewhere do not need a
+second durable copy. Structural validation proves that an instruction artifact
+is well formed and discoverable; representative isolated task trials supply the
+separate behavioral evidence for consequential changes.
+
 ## Bootstrap and publication
 
 Starcompass dogfoods the ordinary consumer format with the `greenfield` profile.

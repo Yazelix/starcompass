@@ -1,6 +1,6 @@
 ---
 id: AP-SCOPE-001
-version: 1
+version: 2
 title: User-owned scope
 ---
 
@@ -11,6 +11,13 @@ repository, or planning item outside that direction.
 
 Required practice:
 
+- Treat a request to inspect, audit, diagnose, explain, or recommend as authority
+  only for that non-mutating result. Do not edit implementation, publish
+  external state, or write durable planning state unless the user also chooses
+  that action.
+- Treat existing inputs and artifacts as user-owned. Replace or delete an exact
+  target only when the requested outcome requires it; otherwise preserve it and
+  use a distinct result when output must be written.
 - Separate safe implementation details from choices that change product scope.
 - State consequential assumptions; stop when a missing choice would materially
   change the result.

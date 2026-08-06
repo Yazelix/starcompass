@@ -1448,8 +1448,9 @@ mod tests {
     fn protocol_versions_fill_the_declared_unsigned_range() {
         let directory = TestDirectory::copy_catalog();
         let path = directory.0.join("protocols/AP-SCOPE-001.md");
+        let current = parse_protocol(&directory.0, &path).unwrap().version;
         let text = fs::read_to_string(&path).unwrap().replacen(
-            "version: 1",
+            &format!("version: {current}"),
             "version: 18446744073709551615",
             1,
         );

@@ -1,6 +1,6 @@
 ---
 id: AP-MINIMAL-001
-version: 2
+version: 3
 title: Minimum sufficient implementation
 ---
 
@@ -18,6 +18,13 @@ Evaluate minimality across the accepted system and its lifecycle, not only the
 current patch. Lines, files, dependencies, and patch size are evidence, not
 objectives. Include duplicated truth, cross-owner coordination, coupling,
 migration and removal, portability, operations, and proof cost.
+
+Durable agent context is part of that lifecycle cost. Put instructions at the
+narrowest scope that needs them. Keep durable wording for non-obvious
+constraints and reusable workflows that change behavior; do not duplicate
+policy already owned elsewhere or restate generic agent capability. Load
+detailed references only when the task needs them. Context reduction must not
+hide requirements needed to act safely or correctly.
 
 A smaller patch is not minimal when it preserves a known misplaced or duplicate
 owner, patches a symptom below its shared cause, bypasses an accepted boundary,
