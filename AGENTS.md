@@ -8,14 +8,14 @@ or `.agent-protocols.exceptions.json`, then render from the pinned source.
 ## Protocol import record
 
 - Source: `https://github.com/luccahuguet/starcompass`
-- Source commit: `f2c4987cc43ea13ed932a33829c2a72450fc6ed1`
+- Source commit: `480b3db659daff4488bea4c75031a335c94dfb40`
 - Profiles: `greenfield`
 - Manifest: `.agent-protocols.json` (schema 1)
 
 | Protocol | Version | SHA-256 |
 | --- | ---: | --- |
 | `AP-SCOPE-001` | 1 | `b3f7e012df0708d4baf8957e3c315878a9eb8cd7fddf637dfde1506609d08444` |
-| `AP-CONTRACT-001` | 1 | `0aa692f4c52542111149b691b7d0c015a0c16523cd620a67b0cf335f3284da82` |
+| `AP-CONTRACT-001` | 2 | `f8a3b323f95816ee6d56d136c2ad19c691860155a4e58f57a62a4fb4dfc78cbb` |
 | `AP-REFERENCE-001` | 2 | `ecb28af3796a9964dd98c037463a33b7444d9c39a0365783fb0e9ae9fc007b9c` |
 | `AP-MINIMAL-001` | 2 | `3f4ebb1ab87f50ed5c9f041fb60d94cc7ded264ab04e56413fd1da343baa38f3` |
 | `AP-DEPENDENCY-001` | 1 | `a389ff9054708574c52ec5e5dd7fc3e2d13b125d2218c70062f50a86761981ca` |
@@ -58,6 +58,10 @@ repositories need to cite them.
 
 Required practice:
 
+- Among contracts that fit the user request and available evidence, choose the one
+  with the fewest unsupported guarantees or restrictions. Leave reasonable
+  future behavior unspecified unless the request or evidence requires a
+  commitment.
 - Name the consumer, trigger, observable result, and important failure behavior.
 - Identify the current sources of truth and decide which one owner survives.
 - Choose the cheapest check that can falsify the contract.
