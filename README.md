@@ -38,6 +38,13 @@ pin and canonical protocol text.
 Profiles compose by ordered union: the first appearance of a protocol sets its
 position and later duplicates are ignored.
 
+Protocol IDs remain reserved after retirement. Active protocols must appear in
+at least one profile. A retired protocol stays in `protocols/` and the generated
+index with its retained source and history, but no profile may reference it.
+Protocol frontmatter omits `status` while active and uses `status: retired` for
+the irreversible transition; retirement changes the canonical file and
+therefore requires a version bump.
+
 `AP-CONTRACT-001` selects the contract with the fewest unsupported guarantees or
 restrictions that fits the user request and available evidence. It leaves
 reasonable future behavior unspecified unless the request or evidence requires
@@ -222,18 +229,22 @@ The source-independent `check-consumer` command rejects:
 The source-backed `check` command composes that proof with the pinned checkout
 and additionally rejects:
 
-- malformed, duplicate, unindexed, stale, orphaned, removed, or unversioned
-  protocol changes;
+- malformed, unindexed, or stale protocol catalog data;
+- active protocols absent from every profile or retired profile members;
 - symlinked or special catalog sources;
 - malformed or unrenderable profiles and unknown or duplicate profile members;
 - a source checkout different from the manifest's full Git SHA;
 - protocol, profile, canonical prose, manifest, or complete generated-file
   drift.
 
-Neither command proves that an agent followed the prose, that a repository's
-code satisfies the rules, or that an exception was truthfully approved. The
-`audit-agent-protocols` skill performs the human-semantic part of an import
-audit and reports it separately from the mechanical result.
+`validate` shares the catalog and profile checks. The separate `version-check`
+history proof rejects protocol ID removal, version regression, source changes
+without a version bump, introduction as retired, and reactivation.
+
+Neither check command proves that an agent followed the prose, that a
+repository's code satisfies the rules, or that an exception was truthfully
+approved. The `audit-agent-protocols` skill performs the human-semantic part of
+an import audit and reports it separately from the mechanical result.
 
 ## Protocol lifecycle
 
@@ -243,6 +254,12 @@ history gate cannot safely distinguish editorial from semantic wording. Run
 `version-check` before `index`. Its base must be a non-empty Git revision that
 resolves to a commit; the checker reads the historical index from that exact
 commit. Important rationale and rejected alternatives live in Beads.
+
+To retire a protocol, bump its version, add `status: retired` to its
+frontmatter, and remove it from every profile in the same source change. Then
+run `version-check`, `index`, and `validate` normally. The index retains the
+record, profiles cannot select it, and the history gate prevents both new IDs
+from starting retired and retired IDs from reactivating.
 
 Consumers upgrade intentionally:
 
@@ -319,8 +336,8 @@ and lockfiles.
 | --- | ---: |
 | Protocols and generated index | 660 |
 | Profiles | 104 |
-| Rust checker and package manifest | 1,347 |
-| Tests | 739 |
+| Rust checker and package manifest | 1,405 |
+| Tests | 825 |
 | Enforcement skills | 175 |
-| Repository policy, docs, and licenses | 1,522 |
-| **Total** | **4,547** |
+| Repository policy, docs, and licenses | 1,545 |
+| **Total** | **4,714** |

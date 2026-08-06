@@ -35,6 +35,15 @@ gate. Git commits identify the exact catalog, profiles, and rendering
 implementation used for an import. Consumers record both because neither
 replaces the other.
 
+Permanent identity does not require permanent profile membership. Protocol
+frontmatter owns lifecycle: no `status` field means active, while
+`status: retired` records an irreversible retirement. Active protocols must
+appear in at least one profile; retired protocols remain source-backed and
+indexed but must appear in none. New IDs must begin active. Retirement changes
+the canonical file, so its ordinary version-bump rule applies. Keeping the
+retired body and digest preserves historical authentication without a separate
+archive, retirement registry, or synthetic profile.
+
 ## Profiles compose; projects still own policy
 
 The five profiles are curated ordered sets, not inheritance trees. Repeated

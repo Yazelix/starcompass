@@ -47,6 +47,7 @@ struct Protocol {
     title: String,
     path: String,
     sha256: String,
+    status: Option<ProtocolStatus>,
     body: String,
 }
 
@@ -58,8 +59,15 @@ impl Protocol {
             title: self.title.clone(),
             path: self.path.clone(),
             sha256: self.sha256.clone(),
+            status: self.status,
         }
     }
+}
+
+#[derive(Clone, Copy, Debug, Deserialize, PartialEq, Eq, Serialize)]
+#[serde(rename_all = "lowercase")]
+enum ProtocolStatus {
+    Retired,
 }
 
 #[derive(Clone, Debug, Deserialize, PartialEq, Eq, Serialize)]
@@ -77,6 +85,12 @@ struct IndexRecord {
     title: String,
     path: String,
     sha256: String,
+    #[serde(
+        default,
+        deserialize_with = "present",
+        skip_serializing_if = "Option::is_none"
+    )]
+    status: Option<ProtocolStatus>,
 }
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -104,18 +118,19 @@ struct Exception {
     reason: String,
     #[serde(
         default,
-        deserialize_with = "present_string",
+        deserialize_with = "present",
         skip_serializing_if = "Option::is_none"
     )]
     review_condition: Option<String>,
     scope: String,
 }
 
-fn present_string<'de, D>(deserializer: D) -> std::result::Result<Option<String>, D::Error>
+fn present<'de, D, T>(deserializer: D) -> std::result::Result<Option<T>, D::Error>
 where
     D: serde::Deserializer<'de>,
+    T: Deserialize<'de>,
 {
-    String::deserialize(deserializer).map(Some)
+    T::deserialize(deserializer).map(Some)
 }
 
 #[derive(Clone, Debug, Deserialize, PartialEq, Eq, Serialize)]
@@ -246,10 +261,11 @@ fn parse_protocol(root: &Path, path: &Path) -> Result<Protocol> {
         }
     }
     let fields: BTreeSet<_> = metadata.keys().copied().collect();
-    let expected = BTreeSet::from(["id", "title", "version"]);
-    if fields != expected {
+    let required = BTreeSet::from(["id", "title", "version"]);
+    let allowed = BTreeSet::from(["id", "status", "title", "version"]);
+    if !required.is_subset(&fields) || !fields.is_subset(&allowed) {
         return Err(Error::new(format!(
-            "frontmatter fields in {} must be [\"id\", \"title\", \"version\"]",
+            "frontmatter fields in {} must be id, title, version, and optional status",
             path.display()
         )));
     }
@@ -279,6 +295,16 @@ fn parse_protocol(root: &Path, path: &Path) -> Result<Protocol> {
             path.display()
         )));
     }
+    let status = match metadata.get("status").copied() {
+        None => None,
+        Some("retired") => Some(ProtocolStatus::Retired),
+        Some(_) => {
+            return Err(Error::new(format!(
+                "protocol status must be retired in {}",
+                path.display()
+            )));
+        }
+    };
     let body = text[boundary + 5..].trim();
     if body.is_empty() {
         return Err(Error::new(format!(
@@ -300,6 +326,7 @@ fn parse_protocol(root: &Path, path: &Path) -> Result<Protocol> {
         title: metadata["title"].into(),
         path: relative,
         sha256: digest(&raw),
+        status,
         body: body.into(),
     })
 }
@@ -422,6 +449,22 @@ fn load_profiles(
                 profile.name
             )));
         }
+        let retired = profile
+            .protocols
+            .iter()
+            .filter(|id| {
+                protocols
+                    .get(*id)
+                    .is_some_and(|protocol| protocol.status.is_some())
+            })
+            .cloned()
+            .collect::<Vec<_>>();
+        if !retired.is_empty() {
+            return Err(Error::new(format!(
+                "profile {} references retired protocols: {retired:?}",
+                profile.name
+            )));
+        }
         for required in ["AP-SCOPE-001", "AP-EXCEPTION-001"] {
             if !profile.protocols.iter().any(|id| id == required) {
                 return Err(Error::new(format!(
@@ -434,13 +477,13 @@ fn load_profiles(
         profiles.insert(profile.name.clone(), profile);
     }
     let unused = protocols
-        .keys()
-        .filter(|id| !used.contains(*id))
-        .cloned()
+        .values()
+        .filter(|protocol| protocol.status.is_none() && !used.contains(&protocol.id))
+        .map(|protocol| protocol.id.clone())
         .collect::<Vec<_>>();
     if !unused.is_empty() {
         return Err(Error::new(format!(
-            "protocols are not included in any profile: {unused:?}"
+            "active protocols are not included in any profile: {unused:?}"
         )));
     }
     Ok(profiles)
@@ -493,8 +536,23 @@ fn validate_version_transition(previous: &ProtocolIndex, current: &ProtocolIndex
             "protocol IDs are permanent and cannot be removed: {removed:?}"
         )));
     }
+    let introduced_retired = after
+        .iter()
+        .filter(|(id, record)| !before.contains_key(*id) && record.status.is_some())
+        .map(|(id, _)| (*id).clone())
+        .collect::<Vec<_>>();
+    if !introduced_retired.is_empty() {
+        return Err(Error::new(format!(
+            "protocol IDs cannot be introduced as retired: {introduced_retired:?}"
+        )));
+    }
     for (id, old) in before {
         let new = after.get(id).expect("removed protocol IDs were rejected");
+        if old.status.is_some() && new.status.is_none() {
+            return Err(Error::new(format!(
+                "{id} is retired and cannot be reactivated"
+            )));
+        }
         if new.version < old.version {
             return Err(Error::new(format!("{id} version regressed")));
         }
@@ -1372,6 +1430,10 @@ mod tests {
         }
     }
 
+    fn assert_error<T: std::fmt::Debug>(result: Result<T>, expected: &str) {
+        assert!(result.unwrap_err().to_string().contains(expected));
+    }
+
     #[test]
     fn protocol_id_validation_matches_the_catalog_grammar() {
         for valid in ["AP-SCOPE-001", "AP-FORK-V2-999"] {
@@ -1576,6 +1638,7 @@ mod tests {
             title: "Removed".into(),
             path: "protocols/AP-REMOVED-999.md".into(),
             sha256: "0".repeat(64),
+            status: None,
         });
         assert!(
             validate_version_transition(&missing, &current)
@@ -1601,6 +1664,87 @@ mod tests {
                     .contains("invalid Git revision")
             );
         }
+    }
+
+    #[test]
+    fn retired_protocols_remain_indexed_but_leave_active_profiles() {
+        let directory = TestDirectory::copy_catalog();
+        let active = expected_index(&directory.0).unwrap();
+        let mut null_status = serde_json::to_value(&active).unwrap();
+        null_status["protocols"][0]["status"] = serde_json::Value::Null;
+        assert!(serde_json::from_value::<ProtocolIndex>(null_status).is_err());
+
+        let mut introduced = active.clone();
+        let mut born_retired = introduced.protocols[0].clone();
+        born_retired.id = "AP-RETIRED-999".into();
+        born_retired.status = Some(ProtocolStatus::Retired);
+        introduced.protocols.push(born_retired);
+        assert_error(
+            validate_version_transition(&active, &introduced),
+            "cannot be introduced as retired",
+        );
+
+        let index_path = directory.0.join("protocols/index.json");
+        let protocol_path = directory.0.join("protocols/AP-FORK-002.md");
+        let protocol = fs::read_to_string(&protocol_path).unwrap().replacen(
+            "version: 1\n",
+            "version: 2\nstatus: retired\n",
+            1,
+        );
+        fs::write(&protocol_path, protocol).unwrap();
+
+        let profile_path = directory.0.join("profiles/fork.json");
+        let mut profile: Profile = read_json(&profile_path).unwrap();
+        profile.protocols.retain(|id| id != "AP-FORK-002");
+        fs::write(&profile_path, json_text(&profile).unwrap()).unwrap();
+
+        let retired = expected_index(&directory.0).unwrap();
+        let record = retired
+            .protocols
+            .iter()
+            .find(|record| record.id == "AP-FORK-002")
+            .unwrap();
+        assert_eq!(record.status, Some(ProtocolStatus::Retired));
+        validate_version_transition(&active, &retired).unwrap();
+        fs::write(&index_path, json_text(&retired).unwrap()).unwrap();
+
+        validate_repository(&directory.0).unwrap();
+        profile.protocols.push("AP-FORK-002".into());
+        fs::write(&profile_path, json_text(&profile).unwrap()).unwrap();
+        assert_error(
+            validate_repository(&directory.0),
+            "references retired protocols",
+        );
+
+        profile.protocols.pop();
+        fs::write(&profile_path, json_text(&profile).unwrap()).unwrap();
+        let protocol = fs::read_to_string(&protocol_path).unwrap().replacen(
+            "version: 2\nstatus: retired\n",
+            "version: 3\n",
+            1,
+        );
+        fs::write(&protocol_path, protocol).unwrap();
+        let reactivated = expected_index(&directory.0).unwrap();
+        fs::write(&index_path, json_text(&reactivated).unwrap()).unwrap();
+        assert_error(
+            validate_repository(&directory.0),
+            "active protocols are not included in any profile",
+        );
+        assert_error(
+            validate_version_transition(&retired, &reactivated),
+            "cannot be reactivated",
+        );
+
+        let protocol = fs::read_to_string(&protocol_path).unwrap().replacen(
+            "version: 3\n",
+            "version: 4\nstatus: active\n",
+            1,
+        );
+        fs::write(&protocol_path, protocol).unwrap();
+        assert_error(
+            expected_index(&directory.0),
+            "protocol status must be retired",
+        );
     }
 
     #[cfg(unix)]

@@ -16,6 +16,8 @@
 - Typed Rust catalog indexing, self-contained `AGENTS.md` rendering, pinned
   structural drift detection, and atomic cross-platform output replacement.
 - History checks for permanent protocol IDs and mandatory version increments.
+- Explicit irreversible protocol retirement that preserves indexed history
+  while removing obsolete rules from all profiles.
 - Explicit local overlay and approved-exception inputs and import records.
 - Focused contract tests for composition, validation, exception handling, and
   drift.
@@ -30,8 +32,9 @@
 
 ### Fixed
 
-- Reject explicit null review conditions, year-zero exception dates, empty or
-  option-like Git base revisions, and duplicate IDs in historical indexes.
+- Reject explicit null review conditions or protocol statuses, year-zero
+  exception dates, empty or option-like Git base revisions, and duplicate IDs
+  in historical indexes.
 - Restore fresh `0644` generated files on Unix and report catalog entry errors
   instead of silently omitting them.
 - Accept the full unsigned protocol-version range and recognize global help
