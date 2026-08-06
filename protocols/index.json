@@ -38,10 +38,10 @@
     },
     {
       "id": "AP-FAILURE-001",
-      "version": 3,
+      "version": 4,
       "title": "Designed lifecycle and failure semantics",
       "path": "protocols/AP-FAILURE-001.md",
-      "sha256": "ae89c0eb583f8a7c5dab65b7384ee48e3e9bd1dff3752d27c7660f5ebd8ee61e"
+      "sha256": "450e48b4e1532ff50a9a1da7faa49e3539450e0676f3c530f888d33b4b752e80"
     },
     {
       "id": "AP-FORK-001",
@@ -66,10 +66,10 @@
     },
     {
       "id": "AP-GIT-001",
-      "version": 4,
+      "version": 5,
       "title": "Safe repository history",
       "path": "protocols/AP-GIT-001.md",
-      "sha256": "d0256104641213289fd4628289689f9dacfbfb8c98f8428bba265590e1be6a95"
+      "sha256": "f2c3254311de57a23a13aa382fe3285e65bb34e535ecd813d1be783ca79d4bf9"
     },
     {
       "id": "AP-MINIMAL-001",

@@ -61,8 +61,10 @@
 
 ### Changed
 
-- Compact planning, CI, and lifecycle wording retains explicit issue binding,
-  fork and secret behavior, and deterministic failure testing.
+- Compact planning, CI, lifecycle, and Git wording retains explicit issue
+  binding, fork and secret behavior, deterministic failure testing, bounded
+  slow-consumer impact, and the distinction between amending unpublished work
+  and following up after external reliance.
 - Canonical protocol wording retains non-obvious model weaknesses, high-cost
   boundaries, and repository workflows while removing generic or repeated
   guidance. Every individual profile fits a 12 KiB canonical/import budget, and
