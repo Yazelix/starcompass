@@ -3,150 +3,150 @@
   "protocols": [
     {
       "id": "AP-CI-001",
-      "version": 1,
+      "version": 2,
       "title": "Bounded continuous integration",
       "path": "protocols/AP-CI-001.md",
-      "sha256": "78f1662259cd83f33d22ff4ddd0859ab0d4f704ba4f38756eef40a8b9b787bec"
+      "sha256": "415b53ada91dd8f0689c0d82ae5abada8862212cf3a8c67c6124fea1d025918f"
     },
     {
       "id": "AP-CONTRACT-001",
-      "version": 3,
+      "version": 4,
       "title": "Contract-driven changes",
       "path": "protocols/AP-CONTRACT-001.md",
-      "sha256": "4b092f0fb04d2d2064d0004a711dbfebb1a18ad8de7c5ac42237e136d4a934ca"
+      "sha256": "cdf2e5d69cefd34ceeeaa6b7511b21f921e2be50c17d3c01b85120b20234cff7"
     },
     {
       "id": "AP-DELIVERY-001",
-      "version": 1,
+      "version": 2,
       "title": "Installed artifact and fresh-session proof",
       "path": "protocols/AP-DELIVERY-001.md",
-      "sha256": "5e424f8f1adf9dc86864e3c0e209b47ed577e17baa74e3ac2219e2209a4ff80b"
+      "sha256": "71fb180c3dbb4dcc9349c2c647cfb933c2b79b7e507efb31ffb82fbd654fbcb7"
     },
     {
       "id": "AP-DEPENDENCY-001",
-      "version": 1,
+      "version": 2,
       "title": "Dependency gate",
       "path": "protocols/AP-DEPENDENCY-001.md",
-      "sha256": "a389ff9054708574c52ec5e5dd7fc3e2d13b125d2218c70062f50a86761981ca"
+      "sha256": "ded49add538b82de0a9c522bc8a34720f4ebbb47f39fc2f7ddb25e7aad1700d3"
     },
     {
       "id": "AP-EXCEPTION-001",
-      "version": 1,
+      "version": 2,
       "title": "Explicit local exceptions",
       "path": "protocols/AP-EXCEPTION-001.md",
-      "sha256": "f66749229dbbc005e1c3103bfed86cf95169d7b32466c72fd8442e841cadb268"
+      "sha256": "2c4f00299922edac83286821af07ad485e5a630bca6acbbce918d87614abb395"
     },
     {
       "id": "AP-FAILURE-001",
-      "version": 1,
+      "version": 2,
       "title": "Designed lifecycle and failure semantics",
       "path": "protocols/AP-FAILURE-001.md",
-      "sha256": "38df47dd773c7a85161309a1947dd97afcce93a5bdefc82f1c971475d228482e"
+      "sha256": "1efa6dbb008a810932666841097fb387c04b7bf7365416485dfcc1db33eab200"
     },
     {
       "id": "AP-FORK-001",
-      "version": 1,
+      "version": 2,
       "title": "Minimal isolated fork delta",
       "path": "protocols/AP-FORK-001.md",
-      "sha256": "c8137dfbdc699c78cf7d8cd8a7dff7280b4013a84ed65c9234e7fb6511ca4563"
+      "sha256": "11847b012a06b859b42c01c5aa3f4a2fb1d079cb25de80f27c3b129ae4f4780e"
     },
     {
       "id": "AP-FORK-002",
-      "version": 1,
+      "version": 2,
       "title": "Upstream and removal discipline",
       "path": "protocols/AP-FORK-002.md",
-      "sha256": "d896c5c45cf1615da683fa7503365d8d58286d4b7198ffc49ef9b9a0631b9ef1"
+      "sha256": "4d527d23672d2541e9f8b0ba0d83613ba715bfe6e7870437eccc4bf267d0bb4d"
     },
     {
       "id": "AP-FRONTIER-001",
-      "version": 1,
+      "version": 2,
       "title": "One active integration frontier",
       "path": "protocols/AP-FRONTIER-001.md",
-      "sha256": "60e397fa4862afe902792501ffc6d2a82c94479877196b4278e7283a20111fe0"
+      "sha256": "0777c74645955a26dc3829812ff26fa1a00a017c3b4cc1ac6740284f2664566c"
     },
     {
       "id": "AP-GIT-001",
-      "version": 3,
+      "version": 4,
       "title": "Safe repository history",
       "path": "protocols/AP-GIT-001.md",
-      "sha256": "16d27b0df7ccc94880bb31020e822e32b37503f43c2cf7a69de333300cbfdacf"
+      "sha256": "d0256104641213289fd4628289689f9dacfbfb8c98f8428bba265590e1be6a95"
     },
     {
       "id": "AP-MINIMAL-001",
-      "version": 3,
+      "version": 4,
       "title": "Minimum sufficient implementation",
       "path": "protocols/AP-MINIMAL-001.md",
-      "sha256": "719ca1e060ffbc969ee96e3d8c3c6242be5bc52b34ba2ec5988f80ab841ef31c"
+      "sha256": "612bc9c62a20adf7332724d4663af0a0e591d624de2a76b1c257a9ed428db1f6"
     },
     {
       "id": "AP-ORCHESTRATOR-001",
-      "version": 1,
+      "version": 2,
       "title": "Thin orchestrator ownership",
       "path": "protocols/AP-ORCHESTRATOR-001.md",
-      "sha256": "6228280f59c46dae79e45986d3848f071fd57699c8ce548ec2f7e503689e09c8"
+      "sha256": "f78ebc0db6db525aac1d3226703af7e84cba9953c579470763831241a7d0c2ad"
     },
     {
       "id": "AP-OWNERSHIP-001",
-      "version": 1,
+      "version": 2,
       "title": "One owner per invariant",
       "path": "protocols/AP-OWNERSHIP-001.md",
-      "sha256": "bdc09117f79b0d8dbe78e2dd8673a2463398aa31880fe27209fd6cc47f58bbf7"
+      "sha256": "d218a4e0625b659ec366284110bdfce02bd66cb229ab6ba07f2317092ea13053"
     },
     {
       "id": "AP-PLAN-001",
-      "version": 6,
+      "version": 7,
       "title": "Durable planning state",
       "path": "protocols/AP-PLAN-001.md",
-      "sha256": "04b96c47978d49d2e6584f89626bca42b6cb39df537fa3e5abd6da0bdc2edfda"
+      "sha256": "08f20ccd2ef806f4611cde601d9f1c77096392c4804313bb4311672b239f417d"
     },
     {
       "id": "AP-PORTABILITY-001",
-      "version": 1,
+      "version": 2,
       "title": "Portable core with explicit platform seams",
       "path": "protocols/AP-PORTABILITY-001.md",
-      "sha256": "d2800376013bbe1ade3449f835daf8780e60d4c08a79a7f733d4a651c4d6d887"
+      "sha256": "a2f5025bc7a10436b5c2f8f42c6002ccf1e361f05abbff3dea6507a3426394c0"
     },
     {
       "id": "AP-PROMOTION-001",
-      "version": 1,
+      "version": 2,
       "title": "Exact-revision channel promotion",
       "path": "protocols/AP-PROMOTION-001.md",
-      "sha256": "d75780b1ee1dd658f32c80ff5edda5bff342212569029d0eb3bdc382f471d66e"
+      "sha256": "07b53035fd705affe21ca1b0c07a2b766bc91fe45bc83c036c5c335577a08f93"
     },
     {
       "id": "AP-PROOF-001",
-      "version": 3,
+      "version": 4,
       "title": "Explicit proof lifecycle",
       "path": "protocols/AP-PROOF-001.md",
-      "sha256": "6d986bb67f310d9ff95fede9c354f6de37716c2b049db070e4cddca0f1357e86"
+      "sha256": "2762fdf80ba2a36bb1e8844a44959bea7a6309dcd7a5796029a06a7ad9c26692"
     },
     {
       "id": "AP-REFERENCE-001",
-      "version": 2,
+      "version": 3,
       "title": "Evidence before code shape",
       "path": "protocols/AP-REFERENCE-001.md",
-      "sha256": "ecb28af3796a9964dd98c037463a33b7444d9c39a0365783fb0e9ae9fc007b9c"
+      "sha256": "186fa74aa530c9c76ae507685461dff2b1506ecb5087230ded51f02cecb9231a"
     },
     {
       "id": "AP-SCOPE-001",
-      "version": 2,
+      "version": 3,
       "title": "User-owned scope",
       "path": "protocols/AP-SCOPE-001.md",
-      "sha256": "f66415c50cfedcb850725391f54873dae5bd067189fcf63fc2cf7c2efd3bd489"
+      "sha256": "cae30f9031beea4f831a89445f35807f50618e0f2cb0432f3b94bec40da9aeef"
     },
     {
       "id": "AP-TERMINAL-001",
-      "version": 1,
+      "version": 2,
       "title": "Terminal state authority",
       "path": "protocols/AP-TERMINAL-001.md",
-      "sha256": "a8632561b2ff959b1e0ee2abc07f4bce13af289e0a23574cc51aef740e3d9605"
+      "sha256": "c1805e12ca5c41d3ed2a6b24739fcded2ad986758fda01fdfa3132c9f8351d9c"
     },
     {
       "id": "AP-TEST-001",
-      "version": 2,
+      "version": 3,
       "title": "Strong and few tests",
       "path": "protocols/AP-TEST-001.md",
-      "sha256": "80ed9a1d3038c704a26ecf03525a85974ab8de3ddafa4aab2c2ce56e947bf00b"
+      "sha256": "58b5837cb679e958192b366bb15d6e34649f5a91ff9f4accdc7edb4ef5cdb873"
     }
   ]
 }

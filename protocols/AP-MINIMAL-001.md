@@ -1,53 +1,28 @@
 ---
 id: AP-MINIMAL-001
-version: 3
+version: 4
 title: Minimum sufficient implementation
 ---
 
-Use the accepted contract and source evidence to identify the correct owner,
-affected flow, and necessary boundaries before minimizing code. Then use the
-first option that fully satisfies those constraints:
+After identifying the contract, evidence, owner, flow, and boundaries, take the
+first sufficient option: no change; existing owner, helper, or pattern;
+standard library or native platform; accepted dependency that owns the
+behavior; minimum correct local code.
 
-1. Make no change when the required behavior already exists.
-2. Reuse an existing correct owner, helper, or pattern in the repository.
-3. Use the standard library or a native platform capability.
-4. Use an already accepted dependency that owns the behavior.
-5. Implement the minimum local code that is correct and maintainable.
+Judge the whole lifecycle, including duplicate truth, coordination, coupling,
+migration and removal, portability, operations, proof, and agent context. Scope
+instructions narrowly; retain non-obvious constraints and reusable
+behavior-changing workflows, not generic or duplicated policy. Load details
+only when needed.
 
-Evaluate minimality across the accepted system and its lifecycle, not only the
-current patch. Lines, files, dependencies, and patch size are evidence, not
-objectives. Include duplicated truth, cross-owner coordination, coupling,
-migration and removal, portability, operations, and proof cost.
-
-Durable agent context is part of that lifecycle cost. Put instructions at the
-narrowest scope that needs them. Keep durable wording for non-obvious
-constraints and reusable workflows that change behavior; do not duplicate
-policy already owned elsewhere or restate generic agent capability. Load
-detailed references only when the task needs them. Context reduction must not
-hide requirements needed to act safely or correctly.
-
-A smaller patch is not minimal when it preserves a known misplaced or duplicate
-owner, patches a symptom below its shared cause, bypasses an accepted boundary,
-or increases downstream coordination. A necessary root-cause or ownership
-correction may be locally larger. Use patch size only as a tie-breaker among
-shapes that satisfy the same contract, ownership, lifecycle, and proof duties.
-
-Prefer deletion over addition, direct ownership over adapters, and fewer files
-over scaffolding. Minimalism must not remove required behavior, trust-boundary
+A patch is not minimal if it preserves a wrong or duplicate owner, treats a
+symptom below its shared cause, bypasses a boundary, or raises downstream cost.
+Prefer deletion, direct ownership, and fewer files; use patch size only between
+equally correct system shapes. Never remove required behavior, trust-boundary
 validation, data-loss protection, security, accessibility, or the cheapest
 runnable check for non-trivial logic.
 
-Ponytail is the adopted agent-side aid for this discipline when the host
-supports it; it is a fallible implementation bias, not an architectural
-authority. Apply its YAGNI, shortest-diff, standard-library, native, and
-one-line heuristics only after the constraints above. Repository contracts,
-ownership, evidence, dependency decisions, safety, accessibility, portability,
-proof obligations, and explicit user choices take precedence. Do not invoke
-Ponytail to avoid a necessary architectural or root-cause change.
-
-Use the upstream project directly rather than copying its rules or adapters.
-The reviewed source is
-[DietrichGebert/ponytail](https://github.com/DietrichGebert/ponytail/tree/16f29800fd2681bdf24f3eb4ccffe38be3baec6b).
-If Ponytail is unavailable or disabled, the self-contained requirements above
-still apply. Its instruction hooks improve consistency; they do not prove
-compliance.
+When available, use upstream
+[Ponytail](https://github.com/DietrichGebert/ponytail/tree/16f29800fd2681bdf24f3eb4ccffe38be3baec6b)
+as a fallible code-shape bias after these constraints. Its absence does not
+suspend them, and its hooks do not prove compliance.

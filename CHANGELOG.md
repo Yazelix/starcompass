@@ -61,6 +61,11 @@
 
 ### Changed
 
+- Canonical protocol wording retains non-obvious model weaknesses, high-cost
+  boundaries, and repository workflows while removing generic or repeated
+  guidance. Every individual profile fits a 12 KiB canonical/import budget, and
+  the measured Orbit profile combination preserves 2 KiB of host-instruction
+  headroom.
 - `AP-SCOPE-001` keeps inspection, audit, diagnosis, explanation, and
   recommendation non-mutating unless the user also chooses a change, and
   preserves user-owned inputs and artifacts from implicit replacement or

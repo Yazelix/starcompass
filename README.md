@@ -38,6 +38,13 @@ pin and canonical protocol text.
 Profiles compose by ordered union: the first appearance of a protocol sets its
 position and later duplicates are ignored.
 
+With empty exceptions and overlay, each shipped profile's canonical/import
+section is capped at 12,288 bytes. The tested `greenfield + terminal-engine`
+combination is capped at 13,030 bytes; with Orbit's measured 17,690-byte local
+suffix, the complete instructions remain within 30,720 bytes. These budgets
+leave room under Codex's default 32 KiB project-document loader limit without
+remote includes or consumer-specific profile forks.
+
 Protocol IDs remain reserved after retirement. Active protocols must appear in
 at least one profile. A retired protocol stays in `protocols/` and the generated
 index with its retained source and history, but no profile may reference it.
@@ -362,10 +369,10 @@ and lockfiles.
 
 | Surface | LOC |
 | --- | ---: |
-| Protocols and generated index | 685 |
+| Protocols and generated index | 466 |
 | Profiles | 104 |
 | Rust checker and package manifest | 1,416 |
-| Tests | 862 |
+| Tests | 902 |
 | Enforcement skills | 175 |
-| Repository policy, docs, and licenses | 1,796 |
-| **Total** | **5,038** |
+| Repository policy, docs, and licenses | 1,816 |
+| **Total** | **4,879** |

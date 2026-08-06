@@ -1,53 +1,31 @@
 ---
 id: AP-PLAN-001
-version: 6
+version: 7
 title: Durable planning state
 ---
 
-Keep the outcomes and constraints that later work needs in the project's
-durable planning system or canonical documentation. An issue represents a
-chosen goal, decision, material defect, or schedulable follow-up. Review and
-implementation methods belong to that issue.
+Keep later-needed outcomes and constraints in the designated planning system or
+canonical docs. Issues represent chosen goals, decisions, material defects, or
+schedulable follow-ups; methods stay in their owning issue.
 
-An agent run is one uninterrupted execution ending when control returns to the
-user, including automatic continuations. A run may inspect any planning state
-read-only. A run that writes planning state or implementation may use one of two
-issue-work shapes:
+A run ends when control returns, including after automatic continuations.
+Read-only planning inspection is unrestricted. Planning writes or implementation
+use one shape:
 
-1. Own at most one issue. The run may create, claim, update, implement, or close
-   that issue.
-2. Use a bounded planning-only batch with explicit user authorization over a
-   named or accepted issue set. The run may create, update, or close only that
-   set; it may not claim an issue or make implementation edits.
+1. Own at most one issue; create, claim, update, implement, or close only it.
+2. With explicit user authorization, create, update, or close a named or
+   accepted planning-only batch; claim nothing and edit no implementation.
 
 Do not combine these shapes in one run.
 
-Required practice:
+Bind implementation before the first issue write or code edit. When its issue
+completes, blocks, or hands off, return without starting another. Report
+unapproved findings; create separate issues only for material out-of-scope or
+independently schedulable work, and outside an authorized batch defer creation.
 
-- Bind an implementation run to its one owning issue before its first issue
-  write or implementation edit.
-- After the owning implementation issue is complete, blocked, or handed off,
-  stop and return control to the user. Do not begin another issue, including
-  work newly unblocked by the completion.
-- Leave unapproved follow-up findings as reported findings. A planning-only
-  batch may include only its named or accepted issue set.
-- After review, fresh-eyes, simplification, or verification of an owning issue,
-  update its editable fields to describe the accepted state instead of pass
-  chronology.
-- Create a separate issue only for a material finding outside the prior owning
-  scope or one worth scheduling on its own. Outside an authorized planning-only
-  batch, defer creation to a later run. Name it after the outcome or finding.
-- Record the contract, decision boundary, dependencies, acceptance evidence,
-  material negative results, and rejected alternatives that constrain later
-  work.
-- Reserve append-only comments and audit records for chronology needed as
-  evidence. Keep raw command logs and build transcripts with their proof. Omit
-  baseline hashes, failed attempts, and candidate scoring unless they constrain
-  later work.
-- Keep issue status honest: planned, active, blocked, and complete are distinct.
-- Model real prerequisites as dependencies; do not create decorative graphs.
-- Reconcile planning state with the repository before handoff.
-- Use the repository-designated issue tool and never edit its storage directly.
-
-Do not erase approvals, contract changes, material failures, or evidence needed
-to understand the accepted result.
+Keep editable fields at accepted current state after review, simplification, or
+verification; reserve append-only history for needed evidence. Preserve
+contracts, decisions, dependencies, acceptance evidence, material negative
+results and failures, constraining rejections, and approvals. Keep raw logs with
+their proof. Keep status honest, model only real prerequisites, and reconcile
+before handoff. Use the designated issue tool; never edit its storage directly.

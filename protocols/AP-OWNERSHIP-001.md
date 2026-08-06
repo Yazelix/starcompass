@@ -1,18 +1,11 @@
 ---
 id: AP-OWNERSHIP-001
-version: 1
+version: 2
 title: One owner per invariant
 ---
 
-Every invariant, state transition, and user-visible policy must have one clear
-owner. Other components may consume its output; they must not independently
-reconstruct or reinterpret the same truth.
-
-Required practice:
-
-- Name the owner before adding adapters or synchronization.
-- Prefer deleting duplicate owners over reconciling them.
-- Keep policy at the highest layer that has the necessary context and mechanism
-  at the lowest layer that can enforce it correctly.
-- Make cross-boundary data explicit and versioned when independently released
-  components depend on it.
+Give every invariant, state transition, and user-visible policy one owner;
+consumers must not reconstruct or reinterpret it. Name the owner before adapters
+or synchronization and delete duplicates. Put policy at the highest layer with
+enough context and enforcement at the lowest correct layer. Make cross-boundary
+data explicit and versioned for independently released consumers.

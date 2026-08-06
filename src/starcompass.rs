@@ -1478,11 +1478,10 @@ mod tests {
             u64::MAX
         );
 
-        let text = fs::read_to_string(&path).unwrap().replacen(
-            "The user decides product and project scope.",
-            "    The user decides product and project scope.",
-            1,
-        );
+        let body = parse_protocol(&directory.0, &path).unwrap().body;
+        let text = fs::read_to_string(&path)
+            .unwrap()
+            .replacen(&body, &format!("    {body}"), 1);
         fs::write(&path, text).unwrap();
         assert!(
             parse_protocol(&directory.0, &path)
@@ -1568,6 +1567,50 @@ mod tests {
                 .contains("single-line")
             );
         }
+    }
+
+    #[test]
+    fn profiles_fit_canonical_instruction_budget() {
+        const LIMIT: usize = 12 * 1024;
+
+        let (_, profiles) = validate_repository(&root()).unwrap();
+        let local_rules = render_local_rules("");
+        let mut failures = Vec::new();
+        for profile in profiles.keys() {
+            let (_, agents) = assemble_import(
+                &root(),
+                std::slice::from_ref(profile),
+                "",
+                &EMPTY_EXCEPTIONS,
+                SOURCE_REPOSITORY,
+                COMMIT,
+            )
+            .unwrap();
+            let actual = agents.len() - local_rules.len();
+            if actual > LIMIT {
+                failures.push(format!(
+                    "{profile} canonical/import section is {actual} bytes; limit is {LIMIT}"
+                ));
+            }
+        }
+        let selected = vec!["greenfield".into(), "terminal-engine".into()];
+        let (_, agents) = assemble_import(
+            &root(),
+            &selected,
+            "",
+            &EMPTY_EXCEPTIONS,
+            SOURCE_REPOSITORY,
+            COMMIT,
+        )
+        .unwrap();
+        let actual = agents.len() - local_rules.len();
+        const ORBIT_LIMIT: usize = 30 * 1024 - 17_690;
+        if actual > ORBIT_LIMIT {
+            failures.push(format!(
+                "greenfield + terminal-engine canonical/import section is {actual} bytes; limit is {ORBIT_LIMIT}"
+            ));
+        }
+        assert!(failures.is_empty(), "{}", failures.join("\n"));
     }
 
     #[test]
@@ -1968,11 +2011,8 @@ mod tests {
                 .contains("authoring file drifted")
         );
 
-        let changed_prose = agents.replacen(
-            "The user decides product and project scope.",
-            "The user still decides product and project scope.",
-            1,
-        );
+        let marker = "## Canonical protocols\n\n";
+        let changed_prose = agents.replacen(marker, &format!("{marker}Manual edit.\n\n"), 1);
         assert_ne!(changed_prose, agents);
         validate_consumer_import(&manifest, "Local truth.\n", &empty, &changed_prose).unwrap();
         assert!(

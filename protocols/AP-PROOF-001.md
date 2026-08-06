@@ -1,26 +1,18 @@
 ---
 id: AP-PROOF-001
-version: 3
+version: 4
 title: Explicit proof lifecycle
 ---
 
-Claims and proofs have a lifecycle. A passing check supports only the exact
-revision, environment, and surface it exercised.
+Proof supports only its recorded command or observation, revision, environment,
+result, and exercised surface. Distinguish proposed, implemented, mechanically
+verified, dogfooded, accepted, and promoted states; rerun stale proof and never
+widen its claim.
 
-Required practice:
+For performance claims, measure the bottleneck, compare the same representative
+workload and environment with a recorded baseline, retain a correctness oracle,
+and report a distribution or bound. Preserve constraining negative results.
 
-- Record the command or observation, relevant environment, revision, and result.
-- Distinguish proposed, implemented, mechanically verified, manually dogfooded,
-  accepted, and promoted states.
-- Re-run stale proof after relevant code, dependency, platform, or contract
-  changes.
-- Never promote a narrower check into a broader claim.
-- For a performance claim, compare the same representative workload and
-  environment against a recorded baseline, measure the bottleneck before
-  changing the design, retain a correctness oracle, and report a representative
-  distribution or bound rather than only a favorable sample.
-- When completion requires review or simplification, a pass that produces a
-  material change invalidates the prior completion assessment. Repeat the
-  relevant pass against the revised state and declare completion only after a
-  full pass finds no actionable in-scope bugs or simplifications.
-- Preserve important negative results; they constrain the next valid design.
+A review or simplification pass that materially changes its subject invalidates
+completion. Repeat it on the revised state and declare convergence only after a
+full pass finds no actionable in-scope bugs or simplifications.

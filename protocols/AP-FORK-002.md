@@ -1,18 +1,10 @@
 ---
 id: AP-FORK-002
-version: 1
+version: 2
 title: Upstream and removal discipline
 ---
 
-Every fork feature needs an upstream relationship and an exit story.
-
-Required practice:
-
-- Record the upstream baseline and patch provenance.
-- Audit upstream changes before rebasing or replacing behavior; do not
-  mechanically replay patches.
-- Prefer contributing generally useful mechanisms upstream when feasible.
-- Define when an upstream feature, external component, or contract change makes
-  the local patch removable.
-- Test both the intended fork behavior and the upstream boundary most likely to
-  invalidate it.
+For every fork feature, record upstream baseline and patch provenance, audit
+upstream changes instead of replaying patches mechanically, contribute general
+mechanisms upstream when feasible, define its removal condition, and test both
+fork behavior and the upstream boundary most likely to invalidate it.

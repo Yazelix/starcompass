@@ -1,18 +1,11 @@
 ---
 id: AP-FAILURE-001
-version: 1
+version: 2
 title: Designed lifecycle and failure semantics
 ---
 
-Long-lived sessions and services must define lifecycle, recovery, and pressure
-behavior before happy-path feature breadth.
-
-Required practice:
-
-- Name state transitions for start, attach, detach, crash, restart, shutdown,
-  version mismatch, and abandoned resources.
-- Bound queues, memory, retries, timeouts, and slow-consumer behavior.
-- Make cancellation ownership and cleanup idempotent.
-- Preserve enough durable state to meet the recovery contract and no more.
-- Test failures deterministically where possible and dogfood the remaining
-  process and platform interactions.
+For long-lived sessions and services, define start, attach, detach, crash,
+restart, shutdown, version-mismatch, and abandonment transitions. Bound queues,
+memory, retries, timeouts, and slow consumers. Own cancellation, make cleanup
+idempotent, and persist only the recovery contract. Test failures and dogfood
+remaining process or platform cases.
