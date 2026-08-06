@@ -8,7 +8,7 @@ or `.agent-protocols.exceptions.json`, then render from the pinned source.
 ## Protocol import record
 
 - Source: `https://github.com/luccahuguet/starcompass`
-- Source commit: `ee11b2fe6892450aa9373f4afcb037b83da752b0`
+- Source commit: `10e08a753087dd8ef6ffd89e72945a3f2c8bd5f6`
 - Profiles: `greenfield`
 - Manifest: `.agent-protocols.json` (schema 1)
 
@@ -22,7 +22,7 @@ or `.agent-protocols.exceptions.json`, then render from the pinned source.
 | `AP-OWNERSHIP-001` | 2 | `d218a4e0625b659ec366284110bdfce02bd66cb229ab6ba07f2317092ea13053` |
 | `AP-TEST-001` | 3 | `58b5837cb679e958192b366bb15d6e34649f5a91ff9f4accdc7edb4ef5cdb873` |
 | `AP-PROOF-001` | 4 | `2762fdf80ba2a36bb1e8844a44959bea7a6309dcd7a5796029a06a7ad9c26692` |
-| `AP-PLAN-001` | 8 | `6f8acada188da990ef0c5d51e57d9da1190d2ff03cfb5d9be7f8922c27061b06` |
+| `AP-PLAN-001` | 9 | `a1671c41d8a5c059a7138914ae4903b1d305473cf9681e293fa7d16c0b939b15` |
 | `AP-CI-001` | 3 | `c7cb65a81ce8434d02f2d19306bf93358f3624d0b77886bc91d4de93f7a779ba` |
 | `AP-EXCEPTION-001` | 2 | `2c4f00299922edac83286821af07ad485e5a630bca6acbbce918d87614abb395` |
 | `AP-GIT-001` | 5 | `f2c3254311de57a23a13aa382fe3285e65bb34e535ecd813d1be783ca79d4bf9` |
@@ -155,9 +155,9 @@ Keep later-needed outcomes and constraints in the designated planning system or
 canonical docs. Issues represent chosen goals, decisions, material defects, or
 schedulable follow-ups; methods stay in their owning issue.
 
-A run ends when control returns, including after automatic continuations.
-Read-only planning inspection is unrestricted. Planning writes or implementation
-use one shape:
+A run includes automatic continuations and ends when control returns. Planning
+reads are unrestricted. A run that writes planning state or implementation uses
+one shape:
 
 1. Own at most one issue; create, claim, update, implement, or close only it.
 2. With explicit user authorization, create, update, or close a named or
