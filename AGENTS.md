@@ -8,7 +8,7 @@ or `.agent-protocols.exceptions.json`, then render from the pinned source.
 ## Protocol import record
 
 - Source: `https://github.com/luccahuguet/starcompass`
-- Source commit: `480b3db659daff4488bea4c75031a335c94dfb40`
+- Source commit: `ca29a346533a6ae77c8312f7d025513be48a25f9`
 - Profiles: `greenfield`
 - Manifest: `.agent-protocols.json` (schema 1)
 
@@ -22,7 +22,7 @@ or `.agent-protocols.exceptions.json`, then render from the pinned source.
 | `AP-OWNERSHIP-001` | 1 | `bdc09117f79b0d8dbe78e2dd8673a2463398aa31880fe27209fd6cc47f58bbf7` |
 | `AP-TEST-001` | 1 | `363da7c542521be22233a4cc3373c0d3c3c5a9a0cf37f633cd5029545f4a3bee` |
 | `AP-PROOF-001` | 1 | `1af235a56e9711d55362d869fa4057f1658d0aa7fe766030be0897ee5fd7c02b` |
-| `AP-PLAN-001` | 5 | `f9f91e87b6f76f9a3a31005fdcba06fe1534ca1555379db720dbeca31d5a594b` |
+| `AP-PLAN-001` | 6 | `04b96c47978d49d2e6584f89626bca42b6cb39df537fa3e5abd6da0bdc2edfda` |
 | `AP-CI-001` | 1 | `78f1662259cd83f33d22ff4ddd0859ab0d4f704ba4f38756eef40a8b9b787bec` |
 | `AP-EXCEPTION-001` | 1 | `f66749229dbbc005e1c3103bfed86cf95169d7b32466c72fd8442e841cadb268` |
 | `AP-GIT-001` | 3 | `16d27b0df7ccc94880bb31020e822e32b37503f43c2cf7a69de333300cbfdacf` |
@@ -218,25 +218,32 @@ implementation methods belong to that issue.
 
 An agent run is one uninterrupted execution ending when control returns to the
 user, including automatic continuations. A run may inspect any planning state
-read-only, but it may create, claim, update, implement, or close at most one
-Bead or repository-designated equivalent issue.
+read-only. A run that writes planning state or implementation may use one of two
+issue-work shapes:
+
+1. Own at most one issue. The run may create, claim, update, implement, or close
+   that issue.
+2. Use a bounded planning-only batch with explicit user authorization over a
+   named or accepted issue set. The run may create, update, or close only that
+   set; it may not claim an issue or make implementation edits.
+
+Do not combine these shapes in one run.
 
 Required practice:
 
-- When work is tracked by a Bead, bind the run to that one owning issue before
-  its first issue write or implementation edit.
-- After the owning issue is complete, blocked, or handed off, stop and return
-  control to the user. Do not begin another issue, including work newly
-  unblocked by the completion.
-- Leave follow-up findings as reported findings for a later run. If issue
-  creation is the requested outcome, the one issue created is that run's owning
-  issue.
-- After review, fresh-eyes, simplification, or verification, update the owning
-  issue's editable fields to describe the accepted state instead of pass
+- Bind an implementation run to its one owning issue before its first issue
+  write or implementation edit.
+- After the owning implementation issue is complete, blocked, or handed off,
+  stop and return control to the user. Do not begin another issue, including
+  work newly unblocked by the completion.
+- Leave unapproved follow-up findings as reported findings. A planning-only
+  batch may include only its named or accepted issue set.
+- After review, fresh-eyes, simplification, or verification of an owning issue,
+  update its editable fields to describe the accepted state instead of pass
   chronology.
-- In a later run, create a separate issue only for a material finding outside
-  the prior owning scope or one worth scheduling on its own. Name it after the
-  outcome or finding.
+- Create a separate issue only for a material finding outside the prior owning
+  scope or one worth scheduling on its own. Outside an authorized planning-only
+  batch, defer creation to a later run. Name it after the outcome or finding.
 - Record the contract, decision boundary, dependencies, acceptance evidence,
   material negative results, and rejected alternatives that constrain later
   work.
