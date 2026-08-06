@@ -140,6 +140,13 @@ adapter surface. A fork is justified only after a recorded incompatibility
 cannot reasonably be fixed upstream. The structural checker does not install or
 attest third-party runtime integrations.
 
+Ponytail supplies a code-shape bias after architecture selection; it does not
+select the architecture. Starcompass evaluates minimality across the accepted
+system and lifecycle, including ownership, duplicated truth, coordination,
+coupling, portability, migration, operations, and proof. Patch size is only a
+tie-breaker among shapes satisfying the same contract and ownership duties, so
+a locally larger root-cause or owner correction can be the minimum solution.
+
 ## Dependency decision
 
 The checker is a Rust 2024 binary with Rust 1.85 as its minimum toolchain. Rust

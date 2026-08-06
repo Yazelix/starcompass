@@ -47,9 +47,12 @@ Every profile includes `AP-MINIMAL-001`. Ponytail is its adopted agent-side
 implementation where the host supports it. Consumers use the
 [upstream project](https://github.com/DietrichGebert/ponytail/tree/16f29800fd2681bdf24f3eb4ccffe38be3baec6b)
 directly; Starcompass does not copy its modes, hooks, skills, or host
-adapters. The protocol remains self-contained so its invariant still applies
-offline or when Ponytail is unavailable. The checker does not install Ponytail
-or claim that its instructions were followed.
+adapters. Starcompass treats Ponytail as a fallible implementation bias, not an
+architectural authority: accepted contracts, correct ownership, evidence, and
+net system complexity determine the valid shape before patch size is minimized.
+The protocol remains self-contained so its invariant still applies offline or
+when Ponytail is unavailable. The checker does not install Ponytail or claim
+that its instructions were followed.
 
 | Profile | Intended role | Specialized protocols |
 | --- | --- | --- |
@@ -303,10 +306,10 @@ and lockfiles.
 
 | Surface | LOC |
 | --- | ---: |
-| Protocols and generated index | 624 |
+| Protocols and generated index | 649 |
 | Profiles | 104 |
 | Rust checker and package manifest | 1,347 |
 | Tests | 739 |
 | Enforcement skills | 175 |
-| Repository policy, docs, and licenses | 1,460 |
-| **Total** | **4,449** |
+| Repository policy, docs, and licenses | 1,474 |
+| **Total** | **4,488** |
