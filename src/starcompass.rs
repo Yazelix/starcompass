@@ -218,6 +218,10 @@ fn json_text<T: Serialize>(value: &T) -> Result<String> {
     Ok(serde_json::to_string_pretty(value)? + "\n")
 }
 
+fn markdown_content(value: &str) -> &str {
+    value.trim_start_matches(['\r', '\n']).trim_end()
+}
+
 fn parse_protocol(root: &Path, path: &Path) -> Result<Protocol> {
     let raw = fs::read(path)?;
     let text = std::str::from_utf8(&raw)
@@ -305,7 +309,7 @@ fn parse_protocol(root: &Path, path: &Path) -> Result<Protocol> {
             )));
         }
     };
-    let body = text[boundary + 5..].trim();
+    let body = markdown_content(&text[boundary + 5..]);
     if body.is_empty() {
         return Err(Error::new(format!(
             "protocol body is empty: {}",
@@ -774,7 +778,9 @@ fn render_import_record(manifest: &Manifest) -> String {
                     .review_condition
                     .as_deref()
                     .unwrap_or("none recorded"),
-            );
+            )
+            .trim_end()
+            .to_owned();
             if !review.ends_with(['.', '!', '?']) {
                 review.push('.');
             }
@@ -804,7 +810,7 @@ fn render_local_rules(overlay: &str) -> String {
     [
         "## Repository-local rules",
         "",
-        match overlay.trim() {
+        match markdown_content(overlay) {
             "" => "No additional local rules.",
             local => local,
         },
@@ -1456,7 +1462,7 @@ mod tests {
     }
 
     #[test]
-    fn protocol_versions_fill_the_declared_unsigned_range() {
+    fn protocol_parser_preserves_markdown_indentation_and_u64_versions() {
         let directory = TestDirectory::copy_catalog();
         let path = directory.0.join("protocols/AP-SCOPE-001.md");
         let current = parse_protocol(&directory.0, &path).unwrap().version;
@@ -1470,6 +1476,19 @@ mod tests {
         assert_eq!(
             parse_protocol(&directory.0, &path).unwrap().version,
             u64::MAX
+        );
+
+        let text = fs::read_to_string(&path).unwrap().replacen(
+            "The user decides product and project scope.",
+            "    The user decides product and project scope.",
+            1,
+        );
+        fs::write(&path, text).unwrap();
+        assert!(
+            parse_protocol(&directory.0, &path)
+                .unwrap()
+                .body
+                .starts_with("    ")
         );
     }
 
@@ -1523,6 +1542,10 @@ mod tests {
                 assert!(first.1.contains(&format!("### {} ", imported.id)));
             }
         }
+        assert_eq!(
+            render_local_rules("    code\n"),
+            "## Repository-local rules\n\n    code\n"
+        );
 
         for (repository, profiles) in [
             (
@@ -1579,6 +1602,7 @@ mod tests {
             exceptions: vec![exception("AP-CI-001", "private alpha")],
         };
         document.exceptions[0].reason = "Recorded\r\nexception.".into();
+        document.exceptions[0].review_condition = Some("Review later.\r\n".into());
         let (manifest, agents) = assemble_import(
             &root(),
             &["greenfield".into()],

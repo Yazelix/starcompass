@@ -156,9 +156,10 @@ An exception has five required fields and one optional review condition:
 An overlay adds local detail. An exception narrows, replaces, or suspends an
 imported requirement and therefore requires explicit approval.
 The renderer requires non-empty, single-line repository and profile values
-without backticks because the import record uses inline code spans. It folds
-exception line endings into spaces and adds review-condition punctuation only
-when the author omitted it.
+without backticks because the import record uses inline code spans. It preserves
+leading Markdown indentation in canonical protocol bodies and local overlays,
+folds exception line endings into spaces, and adds review-condition punctuation
+only when the author omitted it.
 
 ## Commands
 
@@ -363,8 +364,8 @@ and lockfiles.
 | --- | ---: |
 | Protocols and generated index | 685 |
 | Profiles | 104 |
-| Rust checker and package manifest | 1,410 |
-| Tests | 844 |
+| Rust checker and package manifest | 1,416 |
+| Tests | 862 |
 | Enforcement skills | 175 |
-| Repository policy, docs, and licenses | 1,792 |
-| **Total** | **5,010** |
+| Repository policy, docs, and licenses | 1,796 |
+| **Total** | **5,038** |

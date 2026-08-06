@@ -34,6 +34,9 @@
 
 ### Fixed
 
+- Preserve leading Markdown indentation in canonical protocol bodies and local
+  overlays, and normalize trailing review-condition whitespace before adding
+  punctuation.
 - Let mandatory profile protocols follow the same retirement lifecycle, and
   reject protocol IDs with empty `AREA` segments.
 - Reject explicit null review conditions or protocol statuses, year-zero
