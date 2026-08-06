@@ -1,11 +1,11 @@
 ---
 id: AP-FAILURE-001
-version: 2
+version: 3
 title: Designed lifecycle and failure semantics
 ---
 
-For long-lived sessions and services, define start, attach, detach, crash,
-restart, shutdown, version-mismatch, and abandonment transitions. Bound queues,
-memory, retries, timeouts, and slow consumers. Own cancellation, make cleanup
-idempotent, and persist only the recovery contract. Test failures and dogfood
-remaining process or platform cases.
+Long-lived sessions and services define start, attach/detach, crash/restart,
+shutdown, version mismatch, abandonment; bound queues, memory, retries,
+timeouts, slow consumers. Own cancellation and idempotent cleanup; persist only
+required recovery state. Test deterministic failures when practical; dogfood
+other process/platform cases.

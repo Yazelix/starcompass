@@ -1,11 +1,12 @@
 ---
 id: AP-CI-001
-version: 2
+version: 3
 title: Bounded continuous integration
 ---
 
-Before hosted automation, name the protected contract and why local proof is
+Before hosted automation, name its contract and why local proof is
 insufficient. Bound triggers, jobs, timeouts, permissions, artifacts, cache,
-concurrency, forks, and secrets; prefer one cheap deterministic job. Record when
-to expand, reduce, or remove it. Confidence must justify financial, latency,
-security, and maintenance cost, including private minutes and storage.
+concurrency; specify fork and secret behavior. Prefer one cheap deterministic
+job. Record when to expand, reduce, or remove. Confidence must justify its
+financial, latency, security, and maintenance costs, including private minutes
+and storage.

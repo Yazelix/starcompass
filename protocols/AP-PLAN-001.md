@@ -1,6 +1,6 @@
 ---
 id: AP-PLAN-001
-version: 7
+version: 8
 title: Durable planning state
 ---
 
@@ -18,8 +18,8 @@ use one shape:
 
 Do not combine these shapes in one run.
 
-Bind implementation before the first issue write or code edit. When its issue
-completes, blocks, or hands off, return without starting another. Report
+Bind implementation work to its issue before planning or code writes. When that
+issue completes, blocks, or hands off, return without starting another. Report
 unapproved findings; create separate issues only for material out-of-scope or
 independently schedulable work, and outside an authorized batch defer creation.
 

@@ -1575,7 +1575,6 @@ mod tests {
 
         let (_, profiles) = validate_repository(&root()).unwrap();
         let local_rules = render_local_rules("");
-        let mut failures = Vec::new();
         for profile in profiles.keys() {
             let (_, agents) = assemble_import(
                 &root(),
@@ -1587,11 +1586,10 @@ mod tests {
             )
             .unwrap();
             let actual = agents.len() - local_rules.len();
-            if actual > LIMIT {
-                failures.push(format!(
-                    "{profile} canonical/import section is {actual} bytes; limit is {LIMIT}"
-                ));
-            }
+            assert!(
+                actual <= LIMIT,
+                "{profile} canonical/import section is {actual} bytes; limit is {LIMIT}"
+            );
         }
         let selected = vec!["greenfield".into(), "terminal-engine".into()];
         let (_, agents) = assemble_import(
@@ -1605,12 +1603,10 @@ mod tests {
         .unwrap();
         let actual = agents.len() - local_rules.len();
         const ORBIT_LIMIT: usize = 30 * 1024 - 17_690;
-        if actual > ORBIT_LIMIT {
-            failures.push(format!(
-                "greenfield + terminal-engine canonical/import section is {actual} bytes; limit is {ORBIT_LIMIT}"
-            ));
-        }
-        assert!(failures.is_empty(), "{}", failures.join("\n"));
+        assert!(
+            actual <= ORBIT_LIMIT,
+            "greenfield + terminal-engine canonical/import section is {actual} bytes; limit is {ORBIT_LIMIT}"
+        );
     }
 
     #[test]
