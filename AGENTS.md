@@ -8,7 +8,7 @@ or `.agent-protocols.exceptions.json`, then render from the pinned source.
 ## Protocol import record
 
 - Source: `https://github.com/luccahuguet/starcompass`
-- Source commit: `051856e72b563daa20ec411d5bec31a55b0c6401`
+- Source commit: `f2c4987cc43ea13ed932a33829c2a72450fc6ed1`
 - Profiles: `greenfield`
 - Manifest: `.agent-protocols.json` (schema 1)
 
@@ -17,7 +17,7 @@ or `.agent-protocols.exceptions.json`, then render from the pinned source.
 | `AP-SCOPE-001` | 1 | `b3f7e012df0708d4baf8957e3c315878a9eb8cd7fddf637dfde1506609d08444` |
 | `AP-CONTRACT-001` | 1 | `0aa692f4c52542111149b691b7d0c015a0c16523cd620a67b0cf335f3284da82` |
 | `AP-REFERENCE-001` | 2 | `ecb28af3796a9964dd98c037463a33b7444d9c39a0365783fb0e9ae9fc007b9c` |
-| `AP-MINIMAL-001` | 1 | `256c158cc8b226e4baf96d5590531ea180edc9717338dac0fe51a34dd037791f` |
+| `AP-MINIMAL-001` | 2 | `3f4ebb1ab87f50ed5c9f041fb60d94cc7ded264ab04e56413fd1da343baa38f3` |
 | `AP-DEPENDENCY-001` | 1 | `a389ff9054708574c52ec5e5dd7fc3e2d13b125d2218c70062f50a86761981ca` |
 | `AP-OWNERSHIP-001` | 1 | `bdc09117f79b0d8dbe78e2dd8673a2463398aa31880fe27209fd6cc47f58bbf7` |
 | `AP-TEST-001` | 1 | `363da7c542521be22233a4cc3373c0d3c3c5a9a0cf37f633cd5029545f4a3bee` |
@@ -99,23 +99,42 @@ Reference review is a decision gate, not a requirement to copy the reference.
 
 ### AP-MINIMAL-001 — Minimum sufficient implementation
 
-Understand the affected flow before choosing the smallest complete solution.
-Use the first option that fully satisfies the chosen contract:
+Use the accepted contract and source evidence to identify the correct owner,
+affected flow, and necessary boundaries before minimizing code. Then use the
+first option that fully satisfies those constraints:
 
 1. Make no change when the required behavior already exists.
-2. Reuse an existing owner, helper, or pattern in the repository.
+2. Reuse an existing correct owner, helper, or pattern in the repository.
 3. Use the standard library or a native platform capability.
 4. Use an already accepted dependency that owns the behavior.
 5. Implement the minimum local code that is correct and maintainable.
+
+Evaluate minimality across the accepted system and its lifecycle, not only the
+current patch. Lines, files, dependencies, and patch size are evidence, not
+objectives. Include duplicated truth, cross-owner coordination, coupling,
+migration and removal, portability, operations, and proof cost.
+
+A smaller patch is not minimal when it preserves a known misplaced or duplicate
+owner, patches a symptom below its shared cause, bypasses an accepted boundary,
+or increases downstream coordination. A necessary root-cause or ownership
+correction may be locally larger. Use patch size only as a tie-breaker among
+shapes that satisfy the same contract, ownership, lifecycle, and proof duties.
 
 Prefer deletion over addition, direct ownership over adapters, and fewer files
 over scaffolding. Minimalism must not remove required behavior, trust-boundary
 validation, data-loss protection, security, accessibility, or the cheapest
 runnable check for non-trivial logic.
 
-Ponytail is the adopted agent-side implementation of this discipline when the
-host supports it. Use the upstream project directly rather than copying its
-rules or adapters. The reviewed source is
+Ponytail is the adopted agent-side aid for this discipline when the host
+supports it; it is a fallible implementation bias, not an architectural
+authority. Apply its YAGNI, shortest-diff, standard-library, native, and
+one-line heuristics only after the constraints above. Repository contracts,
+ownership, evidence, dependency decisions, safety, accessibility, portability,
+proof obligations, and explicit user choices take precedence. Do not invoke
+Ponytail to avoid a necessary architectural or root-cause change.
+
+Use the upstream project directly rather than copying its rules or adapters.
+The reviewed source is
 [DietrichGebert/ponytail](https://github.com/DietrichGebert/ponytail/tree/16f29800fd2681bdf24f3eb4ccffe38be3baec6b).
 If Ponytail is unavailable or disabled, the self-contained requirements above
 still apply. Its instruction hooks improve consistency; they do not prove
