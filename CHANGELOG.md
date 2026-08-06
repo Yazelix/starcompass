@@ -21,6 +21,8 @@
 - Explicit local overlay and approved-exception inputs and import records.
 - Focused contract tests for composition, validation, exception handling, and
   drift.
+- Host-independent protocol behavior trials with isolated agent inputs and
+  separate assessment rubrics.
 - Protocol-only apply and audit Codex skills.
 - Generated `AGENTS.md` files identify their editable consumer-owned inputs.
 - Exact-pinned `greenfield` self-adoption through the ordinary consumer format
@@ -69,6 +71,8 @@
 - `AP-TEST-001` uses representative isolated task trials for consequential
   agent-instruction changes and keeps structural validation distinct from
   behavioral compliance.
+- `AP-PROOF-001` requires comparable baselines, bottleneck evidence, correctness
+  oracles, and representative results before making performance claims.
 - `AP-PLAN-001` permits one owning implementation issue or a user-authorized
   bounded planning-only batch and prevents a run from combining both shapes.
 - `AP-REFERENCE-001` applies source-license conditions to their actual actors

@@ -84,7 +84,10 @@ generic wording, and load detailed references only when needed.
 `AP-TEST-001` uses representative isolated task trials for consequential
 changes to agent instructions, prompts, and skills. Structural validation of
 their schema, rendering, or discovery does not prove agent behavior or
-compliance.
+compliance. [`docs/BEHAVIOR_TRIALS.md`](docs/BEHAVIOR_TRIALS.md) provides five
+host-independent cases. Operators give an agent only a case's input and fixture,
+use a separate assessment rubric, and record the exercised revision and
+environment without assigning a general compliance score.
 
 | Profile | Intended role | Specialized protocols |
 | --- | --- | --- |
@@ -348,10 +351,10 @@ and lockfiles.
 
 | Surface | LOC |
 | --- | ---: |
-| Protocols and generated index | 677 |
+| Protocols and generated index | 681 |
 | Profiles | 104 |
 | Rust checker and package manifest | 1,405 |
 | Tests | 826 |
 | Enforcement skills | 175 |
-| Repository policy, docs, and licenses | 1,597 |
-| **Total** | **4,784** |
+| Repository policy, docs, and licenses | 1,737 |
+| **Total** | **4,928** |

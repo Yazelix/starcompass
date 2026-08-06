@@ -1,6 +1,6 @@
 ---
 id: AP-PROOF-001
-version: 1
+version: 2
 title: Explicit proof lifecycle
 ---
 
@@ -15,4 +15,8 @@ Required practice:
 - Re-run stale proof after relevant code, dependency, platform, or contract
   changes.
 - Never promote a narrower check into a broader claim.
+- For a performance claim, compare the same representative workload and
+  environment against a recorded baseline, measure the bottleneck before
+  changing the design, retain a correctness oracle, and report a representative
+  distribution or bound rather than only a favorable sample.
 - Preserve important negative results; they constrain the next valid design.
