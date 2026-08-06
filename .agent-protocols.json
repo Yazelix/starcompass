@@ -2,7 +2,7 @@
   "schema": 1,
   "source": {
     "repository": "https://github.com/luccahuguet/starcompass",
-    "commit": "f6df4d0867bb354b45792fa9823a277d22fe496e"
+    "commit": "332e3be5983583a39b9f46da92911842fc5aa233"
   },
   "profiles": [
     "greenfield"
@@ -10,13 +10,13 @@
   "protocols": [
     {
       "id": "AP-SCOPE-001",
-      "version": 1,
-      "sha256": "b3f7e012df0708d4baf8957e3c315878a9eb8cd7fddf637dfde1506609d08444"
+      "version": 2,
+      "sha256": "f66415c50cfedcb850725391f54873dae5bd067189fcf63fc2cf7c2efd3bd489"
     },
     {
       "id": "AP-CONTRACT-001",
-      "version": 2,
-      "sha256": "f8a3b323f95816ee6d56d136c2ad19c691860155a4e58f57a62a4fb4dfc78cbb"
+      "version": 3,
+      "sha256": "4b092f0fb04d2d2064d0004a711dbfebb1a18ad8de7c5ac42237e136d4a934ca"
     },
     {
       "id": "AP-REFERENCE-001",
@@ -25,8 +25,8 @@
     },
     {
       "id": "AP-MINIMAL-001",
-      "version": 2,
-      "sha256": "3f4ebb1ab87f50ed5c9f041fb60d94cc7ded264ab04e56413fd1da343baa38f3"
+      "version": 3,
+      "sha256": "719ca1e060ffbc969ee96e3d8c3c6242be5bc52b34ba2ec5988f80ab841ef31c"
     },
     {
       "id": "AP-DEPENDENCY-001",
@@ -40,8 +40,8 @@
     },
     {
       "id": "AP-TEST-001",
-      "version": 1,
-      "sha256": "363da7c542521be22233a4cc3373c0d3c3c5a9a0cf37f633cd5029545f4a3bee"
+      "version": 2,
+      "sha256": "80ed9a1d3038c704a26ecf03525a85974ab8de3ddafa4aab2c2ce56e947bf00b"
     },
     {
       "id": "AP-PROOF-001",

@@ -8,19 +8,19 @@ or `.agent-protocols.exceptions.json`, then render from the pinned source.
 ## Protocol import record
 
 - Source: `https://github.com/luccahuguet/starcompass`
-- Source commit: `f6df4d0867bb354b45792fa9823a277d22fe496e`
+- Source commit: `332e3be5983583a39b9f46da92911842fc5aa233`
 - Profiles: `greenfield`
 - Manifest: `.agent-protocols.json` (schema 1)
 
 | Protocol | Version | SHA-256 |
 | --- | ---: | --- |
-| `AP-SCOPE-001` | 1 | `b3f7e012df0708d4baf8957e3c315878a9eb8cd7fddf637dfde1506609d08444` |
-| `AP-CONTRACT-001` | 2 | `f8a3b323f95816ee6d56d136c2ad19c691860155a4e58f57a62a4fb4dfc78cbb` |
+| `AP-SCOPE-001` | 2 | `f66415c50cfedcb850725391f54873dae5bd067189fcf63fc2cf7c2efd3bd489` |
+| `AP-CONTRACT-001` | 3 | `4b092f0fb04d2d2064d0004a711dbfebb1a18ad8de7c5ac42237e136d4a934ca` |
 | `AP-REFERENCE-001` | 2 | `ecb28af3796a9964dd98c037463a33b7444d9c39a0365783fb0e9ae9fc007b9c` |
-| `AP-MINIMAL-001` | 2 | `3f4ebb1ab87f50ed5c9f041fb60d94cc7ded264ab04e56413fd1da343baa38f3` |
+| `AP-MINIMAL-001` | 3 | `719ca1e060ffbc969ee96e3d8c3c6242be5bc52b34ba2ec5988f80ab841ef31c` |
 | `AP-DEPENDENCY-001` | 1 | `a389ff9054708574c52ec5e5dd7fc3e2d13b125d2218c70062f50a86761981ca` |
 | `AP-OWNERSHIP-001` | 1 | `bdc09117f79b0d8dbe78e2dd8673a2463398aa31880fe27209fd6cc47f58bbf7` |
-| `AP-TEST-001` | 1 | `363da7c542521be22233a4cc3373c0d3c3c5a9a0cf37f633cd5029545f4a3bee` |
+| `AP-TEST-001` | 2 | `80ed9a1d3038c704a26ecf03525a85974ab8de3ddafa4aab2c2ce56e947bf00b` |
 | `AP-PROOF-001` | 1 | `1af235a56e9711d55362d869fa4057f1658d0aa7fe766030be0897ee5fd7c02b` |
 | `AP-PLAN-001` | 6 | `04b96c47978d49d2e6584f89626bca42b6cb39df537fa3e5abd6da0bdc2edfda` |
 | `AP-CI-001` | 1 | `78f1662259cd83f33d22ff4ddd0859ab0d4f704ba4f38756eef40a8b9b787bec` |
@@ -42,6 +42,13 @@ repository, or planning item outside that direction.
 
 Required practice:
 
+- Treat a request to inspect, audit, diagnose, explain, or recommend as authority
+  only for that non-mutating result. Do not edit implementation, publish
+  external state, or write durable planning state unless the user also chooses
+  that action.
+- Treat existing inputs and artifacts as user-owned. Replace or delete an exact
+  target only when the requested outcome requires it; otherwise preserve it and
+  use a distinct result when output must be written.
 - Separate safe implementation details from choices that change product scope.
 - State consequential assumptions; stop when a missing choice would materially
   change the result.
@@ -62,6 +69,10 @@ Required practice:
   with the fewest unsupported guarantees or restrictions. Leave reasonable
   future behavior unspecified unless the request or evidence requires a
   commitment.
+- Treat user-facing documentation, help, examples, and configuration
+  descriptions as contract surfaces. Keep their commands, paths, flags,
+  defaults, and availability aligned with their current owner; label planned,
+  partial, or gated behavior instead of presenting it as current.
 - Name the consumer, trigger, observable result, and important failure behavior.
 - Identify the current sources of truth and decide which one owner survives.
 - Choose the cheapest check that can falsify the contract.
@@ -117,6 +128,13 @@ Evaluate minimality across the accepted system and its lifecycle, not only the
 current patch. Lines, files, dependencies, and patch size are evidence, not
 objectives. Include duplicated truth, cross-owner coordination, coupling,
 migration and removal, portability, operations, and proof cost.
+
+Durable agent context is part of that lifecycle cost. Put instructions at the
+narrowest scope that needs them. Keep durable wording for non-obvious
+constraints and reusable workflows that change behavior; do not duplicate
+policy already owned elsewhere or restate generic agent capability. Load
+detailed references only when the task needs them. Context reduction must not
+hide requirements needed to act safely or correctly.
 
 A smaller patch is not minimal when it preserves a known misplaced or duplicate
 owner, patches a symptom below its shared cause, bypasses an accepted boundary,
@@ -187,6 +205,11 @@ Required practice:
   when the expected behavior can be stated before implementation.
 - Choose contract-first integration checks for layout, runtime integration,
   architecture choices, forks, and dogfooding surfaces.
+- For consequential changes to agent instructions, prompts, or skills, use
+  representative task trials with enough isolation that the expected
+  conclusion is not supplied by the test context.
+- Treat schema, rendering, discovery, and other structural checks as proof of
+  those structures, not of agent behavior or compliance.
 - Delete or merge tests that duplicate another proof, assert implementation
   trivia, or preserve scaffolding.
 - Test observable effects rather than mirroring literals, defaults, or source
