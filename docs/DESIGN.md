@@ -40,9 +40,10 @@ frontmatter owns lifecycle: no `status` field means active, while
 `status: retired` records an irreversible retirement. Active protocols must
 appear in at least one profile; retired protocols remain source-backed and
 indexed but must appear in none. New IDs must begin active. Retirement changes
-the canonical file, so its ordinary version-bump rule applies. Keeping the
-retired body and digest preserves historical authentication without a separate
-archive, retirement registry, or synthetic profile.
+the canonical file, so the version-bump rule applies. Profile-wide
+membership requirements apply only while their owning protocol remains active.
+Keeping the retired body and digest preserves historical authentication without
+a separate archive, retirement registry, or synthetic profile.
 
 ## Profiles compose; projects still own policy
 

@@ -44,6 +44,8 @@ index with its retained source and history, but no profile may reference it.
 Protocol frontmatter omits `status` while active and uses `status: retired` for
 the irreversible transition; retirement changes the canonical file and
 therefore requires a version bump.
+`AP-SCOPE-001` and `AP-EXCEPTION-001` remain mandatory in every profile while
+active; retirement releases that membership requirement.
 
 `AP-SCOPE-001` treats inspection, audit, diagnosis, explanation, and
 recommendation as non-mutating requests unless the user also chooses a change.
@@ -231,8 +233,8 @@ cannot be represented by the recorded Git commit.
 Canonical protocol and profile directories must be real directories, while
 their source files and `protocols/index.json` must be regular files. Symlinks
 and special files are rejected because their bytes are not owned by the
-recorded Git revision. Before writing, `render` resolves the overlay, optional
-exceptions, manifest, and `AGENTS.md` paths and rejects aliases that identify
+recorded Git revision. Before writing, `render` resolves the overlay, exception
+input, manifest, and `AGENTS.md` paths and rejects aliases that identify
 the same location. Parent-directory traversal or a symlink cannot let an output
 replace another input or output.
 
@@ -270,12 +272,14 @@ an import audit and reports it separately from the mechanical result.
 
 ## Protocol lifecycle
 
-Protocol IDs use `AP-<AREA>-<NUMBER>` and are permanent. Every change to a
-canonical protocol file bumps its positive integer version because an automated
-history gate cannot safely distinguish editorial from semantic wording. Run
-`version-check` before `index`. Its base must be a non-empty Git revision that
-resolves to a commit; the checker reads the historical index from that exact
-commit. Important rationale and rejected alternatives live in Beads.
+Protocol IDs use `AP-<AREA>-<NUMBER>` and are permanent. `AREA` starts with an
+uppercase letter and contains non-empty uppercase-alphanumeric segments
+separated by single hyphens; `NUMBER` contains three decimal digits. Every
+change to a canonical protocol file bumps its positive integer version because
+an automated history gate cannot safely distinguish editorial from semantic
+wording. Run `version-check` before `index`. Its base must be a non-empty Git
+revision that resolves to a commit; the checker reads the historical index from
+that exact commit. Important rationale and rejected alternatives live in Beads.
 
 To retire a protocol, bump its version, add `status: retired` to its
 frontmatter, and remove it from every profile in the same source change. Then
@@ -359,8 +363,8 @@ and lockfiles.
 | --- | ---: |
 | Protocols and generated index | 685 |
 | Profiles | 104 |
-| Rust checker and package manifest | 1,405 |
-| Tests | 826 |
+| Rust checker and package manifest | 1,410 |
+| Tests | 844 |
 | Enforcement skills | 175 |
-| Repository policy, docs, and licenses | 1,785 |
-| **Total** | **4,980** |
+| Repository policy, docs, and licenses | 1,792 |
+| **Total** | **5,010** |

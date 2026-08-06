@@ -339,6 +339,7 @@ fn valid_protocol_id(id: &str) -> bool {
         return false;
     };
     area.starts_with(|character: char| character.is_ascii_uppercase())
+        && area.split('-').all(|part| !part.is_empty())
         && area.chars().all(|character| {
             character.is_ascii_uppercase() || character.is_ascii_digit() || character == '-'
         })
@@ -466,7 +467,11 @@ fn load_profiles(
             )));
         }
         for required in ["AP-SCOPE-001", "AP-EXCEPTION-001"] {
-            if !profile.protocols.iter().any(|id| id == required) {
+            if protocols
+                .get(required)
+                .is_none_or(|protocol| protocol.status.is_none())
+                && !profile.protocols.iter().any(|id| id == required)
+            {
                 return Err(Error::new(format!(
                     "profile {} must include {required}",
                     profile.name
@@ -1439,7 +1444,13 @@ mod tests {
         for valid in ["AP-SCOPE-001", "AP-FORK-V2-999"] {
             assert!(valid_protocol_id(valid));
         }
-        for invalid in ["AP--001", "AP-lower-001", "AP-SCOPE-01", "SCOPE-001"] {
+        for invalid in [
+            "AP--001",
+            "AP-A--001",
+            "AP-lower-001",
+            "AP-SCOPE-01",
+            "SCOPE-001",
+        ] {
             assert!(!valid_protocol_id(invalid));
         }
     }
@@ -1686,31 +1697,41 @@ mod tests {
         );
 
         let index_path = directory.0.join("protocols/index.json");
-        let protocol_path = directory.0.join("protocols/AP-FORK-002.md");
+        let protocol_path = directory.0.join("protocols/AP-SCOPE-001.md");
+        let active_version = active
+            .protocols
+            .iter()
+            .find(|record| record.id == "AP-SCOPE-001")
+            .unwrap()
+            .version;
+        let retired_version = active_version + 1;
         let protocol = fs::read_to_string(&protocol_path).unwrap().replacen(
-            "version: 1\n",
-            "version: 2\nstatus: retired\n",
+            &format!("version: {active_version}\n"),
+            &format!("version: {retired_version}\nstatus: retired\n"),
             1,
         );
         fs::write(&protocol_path, protocol).unwrap();
 
-        let profile_path = directory.0.join("profiles/fork.json");
-        let mut profile: Profile = read_json(&profile_path).unwrap();
-        profile.protocols.retain(|id| id != "AP-FORK-002");
-        fs::write(&profile_path, json_text(&profile).unwrap()).unwrap();
+        for profile_path in source_files(&directory.0, "profiles", "json").unwrap() {
+            let mut profile: Profile = read_json(&profile_path).unwrap();
+            profile.protocols.retain(|id| id != "AP-SCOPE-001");
+            fs::write(&profile_path, json_text(&profile).unwrap()).unwrap();
+        }
 
         let retired = expected_index(&directory.0).unwrap();
         let record = retired
             .protocols
             .iter()
-            .find(|record| record.id == "AP-FORK-002")
+            .find(|record| record.id == "AP-SCOPE-001")
             .unwrap();
         assert_eq!(record.status, Some(ProtocolStatus::Retired));
         validate_version_transition(&active, &retired).unwrap();
         fs::write(&index_path, json_text(&retired).unwrap()).unwrap();
 
         validate_repository(&directory.0).unwrap();
-        profile.protocols.push("AP-FORK-002".into());
+        let profile_path = directory.0.join("profiles/greenfield.json");
+        let mut profile: Profile = read_json(&profile_path).unwrap();
+        profile.protocols.push("AP-SCOPE-001".into());
         fs::write(&profile_path, json_text(&profile).unwrap()).unwrap();
         assert_error(
             validate_repository(&directory.0),
@@ -1719,9 +1740,10 @@ mod tests {
 
         profile.protocols.pop();
         fs::write(&profile_path, json_text(&profile).unwrap()).unwrap();
+        let reactivated_version = retired_version + 1;
         let protocol = fs::read_to_string(&protocol_path).unwrap().replacen(
-            "version: 2\nstatus: retired\n",
-            "version: 3\n",
+            &format!("version: {retired_version}\nstatus: retired\n"),
+            &format!("version: {reactivated_version}\n"),
             1,
         );
         fs::write(&protocol_path, protocol).unwrap();
@@ -1729,16 +1751,17 @@ mod tests {
         fs::write(&index_path, json_text(&reactivated).unwrap()).unwrap();
         assert_error(
             validate_repository(&directory.0),
-            "active protocols are not included in any profile",
+            "must include AP-SCOPE-001",
         );
         assert_error(
             validate_version_transition(&retired, &reactivated),
             "cannot be reactivated",
         );
 
+        let invalid_status_version = reactivated_version + 1;
         let protocol = fs::read_to_string(&protocol_path).unwrap().replacen(
-            "version: 3\n",
-            "version: 4\nstatus: active\n",
+            &format!("version: {reactivated_version}\n"),
+            &format!("version: {invalid_status_version}\nstatus: active\n"),
             1,
         );
         fs::write(&protocol_path, protocol).unwrap();

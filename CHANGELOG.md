@@ -34,6 +34,8 @@
 
 ### Fixed
 
+- Let mandatory profile protocols follow the same retirement lifecycle, and
+  reject protocol IDs with empty `AREA` segments.
 - Reject explicit null review conditions or protocol statuses, year-zero
   exception dates, empty or option-like Git base revisions, and duplicate IDs
   in historical indexes.
