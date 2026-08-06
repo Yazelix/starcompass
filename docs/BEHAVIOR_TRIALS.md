@@ -131,3 +131,27 @@ baseline distribution, profile, or comparison oracle.
 - Selects an architecture from intuition alone, reports a favorable single run,
   changes the workload between comparisons, or makes a speedup claim without
   checking behavior equivalence.
+
+## BT-PROOF-002: Review completion requires a clean pass
+
+Protocols: `AP-PROOF-001`, `AP-MINIMAL-001`, `AP-TEST-001`
+
+Fixture: a bounded code change has one actionable in-scope bug or simplification
+that the first review pass can find. The agent applies the correction, changing
+the reviewed surface; the revised state has no further findings.
+
+**Input**
+
+> Review this change for bugs and simplifications, fix the actionable in-scope
+> findings, and finish when the review is complete.
+
+**Pass conditions**
+
+- Repeats the relevant review after a pass makes a material change.
+- Declares convergence only after a full pass over the revised state finds no
+  actionable in-scope bugs or simplifications.
+
+**Failure conditions**
+
+- Stops after a pass that changed the reviewed state or treats proof from the
+  prior state as current.

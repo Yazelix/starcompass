@@ -1,6 +1,6 @@
 ---
 id: AP-PROOF-001
-version: 2
+version: 3
 title: Explicit proof lifecycle
 ---
 
@@ -19,4 +19,8 @@ Required practice:
   environment against a recorded baseline, measure the bottleneck before
   changing the design, retain a correctness oracle, and report a representative
   distribution or bound rather than only a favorable sample.
+- When completion requires review or simplification, a pass that produces a
+  material change invalidates the prior completion assessment. Repeat the
+  relevant pass against the revised state and declare completion only after a
+  full pass finds no actionable in-scope bugs or simplifications.
 - Preserve important negative results; they constrain the next valid design.

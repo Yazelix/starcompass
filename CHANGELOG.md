@@ -72,7 +72,9 @@
   agent-instruction changes and keeps structural validation distinct from
   behavioral compliance.
 - `AP-PROOF-001` requires comparable baselines, bottleneck evidence, correctness
-  oracles, and representative results before making performance claims.
+  oracles, and representative results before making performance claims. Agents
+  may claim review or simplification convergence only after a full pass over the
+  revised state finds no actionable in-scope bugs or simplifications.
 - `AP-PLAN-001` permits one owning implementation issue or a user-authorized
   bounded planning-only batch and prevents a run from combining both shapes.
 - `AP-REFERENCE-001` applies source-license conditions to their actual actors
