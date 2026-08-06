@@ -10,7 +10,8 @@ It provides:
 - deterministic, self-contained `AGENTS.md` rendering;
 - exact source-commit, protocol-version, overlay, and exception records;
 - typed Rust source-backed and source-independent drift checks plus rendering;
-- a one-Bead maximum for each uninterrupted agent run;
+- one owning implementation Bead per run or an explicit bounded planning-only
+  batch;
 - two Codex skills dedicated only to applying and auditing the protocols; and
 - self-adoption of the `greenfield` profile through the ordinary consumer
   format.
@@ -41,6 +42,11 @@ position and later duplicates are ignored.
 restrictions that fits the user request and available evidence. It leaves
 reasonable future behavior unspecified unless the request or evidence requires
 a commitment.
+
+`AP-PLAN-001` keeps an implementation run on one owning issue. An explicit user
+request may authorize a bounded planning-only batch over a named or accepted
+issue set; that run may create, update, or close those records but cannot claim
+or implement work.
 
 `AP-REFERENCE-001` requires direct evidence and exact license interpretation.
 It distinguishes public-source inspection for ideas from copying, dependency
@@ -311,10 +317,10 @@ and lockfiles.
 
 | Surface | LOC |
 | --- | ---: |
-| Protocols and generated index | 653 |
+| Protocols and generated index | 660 |
 | Profiles | 104 |
 | Rust checker and package manifest | 1,347 |
 | Tests | 739 |
 | Enforcement skills | 175 |
-| Repository policy, docs, and licenses | 1,504 |
-| **Total** | **4,522** |
+| Repository policy, docs, and licenses | 1,515 |
+| **Total** | **4,540** |

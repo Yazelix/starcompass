@@ -121,6 +121,12 @@ decisions, constraints, acceptance evidence, and material failures aligned with
 the accepted result. Append-only audit records retain chronology when later
 work needs it as evidence.
 
+An implementation run binds to one owning issue and returns control before
+starting another. The user may authorize a bounded planning-only batch over a
+named or accepted issue set. A batch may create, update, or close those records.
+It cannot claim work, edit implementation, or combine planning with an
+implementation run. Unapproved findings remain reports for later user direction.
+
 Review corrections update the owning issue and the current task's unpublished
 commit. Agents refresh local SHA-pinned artifacts after amendment and add
 follow-up commits after publication or an external pin. A separate issue records

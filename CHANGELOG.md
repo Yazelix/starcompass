@@ -57,9 +57,8 @@
   across total system and lifecycle cost. Ponytail remains a fallible runtime
   bias and cannot justify preserving a wrong owner or merely minimizing the
   current diff.
-- `AP-PLAN-001` limits one uninterrupted agent run to one Bead, requires a stop
-  after its completion or handoff, and defers follow-up issue creation to a
-  later run.
+- `AP-PLAN-001` permits one owning implementation issue or a user-authorized
+  bounded planning-only batch and prevents a run from combining both shapes.
 - `AP-REFERENCE-001` applies source-license conditions to their actual actors
   and uses, distinguishes inspection from reuse, and prevents provider
   association from replacing required source evidence.

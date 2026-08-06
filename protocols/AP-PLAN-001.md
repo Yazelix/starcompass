@@ -1,6 +1,6 @@
 ---
 id: AP-PLAN-001
-version: 5
+version: 6
 title: Durable planning state
 ---
 
@@ -11,25 +11,32 @@ implementation methods belong to that issue.
 
 An agent run is one uninterrupted execution ending when control returns to the
 user, including automatic continuations. A run may inspect any planning state
-read-only, but it may create, claim, update, implement, or close at most one
-Bead or repository-designated equivalent issue.
+read-only. A run that writes planning state or implementation may use one of two
+issue-work shapes:
+
+1. Own at most one issue. The run may create, claim, update, implement, or close
+   that issue.
+2. Use a bounded planning-only batch with explicit user authorization over a
+   named or accepted issue set. The run may create, update, or close only that
+   set; it may not claim an issue or make implementation edits.
+
+Do not combine these shapes in one run.
 
 Required practice:
 
-- When work is tracked by a Bead, bind the run to that one owning issue before
-  its first issue write or implementation edit.
-- After the owning issue is complete, blocked, or handed off, stop and return
-  control to the user. Do not begin another issue, including work newly
-  unblocked by the completion.
-- Leave follow-up findings as reported findings for a later run. If issue
-  creation is the requested outcome, the one issue created is that run's owning
-  issue.
-- After review, fresh-eyes, simplification, or verification, update the owning
-  issue's editable fields to describe the accepted state instead of pass
+- Bind an implementation run to its one owning issue before its first issue
+  write or implementation edit.
+- After the owning implementation issue is complete, blocked, or handed off,
+  stop and return control to the user. Do not begin another issue, including
+  work newly unblocked by the completion.
+- Leave unapproved follow-up findings as reported findings. A planning-only
+  batch may include only its named or accepted issue set.
+- After review, fresh-eyes, simplification, or verification of an owning issue,
+  update its editable fields to describe the accepted state instead of pass
   chronology.
-- In a later run, create a separate issue only for a material finding outside
-  the prior owning scope or one worth scheduling on its own. Name it after the
-  outcome or finding.
+- Create a separate issue only for a material finding outside the prior owning
+  scope or one worth scheduling on its own. Outside an authorized planning-only
+  batch, defer creation to a later run. Name it after the outcome or finding.
 - Record the contract, decision boundary, dependencies, acceptance evidence,
   material negative results, and rejected alternatives that constrain later
   work.
