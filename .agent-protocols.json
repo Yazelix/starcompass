@@ -2,7 +2,7 @@
   "schema": 1,
   "source": {
     "repository": "https://github.com/luccahuguet/starcompass",
-    "commit": "ca29a346533a6ae77c8312f7d025513be48a25f9"
+    "commit": "f6df4d0867bb354b45792fa9823a277d22fe496e"
   },
   "profiles": [
     "greenfield"
