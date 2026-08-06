@@ -8,7 +8,7 @@ or `.agent-protocols.exceptions.json`, then render from the pinned source.
 ## Protocol import record
 
 - Source: `https://github.com/luccahuguet/starcompass`
-- Source commit: `f6cd9f15b01c114c8c4ab156631ffcace9885212`
+- Source commit: `87ac6419605a5ab3a00eb0197d6619d7e05237de`
 - Profiles: `greenfield`
 - Manifest: `.agent-protocols.json` (schema 1)
 
@@ -21,7 +21,7 @@ or `.agent-protocols.exceptions.json`, then render from the pinned source.
 | `AP-DEPENDENCY-001` | 1 | `a389ff9054708574c52ec5e5dd7fc3e2d13b125d2218c70062f50a86761981ca` |
 | `AP-OWNERSHIP-001` | 1 | `bdc09117f79b0d8dbe78e2dd8673a2463398aa31880fe27209fd6cc47f58bbf7` |
 | `AP-TEST-001` | 2 | `80ed9a1d3038c704a26ecf03525a85974ab8de3ddafa4aab2c2ce56e947bf00b` |
-| `AP-PROOF-001` | 2 | `66279555db18a04d4b934bc7ebe2953db442518cce64f8e352c04f233bb52849` |
+| `AP-PROOF-001` | 3 | `6d986bb67f310d9ff95fede9c354f6de37716c2b049db070e4cddca0f1357e86` |
 | `AP-PLAN-001` | 6 | `04b96c47978d49d2e6584f89626bca42b6cb39df537fa3e5abd6da0bdc2edfda` |
 | `AP-CI-001` | 1 | `78f1662259cd83f33d22ff4ddd0859ab0d4f704ba4f38756eef40a8b9b787bec` |
 | `AP-EXCEPTION-001` | 1 | `f66749229dbbc005e1c3103bfed86cf95169d7b32466c72fd8442e841cadb268` |
@@ -234,6 +234,10 @@ Required practice:
   environment against a recorded baseline, measure the bottleneck before
   changing the design, retain a correctness oracle, and report a representative
   distribution or bound rather than only a favorable sample.
+- When completion requires review or simplification, a pass that produces a
+  material change invalidates the prior completion assessment. Repeat the
+  relevant pass against the revised state and declare completion only after a
+  full pass finds no actionable in-scope bugs or simplifications.
 - Preserve important negative results; they constrain the next valid design.
 
 ### AP-PLAN-001 — Durable planning state

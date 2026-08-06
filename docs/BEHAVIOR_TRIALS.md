@@ -1,9 +1,9 @@
 # Protocol behavior trials
 
 Use these manual trials to exercise consequential agent instructions outside
-Starcompass's structural checks. Run each trial in a fresh session over a
-disposable fixture that imports the named protocols. Give the agent the fixture
-and the text under **Input**; keep the assessment rubric outside its context.
+Starcompass's structural checks. Build each disposable fixture from its
+**Fixture** summary. Give the agent only the fixture and **Input** text in a
+fresh session; withhold the written summary and assessment rubric.
 
 Record the trial ID and revision, fixture revision, imported protocol revisions,
 host and model, date, input, observation, and result. A result applies only to

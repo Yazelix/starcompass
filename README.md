@@ -301,6 +301,7 @@ src/main.rs                `starcompass` process boundary
 tests/                     focused contract tests
 skills/                    protocol-only Codex skills
 docs/DESIGN.md             architecture decisions and boundaries
+docs/BEHAVIOR_TRIALS.md    manual isolated agent-behavior cases
 .agent-protocols.local.md  Starcompass-specific policy input
 .agent-protocols.*.json    exact self-import and exception records
 AGENTS.md                  generated self-contained active policy
@@ -361,5 +362,5 @@ and lockfiles.
 | Rust checker and package manifest | 1,405 |
 | Tests | 826 |
 | Enforcement skills | 175 |
-| Repository policy, docs, and licenses | 1,772 |
-| **Total** | **4,967** |
+| Repository policy, docs, and licenses | 1,785 |
+| **Total** | **4,980** |
