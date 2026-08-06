@@ -1,6 +1,6 @@
 ---
 id: AP-CONTRACT-001
-version: 1
+version: 2
 title: Contract-driven changes
 ---
 
@@ -10,6 +10,10 @@ repositories need to cite them.
 
 Required practice:
 
+- Among contracts that fit the user request and available evidence, choose the one
+  with the fewest unsupported guarantees or restrictions. Leave reasonable
+  future behavior unspecified unless the request or evidence requires a
+  commitment.
 - Name the consumer, trigger, observable result, and important failure behavior.
 - Identify the current sources of truth and decide which one owner survives.
 - Choose the cheapest check that can falsify the contract.

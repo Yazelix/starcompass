@@ -51,6 +51,8 @@
 
 ### Changed
 
+- `AP-CONTRACT-001` selects the contract with the fewest unsupported guarantees
+  or restrictions and leaves reasonable future behavior unspecified.
 - `AP-MINIMAL-001` evaluates minimality after contract and ownership selection,
   across total system and lifecycle cost. Ponytail remains a fallible runtime
   bias and cannot justify preserving a wrong owner or merely minimizing the

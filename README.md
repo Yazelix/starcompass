@@ -37,6 +37,11 @@ pin and canonical protocol text.
 Profiles compose by ordered union: the first appearance of a protocol sets its
 position and later duplicates are ignored.
 
+`AP-CONTRACT-001` selects the contract with the fewest unsupported guarantees or
+restrictions that fits the user request and available evidence. It leaves
+reasonable future behavior unspecified unless the request or evidence requires
+a commitment.
+
 `AP-REFERENCE-001` requires direct evidence and exact license interpretation.
 It distinguishes public-source inspection for ideas from copying, dependency
 selection, adaptation, and redistribution, and it forbids treating an
@@ -306,10 +311,10 @@ and lockfiles.
 
 | Surface | LOC |
 | --- | ---: |
-| Protocols and generated index | 649 |
+| Protocols and generated index | 653 |
 | Profiles | 104 |
 | Rust checker and package manifest | 1,347 |
 | Tests | 739 |
 | Enforcement skills | 175 |
-| Repository policy, docs, and licenses | 1,493 |
-| **Total** | **4,507** |
+| Repository policy, docs, and licenses | 1,500 |
+| **Total** | **4,518** |
