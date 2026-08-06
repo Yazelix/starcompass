@@ -8,7 +8,7 @@ or `.agent-protocols.exceptions.json`, then render from the pinned source.
 ## Protocol import record
 
 - Source: `https://github.com/luccahuguet/starcompass`
-- Source commit: `3834e410ac4336fe36b6ccafdcbb142457d09422`
+- Source commit: `ee11b2fe6892450aa9373f4afcb037b83da752b0`
 - Profiles: `greenfield`
 - Manifest: `.agent-protocols.json` (schema 1)
 
@@ -25,7 +25,7 @@ or `.agent-protocols.exceptions.json`, then render from the pinned source.
 | `AP-PLAN-001` | 8 | `6f8acada188da990ef0c5d51e57d9da1190d2ff03cfb5d9be7f8922c27061b06` |
 | `AP-CI-001` | 3 | `c7cb65a81ce8434d02f2d19306bf93358f3624d0b77886bc91d4de93f7a779ba` |
 | `AP-EXCEPTION-001` | 2 | `2c4f00299922edac83286821af07ad485e5a630bca6acbbce918d87614abb395` |
-| `AP-GIT-001` | 4 | `d0256104641213289fd4628289689f9dacfbfb8c98f8428bba265590e1be6a95` |
+| `AP-GIT-001` | 5 | `f2c3254311de57a23a13aa382fe3285e65bb34e535ecd813d1be783ca79d4bf9` |
 
 ### Local exceptions
 
@@ -199,12 +199,12 @@ Repository history is shared user state. Inspect status and local policy;
 preserve unrelated or concurrent work and use the least destructive sufficient
 operation.
 
-Fold same-task corrections into its unpublished commit, then refresh dependent
-commits and generated artifacts. After a push, promotion, release, external pin,
-or other reliance point, add a commit. Never reset, discard, force-push, rewrite
-published history, or create a branch without authority. Verify the intended
-diff before commit and remote state after push. Roll back with a reviewed revert
-unless local policy says otherwise.
+Amend the unpublished task commit for same-task corrections; refresh downstream
+commits and generated artifacts. After external reliance (push, promotion,
+release, or pin), commit corrections separately. Never reset, discard,
+force-push, rewrite published history, or create a branch without authority.
+Verify intended diff before commit and remote state after push. Roll back with a
+reviewed revert unless local policy says otherwise.
 
 ## Repository-local rules
 
