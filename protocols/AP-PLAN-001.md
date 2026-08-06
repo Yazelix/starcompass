@@ -1,6 +1,6 @@
 ---
 id: AP-PLAN-001
-version: 8
+version: 9
 title: Durable planning state
 ---
 
@@ -8,9 +8,9 @@ Keep later-needed outcomes and constraints in the designated planning system or
 canonical docs. Issues represent chosen goals, decisions, material defects, or
 schedulable follow-ups; methods stay in their owning issue.
 
-A run ends when control returns, including after automatic continuations.
-Read-only planning inspection is unrestricted. Planning writes or implementation
-use one shape:
+A run includes automatic continuations and ends when control returns. Planning
+reads are unrestricted. A run that writes planning state or implementation uses
+one shape:
 
 1. Own at most one issue; create, claim, update, implement, or close only it.
 2. With explicit user authorization, create, update, or close a named or
