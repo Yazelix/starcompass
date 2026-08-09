@@ -61,6 +61,8 @@
 
 ### Changed
 
+- The canonical source repository is `Yazelix/starcompass`; existing imports
+  keep their exact commit identity while recording the organization-owned URL.
 - Compact wording keeps automatic continuations inside one run, binds
   implementation to its issue, specifies fork and secret behavior, retains
   deterministic failure tests, bounds slow-consumer impact, and separates

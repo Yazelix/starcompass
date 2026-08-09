@@ -9,7 +9,7 @@ use std::{
     process::Command,
 };
 
-const SOURCE_REPOSITORY: &str = "https://github.com/luccahuguet/starcompass";
+const SOURCE_REPOSITORY: &str = "https://github.com/Yazelix/starcompass";
 
 type Result<T> = std::result::Result<T, Error>;
 

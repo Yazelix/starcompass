@@ -64,7 +64,7 @@ fresh-session evidence. `AP-PROMOTION-001` owns ordered channel movement and
 requires the exact already-proved revision. Promotion cannot manufacture proof.
 
 The model adopts the reusable mechanism from Yazelix Nova's
-[`AGENTS.md`](https://github.com/luccahuguet/yazelix/blob/303d4bea457cf669035aabce8848b39c96287785/AGENTS.md):
+[`AGENTS.md`](https://github.com/Yazelix/nova/blob/303d4bea457cf669035aabce8848b39c96287785/AGENTS.md):
 one linear history, promotion-only accepted channels, exact-revision
 fast-forwards, fresh-session dogfood for interaction changes, and additive
 reverts that traverse the normal promotion path. Starcompass does not import
