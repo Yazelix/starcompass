@@ -1,8 +1,8 @@
 {
   "schema": 1,
   "source": {
-    "repository": "https://github.com/luccahuguet/starcompass",
-    "commit": "10e08a753087dd8ef6ffd89e72945a3f2c8bd5f6"
+    "repository": "https://github.com/Yazelix/starcompass",
+    "commit": "8810c4e8b00b005aec25e338f759dec27165efc2"
   },
   "profiles": [
     "greenfield"
