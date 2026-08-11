@@ -102,6 +102,14 @@ Under `AP-PROOF-001`, agents treat review and simplification completion as
 convergence over the accepted scope. A pass that makes a material change
 invalidates the prior assessment; completion requires a full pass over the
 revised state with no actionable in-scope bugs or simplifications.
+Durable proof keeps the relevant result rather than disposable paths or
+reproducible raw logs. An unchanged source candidate retains its complete-suite
+proof while metadata, documentation, or planning-only follow-ups receive their
+own focused checks.
+
+`AP-PLAN-001` keeps execution-baseline and reference-gate comments to changed
+identities, dirty state, mechanism decisions, stop decisions, and the first
+check instead of repeating current issue text.
 
 | Profile | Intended role | Specialized protocols |
 | --- | --- | --- |
@@ -369,10 +377,10 @@ and lockfiles.
 
 | Surface | LOC |
 | --- | ---: |
-| Protocols and generated index | 467 |
+| Protocols and generated index | 471 |
 | Profiles | 104 |
 | Rust checker and package manifest | 1,416 |
 | Tests | 898 |
 | Enforcement skills | 175 |
-| Repository policy, docs, and licenses | 1,684 |
-| **Total** | **4,744** |
+| Repository policy, docs, and licenses | 1,724 |
+| **Total** | **4,788** |

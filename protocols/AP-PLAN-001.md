@@ -1,31 +1,31 @@
 ---
 id: AP-PLAN-001
-version: 9
+version: 10
 title: Durable planning state
 ---
 
-Keep later-needed outcomes and constraints in the designated planning system or
-canonical docs. Issues represent chosen goals, decisions, material defects, or
-schedulable follow-ups; methods stay in their owning issue.
+Keep later-needed outcomes/constraints in planning or canonical docs. Issues
+hold chosen goals/decisions, material defects, or schedulable follow-ups;
+methods stay in owning issue.
 
-A run includes automatic continuations and ends when control returns. Planning
-reads are unrestricted. A run that writes planning state or implementation uses
-one shape:
+A run includes automatic continuations until control returns; reads are
+unrestricted. A writing run either:
 
-1. Own at most one issue; create, claim, update, implement, or close only it.
-2. With explicit user authorization, create, update, or close a named or
-   accepted planning-only batch; claim nothing and edit no implementation.
+1. Owns one issue at most; may create, claim, update, implement, or close it.
+2. With explicit user authorization, creates/updates/closes a named/accepted
+   planning-only batch; claims nothing and changes no implementation.
 
-Do not combine these shapes in one run.
+Never combine them.
 
-Bind implementation work to its issue before planning or code writes. When that
-issue completes, blocks, or hands off, return without starting another. Report
-unapproved findings; create separate issues only for material out-of-scope or
-independently schedulable work, and outside an authorized batch defer creation.
+Bind implementation to its issue before planning/code writes; return at
+completion, blocking, or handoff. Report unapproved findings; create separate
+issues only for material out-of-scope or independently schedulable work; defer
+them outside such batches.
 
-Keep editable fields at accepted current state after review, simplification, or
-verification; reserve append-only history for needed evidence. Preserve
-contracts, decisions, dependencies, acceptance evidence, material negative
-results and failures, constraining rejections, and approvals. Keep raw logs with
-their proof. Keep status honest, model only real prerequisites, and reconcile
-before handoff. Use the designated issue tool; never edit its storage directly.
+Keep fields current; append only evidence. Preserve contracts,
+decisions, dependencies, acceptance, material negatives/failures,
+constraining rejections, and approvals. Execution-baseline and reference-gate
+comments must not repeat issue text; record only changing identities, dirty
+state, adopted/rejected mechanisms, stop-condition decisions, and first
+check. Before handoff, keep status honest, model real prerequisites, reconcile,
+and use the issue tool; never edit storage.

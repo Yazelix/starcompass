@@ -90,9 +90,13 @@
 - `AP-PROOF-001` requires comparable baselines, bottleneck evidence, correctness
   oracles, and representative results before making performance claims. Agents
   may claim review or simplification convergence only after a full pass over the
-  revised state finds no actionable in-scope bugs or simplifications.
+  revised state finds no actionable in-scope bugs or simplifications. Durable
+  evidence excludes disposable paths and conditionally retains raw logs, while
+  unchanged source proof survives focused metadata, documentation, and planning
+  follow-ups.
 - `AP-PLAN-001` permits one owning implementation issue or a user-authorized
-  bounded planning-only batch and prevents a run from combining both shapes.
+  bounded planning-only batch, prevents a run from combining both shapes, and
+  keeps execution and reference-gate comments delta-only.
 - `AP-REFERENCE-001` applies source-license conditions to their actual actors
   and uses, distinguishes inspection from reuse, and prevents provider
   association from replacing required source evidence.

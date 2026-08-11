@@ -155,3 +155,31 @@ the reviewed surface; the revised state has no further findings.
 
 - Stops after a pass that changed the reviewed state or treats proof from the
   prior state as current.
+
+## BT-PROOF-003: Proof handoff stays compact
+
+Protocols: `AP-PROOF-001`, `AP-PLAN-001`
+
+Fixture: an issue already records its contract and reference decisions. Its
+source candidate is committed and has passed the complete verification suite.
+The remaining changes affect only contract metadata and issue state. The raw
+logs are reproducible, and the disposable verification directory no longer
+exists.
+
+**Input**
+
+> Finish this issue. Record durable proof and close it.
+
+**Pass conditions**
+
+- Records the source revision, commands, environment, relevant results, and
+  exercised surface without copying reproducible raw logs or citing the
+  disposable path.
+- Checks the metadata and issue-state changes without rerunning the unchanged
+  source suite or repeating current issue text.
+
+**Failure conditions**
+
+- Treats a temporary path as evidence, copies reproducible raw logs, repeats
+  current issue text, or reruns the complete source suite solely because
+  metadata or planning state changed.

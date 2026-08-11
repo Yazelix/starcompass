@@ -1,18 +1,22 @@
 ---
 id: AP-PROOF-001
-version: 4
+version: 5
 title: Explicit proof lifecycle
 ---
 
-Proof supports only its recorded command or observation, revision, environment,
-result, and exercised surface. Distinguish proposed, implemented, mechanically
-verified, dogfooded, accepted, and promoted states; rerun stale proof and never
-widen its claim.
+Proof records revision, command/observation, environment, result, exercised
+surface, and phase: proposed, implemented, mechanically verified, dogfooded,
+accepted, or promoted. Never widen it; rerun after material change. Run a
+complete suite once per materially unchanged candidate/environment. Docs,
+contract metadata, and planning-only follow-ups reuse it: recorded source
+commands are evidence, not a checklist; never rerun them.
 
-For performance claims, measure the bottleneck, compare the same representative
-workload and environment with a recorded baseline, retain a correctness oracle,
-and report a distribution or bound. Preserve constraining negative results.
+Keep raw logs for costly reproduction, disputes, performance proof, or lossy
+summaries; temporary paths are not evidence.
 
-A review or simplification pass that materially changes its subject invalidates
-completion. Repeat it on the revised state and declare convergence only after a
-full pass finds no actionable in-scope bugs or simplifications.
+Performance claims require bottleneck measurement, fixed representative
+workload/environment, baseline, correctness oracle, and distribution/bound.
+Preserve constraining negatives.
+
+Repeat review/simplification after changing its subject. Claim convergence
+only when a full pass finds no actionable in-scope bugs or simplifications.
