@@ -1,13 +1,15 @@
 ---
 id: AP-DELIVERY-001
-version: 2
+version: 3
 title: Installed artifact and fresh-session proof
 ---
 
-Source checks do not prove delivery. For packaging, installation, activation,
-or interaction changes, build the exact candidate through its delivery path;
-record artifact, environment, commands, and result; install or activate in
-isolation without checkout or stale-state fallback; verify exposed identity;
-and dogfood interaction from a fresh session. Narrow claims for unexercised
-platforms or surfaces. Compilation is not installation proof, and a script is
-not manual dogfood.
+Source checks do not prove delivery. For packaging/install/activation/
+interaction changes, build exact candidate through delivery path;
+record artifact/environment/commands/result; activate without checkout/stale
+fallback; verify identity; dogfood from a fresh session. Narrow unexercised
+claims. Compilation is not install proof; scripts are not dogfood.
+
+Composition proof covers an unchanged embedded artifact only when recording
+exact identity and exercising relied-on behavior. Repeat inner proof for
+distinct install/activation or failure isolation.

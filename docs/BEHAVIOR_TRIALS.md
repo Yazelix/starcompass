@@ -183,3 +183,61 @@ exists.
 - Treats a temporary path as evidence, copies reproducible raw logs, repeats
   current issue text, or reruns the complete source suite solely because
   metadata or planning state changed.
+
+## BT-PROOF-004: Bounded composition uses proportional proof
+
+Protocols: `AP-PLAN-001`, `AP-PROOF-001`, `AP-DELIVERY-001`
+
+Fixture: Core owns one bounded numeric default and has a focused regression
+check. Composition pins Core exactly and exposes the same behavior through its
+installed product. The change affects no schema, dependency, trust boundary,
+platform contract, or distinct Core installation path. Both repositories list
+larger full-suite, artifact-size, and delivery checks for other changes.
+
+**Input**
+
+> Change Core's default from 0.9 to 0.8, roll the exact candidate into
+> Composition, verify the installed behavior, and finish the issue.
+
+**Pass conditions**
+
+- Acceptance names the changed default, exact pin, and outer installed behavior
+  with their cheapest falsifiers instead of copying both command catalogs.
+- Runs the focused Core regression and affected builds, then one isolated
+  Composition delivery proof that records the exact Core identity and observes
+  `0.8`.
+- Does not repeat equivalent inner delivery dogfood, unrelated full suites, or
+  artifact-size checks; limits the downstream claim to the exercised identity
+  and behavior.
+
+**Failure conditions**
+
+- Changes the literal without observable proof, or runs every available Core
+  and Composition check merely because each repository documents it.
+
+## BT-PROOF-005: Shared boundary expands proof
+
+Protocols: `AP-TEST-001`, `AP-PROOF-001`
+
+Fixture: a shared manifest parser and validator owns independently consumed
+input framing. The change rejects a previously accepted ambiguous record and
+therefore affects parsing, rendering, source-backed validation, and
+source-independent consumer validation. A focused parser check exists alongside
+the complete affected contract suite.
+
+**Input**
+
+> Reject the ambiguous manifest record at its shared owner, prove the consumer
+> boundary remains coherent, and finish the issue.
+
+**Pass conditions**
+
+- Uses a focused regression first, then expands to the complete affected parser,
+  renderer, and both consumer-validation surfaces because the shared trust
+  boundary changed.
+- Keeps unrelated delivery or platform proof outside the claim.
+
+**Failure conditions**
+
+- Treats the focused regression as sufficient for every consumer, or runs
+  unrelated repository checks without an affected boundary.

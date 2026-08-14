@@ -1,31 +1,27 @@
 ---
 id: AP-PLAN-001
-version: 10
+version: 11
 title: Durable planning state
 ---
 
 Keep later-needed outcomes/constraints in planning or canonical docs. Issues
 hold chosen goals/decisions, material defects, or schedulable follow-ups;
-methods stay in owning issue.
+methods stay with their owner. Acceptance names outcomes/cheapest falsifiers,
+not command catalogs unless the boundary/transition needs them.
 
-A run includes automatic continuations until control returns; reads are
-unrestricted. A writing run either:
+A run includes continuations until control returns; reads are unrestricted. A
+writing run does exactly one:
 
-1. Owns one issue at most; may create, claim, update, implement, or close it.
-2. With explicit user authorization, creates/updates/closes a named/accepted
-   planning-only batch; claims nothing and changes no implementation.
+1. Owns at most one issue and may create/claim/update/implement/close it.
+2. With explicit user authorization, changes a named/accepted planning-only
+   batch; claims nothing and changes no implementation.
 
-Never combine them.
+Bind implementation before writes; return at completion, block, or handoff.
+Report unapproved findings; create issues only for material out-of-scope or
+schedulable work, deferred outside authorized batches.
 
-Bind implementation to its issue before planning/code writes; return at
-completion, blocking, or handoff. Report unapproved findings; create separate
-issues only for material out-of-scope or independently schedulable work; defer
-them outside such batches.
-
-Keep fields current; append only evidence. Preserve contracts,
-decisions, dependencies, acceptance, material negatives/failures,
-constraining rejections, and approvals. Execution-baseline and reference-gate
-comments must not repeat issue text; record only changing identities, dirty
-state, adopted/rejected mechanisms, stop-condition decisions, and first
-check. Before handoff, keep status honest, model real prerequisites, reconcile,
-and use the issue tool; never edit storage.
+Keep fields current; append only needed contracts, decisions, dependencies,
+acceptance, material failures/negatives, constraining rejections, and approvals.
+Baseline/reference comments record only changed identities, dirty state,
+mechanism/stop decisions, and first check. Keep status/prerequisites honest; use
+the issue tool, never its storage.

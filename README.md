@@ -93,7 +93,7 @@ generic wording, and load detailed references only when needed.
 `AP-TEST-001` uses representative isolated task trials for consequential
 changes to agent instructions, prompts, and skills. Structural validation of
 their schema, rendering, or discovery does not prove agent behavior or
-compliance. [`docs/BEHAVIOR_TRIALS.md`](docs/BEHAVIOR_TRIALS.md) provides six
+compliance. [`docs/BEHAVIOR_TRIALS.md`](docs/BEHAVIOR_TRIALS.md) provides eight
 host-independent cases. Operators give an agent only a case's input and fixture,
 use a separate assessment rubric, and record the exercised revision and
 environment without assigning a general compliance score.
@@ -105,11 +105,15 @@ revised state with no actionable in-scope bugs or simplifications.
 Durable proof keeps the relevant result rather than disposable paths or
 reproducible raw logs. An unchanged source candidate retains its complete-suite
 proof while metadata, documentation, or planning-only follow-ups receive their
-own focused checks.
+own focused checks. Proof targets the highest boundary that exercises the
+changed contract; broader or lower-layer suites require an affected owner,
+failure, trust boundary, distinct delivery semantics, or promotion gate.
 
 `AP-PLAN-001` keeps execution-baseline and reference-gate comments to changed
 identities, dirty state, mechanism decisions, stop decisions, and the first
-check instead of repeating current issue text.
+check instead of repeating current issue text. Acceptance criteria name
+observable outcomes and cheapest falsifiers rather than copying a repository's
+full verification catalog.
 
 | Profile | Intended role | Specialized protocols |
 | --- | --- | --- |
@@ -124,8 +128,11 @@ plus `release`. The release profile is opt-in: it does not create branches or
 prescribe channel names, cadence, packaging commands, or platform support.
 `AP-DELIVERY-001` proves the delivered artifact and fresh-session experience;
 `AP-PROMOTION-001` advances that exact proved revision through the
-consumer-declared channel order. Profile selection remains a product-scope
-decision; the renderer does not infer it from repository contents.
+consumer-declared channel order. One composed outer proof may cover an unchanged
+embedded artifact only for the exact identity and behavior it exercises;
+distinct installation or activation semantics retain their own proof. Profile
+selection remains a product-scope decision; the renderer does not infer it from
+repository contents.
 
 ## Consumer layout
 
@@ -377,10 +384,10 @@ and lockfiles.
 
 | Surface | LOC |
 | --- | ---: |
-| Protocols and generated index | 471 |
+| Protocols and generated index | 470 |
 | Profiles | 104 |
 | Rust checker and package manifest | 1,416 |
 | Tests | 898 |
 | Enforcement skills | 175 |
-| Repository policy, docs, and licenses | 1,726 |
-| **Total** | **4,790** |
+| Repository policy, docs, and licenses | 1,795 |
+| **Total** | **4,858** |

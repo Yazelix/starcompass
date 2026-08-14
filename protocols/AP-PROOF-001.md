@@ -1,22 +1,23 @@
 ---
 id: AP-PROOF-001
-version: 5
+version: 6
 title: Explicit proof lifecycle
 ---
 
-Proof records revision, command/observation, environment, result, exercised
-surface, and phase: proposed, implemented, mechanically verified, dogfooded,
-accepted, or promoted. Never widen it; rerun after material change. Run a
-complete suite once per materially unchanged candidate/environment. Docs,
-contract metadata, and planning-only follow-ups reuse it: recorded source
-commands are evidence, not a checklist; never rerun them.
+Proof records revision, command/observation, environment, result/surface,
+and phase: proposed, implemented, mechanically verified, dogfooded, accepted,
+or promoted. Never widen/reuse after material change.
 
-Keep raw logs for costly reproduction, disputes, performance proof, or lossy
-summaries; temporary paths are not evidence.
+Use the highest boundary exercising the changed contract. Add broader/lower
+suites only for changed owner, failure, trust, distinct delivery, or
+promotion—not availability, issue text, or prior phase. Exact downstream proof
+subsumes lower checks only for the identity/behavior exercised.
 
-Performance claims require bottleneck measurement, fixed representative
-workload/environment, baseline, correctness oracle, and distribution/bound.
-Preserve constraining negatives.
+Run a complete suite once per unchanged candidate/environment. Metadata/docs/
+planning follow-ups reuse it; commands are evidence, not a checklist. Keep logs
+only when reproduction is costly, disputed, performance-sensitive, or lossily
+summarized; temporary paths are not proof.
 
-Repeat review/simplification after changing its subject. Claim convergence
-only when a full pass finds no actionable in-scope bugs or simplifications.
+Performance claims need a measured bottleneck, fixed workload/environment,
+baseline, oracle, and distribution/bound; retain constraining negatives. Review
+changes require another pass; convergence needs a full clean pass.

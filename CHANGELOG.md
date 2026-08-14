@@ -93,10 +93,14 @@
   revised state finds no actionable in-scope bugs or simplifications. Durable
   evidence excludes disposable paths and conditionally retains raw logs, while
   unchanged source proof survives focused metadata, documentation, and planning
-  follow-ups.
+  follow-ups. Proof targets the highest sufficient changed boundary and expands
+  only for affected ownership, failure, trust, delivery, or promotion surfaces.
 - `AP-PLAN-001` permits one owning implementation issue or a user-authorized
   bounded planning-only batch, prevents a run from combining both shapes, and
-  keeps execution and reference-gate comments delta-only.
+  keeps execution and reference-gate comments delta-only. Acceptance records
+  observable outcomes and cheapest falsifiers instead of full command catalogs.
+- `AP-DELIVERY-001` lets one outer composed proof cover an unchanged embedded
+  artifact only for its recorded exact identity and exercised behavior.
 - `AP-REFERENCE-001` applies source-license conditions to their actual actors
   and uses, distinguishes inspection from reuse, and prevents provider
   association from replacing required source evidence.

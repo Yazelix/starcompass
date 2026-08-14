@@ -17,10 +17,10 @@
     },
     {
       "id": "AP-DELIVERY-001",
-      "version": 2,
+      "version": 3,
       "title": "Installed artifact and fresh-session proof",
       "path": "protocols/AP-DELIVERY-001.md",
-      "sha256": "71fb180c3dbb4dcc9349c2c647cfb933c2b79b7e507efb31ffb82fbd654fbcb7"
+      "sha256": "b6b0944ba57587204fd5f8f42daf69f7ff46486281056c99f2b403e8278366ee"
     },
     {
       "id": "AP-DEPENDENCY-001",
@@ -94,10 +94,10 @@
     },
     {
       "id": "AP-PLAN-001",
-      "version": 10,
+      "version": 11,
       "title": "Durable planning state",
       "path": "protocols/AP-PLAN-001.md",
-      "sha256": "2a4c4bf8c63dbff36ccbe642fa32408c130fa9a97217c424ca1bde6f43911bd8"
+      "sha256": "fcb7c8d2b99c6641a7cd1244072eda6230f1ccfc3a4aa47c29cf2525fcb1376d"
     },
     {
       "id": "AP-PORTABILITY-001",
@@ -115,10 +115,10 @@
     },
     {
       "id": "AP-PROOF-001",
-      "version": 5,
+      "version": 6,
       "title": "Explicit proof lifecycle",
       "path": "protocols/AP-PROOF-001.md",
-      "sha256": "2e8503daec35ded03c8ad5b1d76a86ce967537b553eed60ded5df5462eb8bd3a"
+      "sha256": "01fc3712fd369189b934b0503173e6a8963be64b7f18869abfaef3cca53866f7"
     },
     {
       "id": "AP-REFERENCE-001",
