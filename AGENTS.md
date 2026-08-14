@@ -8,7 +8,7 @@ or `.agent-protocols.exceptions.json`, then render from the pinned source.
 ## Protocol import record
 
 - Source: `https://github.com/Yazelix/starcompass`
-- Source commit: `694c4cd021cdf23cddd9cbb8303129d1a381c1c1`
+- Source commit: `fe1b71f24b50da43b1fdafef6c3e632837711fa6`
 - Profiles: `greenfield`
 - Manifest: `.agent-protocols.json` (schema 1)
 
@@ -21,8 +21,8 @@ or `.agent-protocols.exceptions.json`, then render from the pinned source.
 | `AP-DEPENDENCY-001` | 2 | `ded49add538b82de0a9c522bc8a34720f4ebbb47f39fc2f7ddb25e7aad1700d3` |
 | `AP-OWNERSHIP-001` | 2 | `d218a4e0625b659ec366284110bdfce02bd66cb229ab6ba07f2317092ea13053` |
 | `AP-TEST-001` | 3 | `58b5837cb679e958192b366bb15d6e34649f5a91ff9f4accdc7edb4ef5cdb873` |
-| `AP-PROOF-001` | 5 | `2e8503daec35ded03c8ad5b1d76a86ce967537b553eed60ded5df5462eb8bd3a` |
-| `AP-PLAN-001` | 10 | `2a4c4bf8c63dbff36ccbe642fa32408c130fa9a97217c424ca1bde6f43911bd8` |
+| `AP-PROOF-001` | 6 | `01fc3712fd369189b934b0503173e6a8963be64b7f18869abfaef3cca53866f7` |
+| `AP-PLAN-001` | 11 | `fcb7c8d2b99c6641a7cd1244072eda6230f1ccfc3a4aa47c29cf2525fcb1376d` |
 | `AP-CI-001` | 3 | `c7cb65a81ce8434d02f2d19306bf93358f3624d0b77886bc91d4de93f7a779ba` |
 | `AP-EXCEPTION-001` | 2 | `2c4f00299922edac83286821af07ad485e5a630bca6acbbce918d87614abb395` |
 | `AP-GIT-001` | 5 | `f2c3254311de57a23a13aa382fe3285e65bb34e535ecd813d1be783ca79d4bf9` |
@@ -136,50 +136,47 @@ contract.
 
 ### AP-PROOF-001 — Explicit proof lifecycle
 
-Proof records revision, command/observation, environment, result, exercised
-surface, and phase: proposed, implemented, mechanically verified, dogfooded,
-accepted, or promoted. Never widen it; rerun after material change. Run a
-complete suite once per materially unchanged candidate/environment. Docs,
-contract metadata, and planning-only follow-ups reuse it: recorded source
-commands are evidence, not a checklist; never rerun them.
+Proof records revision, command/observation, environment, result/surface,
+and phase: proposed, implemented, mechanically verified, dogfooded, accepted,
+or promoted. Never widen/reuse after material change.
 
-Keep raw logs for costly reproduction, disputes, performance proof, or lossy
-summaries; temporary paths are not evidence.
+Use the highest boundary exercising the changed contract. Add broader/lower
+suites only for changed owner, failure, trust, distinct delivery, or
+promotion—not availability, issue text, or prior phase. Exact downstream proof
+subsumes lower checks only for the identity/behavior exercised.
 
-Performance claims require bottleneck measurement, fixed representative
-workload/environment, baseline, correctness oracle, and distribution/bound.
-Preserve constraining negatives.
+Run a complete suite once per unchanged candidate/environment. Metadata/docs/
+planning follow-ups reuse it; commands are evidence, not a checklist. Keep logs
+only when reproduction is costly, disputed, performance-sensitive, or lossily
+summarized; temporary paths are not proof.
 
-Repeat review/simplification after changing its subject. Claim convergence
-only when a full pass finds no actionable in-scope bugs or simplifications.
+Performance claims need a measured bottleneck, fixed workload/environment,
+baseline, oracle, and distribution/bound; retain constraining negatives. Review
+changes require another pass; convergence needs a full clean pass.
 
 ### AP-PLAN-001 — Durable planning state
 
 Keep later-needed outcomes/constraints in planning or canonical docs. Issues
 hold chosen goals/decisions, material defects, or schedulable follow-ups;
-methods stay in owning issue.
+methods stay with their owner. Acceptance names outcomes/cheapest falsifiers,
+not command catalogs unless the boundary/transition needs them.
 
-A run includes automatic continuations until control returns; reads are
-unrestricted. A writing run either:
+A run includes continuations until control returns; reads are unrestricted. A
+writing run does exactly one:
 
-1. Owns one issue at most; may create, claim, update, implement, or close it.
-2. With explicit user authorization, creates/updates/closes a named/accepted
-   planning-only batch; claims nothing and changes no implementation.
+1. Owns at most one issue and may create/claim/update/implement/close it.
+2. With explicit user authorization, changes a named/accepted planning-only
+   batch; claims nothing and changes no implementation.
 
-Never combine them.
+Bind implementation before writes; return at completion, block, or handoff.
+Report unapproved findings; create issues only for material out-of-scope or
+schedulable work, deferred outside authorized batches.
 
-Bind implementation to its issue before planning/code writes; return at
-completion, blocking, or handoff. Report unapproved findings; create separate
-issues only for material out-of-scope or independently schedulable work; defer
-them outside such batches.
-
-Keep fields current; append only evidence. Preserve contracts,
-decisions, dependencies, acceptance, material negatives/failures,
-constraining rejections, and approvals. Execution-baseline and reference-gate
-comments must not repeat issue text; record only changing identities, dirty
-state, adopted/rejected mechanisms, stop-condition decisions, and first
-check. Before handoff, keep status honest, model real prerequisites, reconcile,
-and use the issue tool; never edit storage.
+Keep fields current; append only needed contracts, decisions, dependencies,
+acceptance, material failures/negatives, constraining rejections, and approvals.
+Baseline/reference comments record only changed identities, dirty state,
+mechanism/stop decisions, and first check. Keep status/prerequisites honest; use
+the issue tool, never its storage.
 
 ### AP-CI-001 — Bounded continuous integration
 
