@@ -135,6 +135,13 @@
       "sha256": "cae30f9031beea4f831a89445f35807f50618e0f2cb0432f3b94bec40da9aeef"
     },
     {
+      "id": "AP-SESSION-001",
+      "version": 1,
+      "title": "Session continuity across compaction",
+      "path": "protocols/AP-SESSION-001.md",
+      "sha256": "f8bdac637027895ec8d1ad4f192e13808d095a809d091b76eadadaf936b2a340"
+    },
+    {
       "id": "AP-TERMINAL-001",
       "version": 2,
       "title": "Terminal state authority",

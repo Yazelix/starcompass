@@ -4,7 +4,7 @@
 
 ### Added
 
-- Twenty-one stable-ID, individually versioned canonical protocols.
+- Twenty-two stable-ID, individually versioned canonical protocols.
 - Starcompass project and repository identity with stable protocol and
   consumer-format names.
 - Minimum-sufficient-implementation discipline with Ponytail as its adopted,
@@ -36,6 +36,10 @@
   and lists it in the root import record. Both checks reject a drifted,
   edited, or escaping directory file, and any root-to-directory chain above
   Codex's 32 KiB default.
+- `AP-SESSION-001` in the `greenfield` and `fork` profiles: treat context
+  compaction as lossy, record user decisions when they are made, reread the
+  active issue after compaction, and restart sessions at clean breaks rather
+  than compacting repeatedly.
 
 ### Fixed
 

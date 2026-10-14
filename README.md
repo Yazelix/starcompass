@@ -5,7 +5,7 @@ agent projects without turning `AGENTS.md` into a remote dependency.
 
 It provides:
 
-- 21 individually identified and versioned protocols;
+- 22 individually identified and versioned protocols;
 - five ordered, composable profiles;
 - deterministic, self-contained `AGENTS.md` rendering;
 - exact source-commit, protocol-version, overlay, and exception records;
@@ -405,10 +405,10 @@ and lockfiles.
 
 | Surface | LOC |
 | --- | ---: |
-| Protocols and generated index | 470 |
-| Profiles | 104 |
+| Protocols and generated index | 490 |
+| Profiles | 106 |
 | Rust checker and package manifest | 1,649 |
 | Tests | 1,081 |
 | Enforcement skills | 179 |
-| Repository policy, docs, and licenses | 1,820 |
-| **Total** | **5,303** |
+| Repository policy, docs, and licenses | 1,828 |
+| **Total** | **5,333** |
