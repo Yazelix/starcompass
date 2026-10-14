@@ -8,7 +8,7 @@ or `.agent-protocols.exceptions.json`, then render from the pinned source.
 ## Protocol import record
 
 - Source: `https://github.com/Yazelix/starcompass`
-- Source commit: `517a3d1e5971b5e3754f8c47bc0aa8f09d8f691f`
+- Source commit: `9058851fe3d317ccdcb7b8ad904a84f5d1a5c96c`
 - Profiles: `greenfield`
 - Manifest: `.agent-protocols.json` (schema 1)
 
@@ -23,6 +23,7 @@ or `.agent-protocols.exceptions.json`, then render from the pinned source.
 | `AP-TEST-001` | 3 | `58b5837cb679e958192b366bb15d6e34649f5a91ff9f4accdc7edb4ef5cdb873` |
 | `AP-PROOF-001` | 6 | `01fc3712fd369189b934b0503173e6a8963be64b7f18869abfaef3cca53866f7` |
 | `AP-PLAN-001` | 11 | `fcb7c8d2b99c6641a7cd1244072eda6230f1ccfc3a4aa47c29cf2525fcb1376d` |
+| `AP-SESSION-001` | 1 | `f8bdac637027895ec8d1ad4f192e13808d095a809d091b76eadadaf936b2a340` |
 | `AP-CI-001` | 3 | `c7cb65a81ce8434d02f2d19306bf93358f3624d0b77886bc91d4de93f7a779ba` |
 | `AP-EXCEPTION-001` | 2 | `2c4f00299922edac83286821af07ad485e5a630bca6acbbce918d87614abb395` |
 | `AP-GIT-001` | 5 | `f2c3254311de57a23a13aa382fe3285e65bb34e535ecd813d1be783ca79d4bf9` |
@@ -177,6 +178,16 @@ acceptance, material failures/negatives, constraining rejections, and approvals.
 Baseline/reference comments record only changed identities, dirty state,
 mechanism/stop decisions, and first check. Keep status/prerequisites honest; use
 the issue tool, never its storage.
+
+### AP-SESSION-001 — Session continuity across compaction
+
+Treat context compaction as lossy. Write each user decision to its durable
+owner when it is made, and reread the active issue after any compaction. Once
+a session has compacted, start the next issue in a fresh session; within an
+issue, a second compaction or any sign of lost context triggers a handoff
+comment (state, next step, open decisions) and a new session. Prefer a
+clean-break restart to compaction, and start a large issue fresh when most of
+the context is already used.
 
 ### AP-CI-001 — Bounded continuous integration
 

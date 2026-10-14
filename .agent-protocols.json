@@ -2,7 +2,7 @@
   "schema": 1,
   "source": {
     "repository": "https://github.com/Yazelix/starcompass",
-    "commit": "517a3d1e5971b5e3754f8c47bc0aa8f09d8f691f"
+    "commit": "9058851fe3d317ccdcb7b8ad904a84f5d1a5c96c"
   },
   "profiles": [
     "greenfield"
@@ -52,6 +52,11 @@
       "id": "AP-PLAN-001",
       "version": 11,
       "sha256": "fcb7c8d2b99c6641a7cd1244072eda6230f1ccfc3a4aa47c29cf2525fcb1376d"
+    },
+    {
+      "id": "AP-SESSION-001",
+      "version": 1,
+      "sha256": "f8bdac637027895ec8d1ad4f192e13808d095a809d091b76eadadaf936b2a340"
     },
     {
       "id": "AP-CI-001",
