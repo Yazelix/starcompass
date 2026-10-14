@@ -6,3 +6,7 @@ __pycache__/
 
 # bv (beads viewer) local config and caches
 .bv/
+# br doctor per-run artifacts
+.doctor/
+# br 0.7.2 quarantined WAL indexes (local recovery artifacts)
+.beads/.br-wal-index-*/
