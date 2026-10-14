@@ -31,6 +31,11 @@
   exception, generated import-record, and repository-local-rule agreement.
 - Public source distribution under either the MIT or Apache-2.0 license, with
   repository and package-discovery metadata.
+- Directory-local instruction files: `render --nested DIR` generates
+  `DIR/AGENTS.md` from that directory's overlay, records it in the manifest,
+  and lists it in the root import record. Both checks reject a drifted,
+  edited, or escaping directory file, and any root-to-directory chain above
+  Codex's 32 KiB default.
 
 ### Fixed
 

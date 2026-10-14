@@ -67,6 +67,10 @@ Repeat `--profile` in the chosen order when roles compose, such as
 `--profile greenfield --profile terminal-engine`. The renderer de-duplicates
 protocol IDs while preserving the first profile's order.
 
+When a subdirectory needs its own rules, add `--nested <dir>` for each one, and
+keep that directory's rules in `<dir>/.agent-protocols.local.md`. Starcompass
+renders `<dir>/AGENTS.md` from it. Never hand-write a directory `AGENTS.md`.
+
 Read the full rendered `AGENTS.md`. Verify that its import record contains the
 expected source commit, ordered profiles, protocol IDs and versions, and every
 exception.

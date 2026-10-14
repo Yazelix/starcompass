@@ -45,6 +45,13 @@ suffix, the complete instructions remain within 30,720 bytes. These budgets
 leave room under Codex's default 32 KiB project-document loader limit without
 remote includes or consumer-specific profile forks.
 
+A consumer can also declare directories whose agents need extra local rules,
+such as subsystems in a monorepo. Codex loads `AGENTS.md` files from the Git
+root down to the working directory, so each directory file carries only its
+local rules and never repeats the canonical import. Checks reject a
+root-to-directory chain above Codex's default 32,768-byte
+`project_doc_max_bytes`, beyond which Codex stops adding files.
+
 Protocol IDs remain reserved after retirement. Active protocols must appear in
 at least one profile. A retired protocol stays in `protocols/` and the generated
 index with its retained source and history, but no profile may reference it.
@@ -142,6 +149,8 @@ repository contents.
 | `.agent-protocols.exceptions.json` | Consumer | Explicit approved changes to imported rules, including an empty list when none exist |
 | `.agent-protocols.json` | Renderer | Exact source, profile, protocol, exception, and overlay record |
 | `AGENTS.md` | Renderer | Self-contained instructions read by coding agents |
+| `<dir>/.agent-protocols.local.md` | Consumer | Optional rules for one declared directory |
+| `<dir>/AGENTS.md` | Renderer | That directory's generated local rules, read after the root file |
 
 Do not hand-edit the generated manifest or `AGENTS.md`. Change the local overlay
 or exception input and render again. During first adoption, preserve every rule
@@ -218,8 +227,14 @@ cargo run --locked --quiet -- render \
   --agents-out /path/to/consumer/AGENTS.md
 ```
 
-Only `--profile` may be repeated. Other command options are singular; the CLI
-rejects duplicates before reading or writing files.
+Only `--profile` and `--nested` may be repeated. Other command options are
+singular; the CLI rejects duplicates before reading or writing files.
+
+Add `--nested DIR` for each directory with local rules. `DIR` is relative to
+the directory of `--agents-out`, written as plain directory names. Render reads
+`DIR/.agent-protocols.local.md`, writes `DIR/AGENTS.md`, records each directory
+and overlay digest in the manifest, and lists the directories in the root
+import record. Without `--nested`, every output is unchanged.
 
 Check the consumer using a Starcompass checkout at the exact commit pinned
 in its manifest when the complete source-backed proof is required:
@@ -244,10 +259,12 @@ starcompass check-consumer \
 ```
 
 `check-consumer` validates manifest structure, overlay hashing, exception
-parity, the generated import record, and the complete repository-local suffix.
-It treats the canonical protocol section as opaque and reports that it did not
-verify canonical prose or manifest protocol digests against source. It does not
-accept `--root`.
+parity, the generated import record, the complete repository-local suffix, and
+every declared directory file byte for byte, since those files contain no
+canonical prose. Both checks find directories relative to the root
+`AGENTS.md`. `check-consumer` treats the canonical protocol section as opaque
+and reports that it did not verify canonical prose or manifest protocol digests
+against source. It does not accept `--root`.
 
 `validate` and `index` can run during source development. `render` and `check`
 refuse a dirty protocol, profile, or checker source because an uncommitted change
@@ -271,7 +288,11 @@ The source-independent `check-consumer` command rejects:
 - malformed manifest, source, profile, protocol, digest, or exception records;
 - overlay or exception-input drift from the manifest;
 - generated source, commit, profile, schema, import-table, or local-rule drift;
-- an empty canonical protocol section.
+- an empty canonical protocol section;
+- a declared directory that is not a normalized plain relative path, or is
+  unsorted or duplicated, rejected before any of its files are read;
+- a missing, drifted, or edited directory overlay or `AGENTS.md`;
+- a root-to-directory chain above 32,768 bytes.
 
 The source-backed `check` command composes that proof with the pinned checkout
 and additionally rejects:
@@ -386,8 +407,8 @@ and lockfiles.
 | --- | ---: |
 | Protocols and generated index | 470 |
 | Profiles | 104 |
-| Rust checker and package manifest | 1,416 |
-| Tests | 898 |
-| Enforcement skills | 175 |
-| Repository policy, docs, and licenses | 1,794 |
-| **Total** | **4,857** |
+| Rust checker and package manifest | 1,649 |
+| Tests | 1,081 |
+| Enforcement skills | 179 |
+| Repository policy, docs, and licenses | 1,820 |
+| **Total** | **5,303** |

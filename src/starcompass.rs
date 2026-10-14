@@ -10,6 +10,10 @@ use std::{
 };
 
 const SOURCE_REPOSITORY: &str = "https://github.com/Yazelix/starcompass";
+const LOCAL_OVERLAY: &str = ".agent-protocols.local.md";
+/// Codex's default `project_doc_max_bytes`: it stops adding instruction files
+/// on the root-to-directory chain once their combined size reaches this limit.
+const INSTRUCTION_CHAIN_LIMIT: usize = 32 * 1024;
 
 type Result<T> = std::result::Result<T, Error>;
 
@@ -142,6 +146,16 @@ struct Manifest {
     protocols: Vec<ImportRecord>,
     exceptions: Vec<Exception>,
     overlay: Overlay,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    nested: Vec<Nested>,
+}
+
+/// A directory whose generated `AGENTS.md` adds local rules to the root import.
+#[derive(Clone, Debug, Deserialize, PartialEq, Eq, Serialize)]
+#[serde(deny_unknown_fields)]
+struct Nested {
+    path: String,
+    sha256: String,
 }
 
 #[derive(Clone, Debug, Deserialize, PartialEq, Eq, Serialize)]
@@ -662,7 +676,8 @@ fn assemble_import(
     exceptions_document: &ExceptionsDocument,
     source_repository: &str,
     source_commit: &str,
-) -> Result<(Manifest, String)> {
+    directories: Vec<(String, String)>,
+) -> Result<(Manifest, String, Vec<NestedFiles>)> {
     let (protocols, profiles) = validate_repository(root)?;
     if profile_names.is_empty()
         || profile_names.iter().any(|name| !valid_inline_code(name))
@@ -704,7 +719,7 @@ fn assemble_import(
         }
     }
     validate_exceptions(exceptions_document, &seen)?;
-    let manifest = Manifest {
+    let mut manifest = Manifest {
         schema: 1,
         source: Source {
             repository: source_repository.into(),
@@ -723,9 +738,62 @@ fn assemble_import(
         overlay: Overlay {
             sha256: digest(overlay.as_bytes()),
         },
+        nested: Vec::new(),
     };
+    let files = nest(&mut manifest, directories);
     let agents = render_agents(&manifest, &selected, overlay);
-    Ok((manifest, agents))
+    Ok((manifest, agents, files))
+}
+
+/// One directory's overlay and generated `AGENTS.md`.
+#[derive(Clone, Debug, PartialEq, Eq)]
+struct NestedFiles {
+    path: String,
+    overlay: String,
+    agents: String,
+}
+
+/// Normalizes a consumer directory to plain relative names joined by `/`.
+fn nested_path(value: &str) -> Result<String> {
+    let invalid = || {
+        Error::new(format!(
+            "nested directory must be a relative path of plain directory names without backticks or line breaks: {value:?}"
+        ))
+    };
+    let mut names = Vec::new();
+    for component in Path::new(value).components() {
+        match component {
+            Component::Normal(name) => names.push(name.to_str().ok_or_else(invalid)?),
+            Component::CurDir if !names.is_empty() => {}
+            _ => return Err(invalid()),
+        }
+    }
+    let path = names.join("/");
+    if names.is_empty() || !valid_inline_code(&path) {
+        return Err(invalid());
+    }
+    Ok(path)
+}
+
+/// Records sorted directory overlays in the manifest and renders their files.
+fn nest(manifest: &mut Manifest, directories: Vec<(String, String)>) -> Vec<NestedFiles> {
+    let mut files = directories
+        .into_iter()
+        .map(|(path, overlay)| NestedFiles {
+            agents: render_nested_agents(&path, &overlay),
+            path,
+            overlay,
+        })
+        .collect::<Vec<_>>();
+    files.sort_by(|left, right| left.path.cmp(&right.path));
+    manifest.nested = files
+        .iter()
+        .map(|file| Nested {
+            path: file.path.clone(),
+            sha256: digest(file.overlay.as_bytes()),
+        })
+        .collect();
+    files
 }
 
 fn markdown_text(value: &str) -> String {
@@ -758,10 +826,23 @@ fn render_import_record(manifest: &Manifest) -> String {
                 .join(", ")
         ),
         "- Manifest: `.agent-protocols.json` (schema 1)".into(),
+    ];
+    if !manifest.nested.is_empty() {
+        lines.push(format!(
+            "- Directory rules: {}; read a directory's `AGENTS.md` before changing files under it.",
+            manifest
+                .nested
+                .iter()
+                .map(|entry| format!("`{}/`", entry.path))
+                .collect::<Vec<_>>()
+                .join(", ")
+        ));
+    }
+    lines.extend([
         String::new(),
         "| Protocol | Version | SHA-256 |".into(),
         "| --- | ---: | --- |".into(),
-    ];
+    ]);
     for protocol in &manifest.protocols {
         lines.push(format!(
             "| `{}` | {} | `{}` |",
@@ -829,6 +910,86 @@ fn render_agents(manifest: &Manifest, protocols: &[&Protocol], overlay: &str) ->
     }
     output.push_str(&render_local_rules(overlay));
     output
+}
+
+fn render_nested_agents(path: &str, overlay: &str) -> String {
+    let local = match markdown_content(overlay) {
+        "" => "No additional local rules.",
+        local => local,
+    };
+    format!(
+        "# Agent Guidelines for `{path}/`\n\n\
+         These directory-local rules add to the repository root `AGENTS.md`, which\n\
+         holds the protocol import and the repository-wide rules. Do not edit this\n\
+         generated file directly. Edit `.agent-protocols.local.md` in this directory,\n\
+         then render from the pinned source.\n\n\
+         {local}\n"
+    )
+}
+
+/// Reads each manifest directory's files after rejecting paths that are not
+/// normalized plain relative names, so a manifest cannot escape the consumer.
+fn read_nested(base: &Path, manifest: &Manifest) -> Result<Vec<NestedFiles>> {
+    manifest
+        .nested
+        .iter()
+        .map(|entry| {
+            if nested_path(&entry.path)? != entry.path {
+                return Err(Error::new(format!(
+                    "nested directory {:?} must be written in normalized form",
+                    entry.path
+                )));
+            }
+            let directory = base.join(&entry.path);
+            Ok(NestedFiles {
+                path: entry.path.clone(),
+                overlay: read_text(&directory.join(LOCAL_OVERLAY))?,
+                agents: read_text(&directory.join("AGENTS.md"))?,
+            })
+        })
+        .collect()
+}
+
+fn validate_nested(manifest: &Manifest, agents: &str, files: &[NestedFiles]) -> Result<()> {
+    if manifest
+        .nested
+        .windows(2)
+        .any(|pair| pair[0].path >= pair[1].path)
+    {
+        return Err(Error::new("nested directories must be sorted and unique"));
+    }
+    for (entry, file) in manifest.nested.iter().zip(files) {
+        if entry.sha256 != digest(file.overlay.as_bytes()) {
+            return Err(Error::new(format!(
+                "{}/{LOCAL_OVERLAY} overlay drifted from the import manifest",
+                file.path
+            )));
+        }
+        if file.agents != render_nested_agents(&file.path, &file.overlay) {
+            return Err(Error::new(format!(
+                "{}/AGENTS.md drifted from its overlay",
+                file.path
+            )));
+        }
+    }
+    for file in files {
+        let total = agents.len()
+            + files
+                .iter()
+                .filter(|ancestor| {
+                    file.path == ancestor.path
+                        || file.path.starts_with(&format!("{}/", ancestor.path))
+                })
+                .map(|ancestor| 2 + ancestor.agents.len())
+                .sum::<usize>();
+        if total > INSTRUCTION_CHAIN_LIMIT {
+            return Err(Error::new(format!(
+                "instructions loaded in {}/ total {total} bytes, above the {INSTRUCTION_CHAIN_LIMIT}-byte default Codex project-document limit",
+                file.path
+            )));
+        }
+    }
+    Ok(())
 }
 
 fn valid_lower_hex(value: &str, length: usize) -> bool {
@@ -942,6 +1103,7 @@ fn validate_source_import(
     root: &Path,
     manifest: &Manifest,
     overlay: &str,
+    nested: &[NestedFiles],
     agents: &str,
     source_commit: &str,
 ) -> Result<()> {
@@ -955,13 +1117,17 @@ fn validate_source_import(
         schema: 1,
         exceptions: manifest.exceptions.clone(),
     };
-    let (wanted, wanted_agents) = assemble_import(
+    let (wanted, wanted_agents, _) = assemble_import(
         root,
         &manifest.profiles,
         overlay,
         &exceptions,
         &manifest.source.repository,
         &manifest.source.commit,
+        nested
+            .iter()
+            .map(|file| (file.path.clone(), file.overlay.clone()))
+            .collect(),
     )?;
     if manifest != &wanted {
         return Err(Error::new(
@@ -1128,6 +1294,20 @@ fn command_version_check(root: &Path, base: &str) -> Result<String> {
     ))
 }
 
+/// Directories resolve relative to the root `AGENTS.md`.
+fn consumer_base(agents_path: &Path) -> &Path {
+    agents_path.parent().unwrap_or(Path::new(""))
+}
+
+fn directory_files(count: usize) -> String {
+    match count {
+        0 => String::new(),
+        1 => ", with 1 directory file".into(),
+        count => format!(", with {count} directory files"),
+    }
+}
+
+#[allow(clippy::too_many_arguments)]
 fn command_render(
     root: &Path,
     profiles: &[String],
@@ -1135,26 +1315,65 @@ fn command_render(
     exceptions_path: &Path,
     manifest_path: &Path,
     agents_path: &Path,
+    nested: &[String],
     source_repository: &str,
 ) -> Result<String> {
-    require_distinct_paths([overlay_path, exceptions_path, manifest_path, agents_path])?;
+    let mut directories = BTreeSet::new();
+    for value in nested {
+        let path = nested_path(value)?;
+        if !directories.insert(path.clone()) {
+            return Err(Error::new(format!(
+                "nested directory {path} is listed more than once"
+            )));
+        }
+    }
+    let base = consumer_base(agents_path);
+    let nested_paths = directories
+        .iter()
+        .map(|path| {
+            (
+                base.join(path).join(LOCAL_OVERLAY),
+                base.join(path).join("AGENTS.md"),
+            )
+        })
+        .collect::<Vec<_>>();
+    require_distinct_paths(
+        [overlay_path, exceptions_path, manifest_path, agents_path]
+            .into_iter()
+            .chain(
+                nested_paths
+                    .iter()
+                    .flat_map(|(input, output)| [input.as_path(), output.as_path()]),
+            ),
+    )?;
     require_clean_source(root)?;
     let overlay = read_text(overlay_path)?;
     let exceptions = read_json(exceptions_path)?;
-    let (manifest, agents) = assemble_import(
+    let nested_overlays = directories
+        .into_iter()
+        .zip(&nested_paths)
+        .map(|(path, (input, _))| Ok((path, read_text(input)?)))
+        .collect::<Result<Vec<_>>>()?;
+    let (manifest, agents, files) = assemble_import(
         root,
         profiles,
         &overlay,
         &exceptions,
         source_repository,
         &source_head(root)?,
+        nested_overlays,
     )?;
+    validate_nested(&manifest, &agents, &files)?;
+    for ((_, output), file) in nested_paths.iter().zip(&files) {
+        atomic_write(output, &file.agents)?;
+    }
     atomic_write(manifest_path, &json_text(&manifest)?)?;
     atomic_write(agents_path, &agents)?;
     Ok(format!(
-        "wrote {} and {}",
+        "wrote {} and {}{}",
         manifest_path.display(),
-        agents_path.display()
+        agents_path.display(),
+        directory_files(files.len())
     ))
 }
 
@@ -1169,13 +1388,23 @@ fn command_check(
     let exceptions: ExceptionsDocument = read_json(exceptions_path)?;
     let manifest: Manifest = read_json(manifest_path)?;
     let agents = read_text(agents_path)?;
+    let nested = read_nested(consumer_base(agents_path), &manifest)?;
     validate_consumer_import(&manifest, &overlay, &exceptions, &agents)?;
+    validate_nested(&manifest, &agents, &nested)?;
     require_clean_source(root)?;
-    validate_source_import(root, &manifest, &overlay, &agents, &source_head(root)?)?;
+    validate_source_import(
+        root,
+        &manifest,
+        &overlay,
+        &nested,
+        &agents,
+        &source_head(root)?,
+    )?;
     Ok(format!(
-        "valid: {} matches {}",
+        "valid: {} matches {}{}",
         agents_path.display(),
-        manifest_path.display()
+        manifest_path.display(),
+        directory_files(nested.len())
     ))
 }
 
@@ -1189,11 +1418,13 @@ fn command_check_consumer(
     let exceptions: ExceptionsDocument = read_json(exceptions_path)?;
     let manifest: Manifest = read_json(manifest_path)?;
     let agents = read_text(agents_path)?;
+    let nested = read_nested(consumer_base(agents_path), &manifest)?;
     validate_consumer_import(&manifest, &overlay, &exceptions, &agents)?;
-    Ok(
-        "valid: consumer files agree; canonical protocol prose and manifest protocol digests were not verified against source"
-            .into(),
-    )
+    validate_nested(&manifest, &agents, &nested)?;
+    Ok(format!(
+        "valid: consumer files agree{}; canonical protocol prose and manifest protocol digests were not verified against source",
+        directory_files(nested.len())
+    ))
 }
 
 fn parse_root(arguments: &mut Vec<String>) -> Result<PathBuf> {
@@ -1353,6 +1584,7 @@ fn run_inner(mut arguments: Vec<String>) -> Result<String> {
             let exceptions = PathBuf::from(require_option(&mut arguments, "--exceptions")?);
             let manifest = PathBuf::from(require_option(&mut arguments, "--manifest-out")?);
             let agents = PathBuf::from(require_option(&mut arguments, "--agents-out")?);
+            let nested = take_options(&mut arguments, "--nested")?;
             let repository = take_option(&mut arguments, "--source-repository")?
                 .unwrap_or_else(|| SOURCE_REPOSITORY.into());
             reject_extra(&arguments)?;
@@ -1363,6 +1595,7 @@ fn run_inner(mut arguments: Vec<String>) -> Result<String> {
                 &exceptions,
                 &manifest,
                 &agents,
+                &nested,
                 &repository,
             )
         }
@@ -1428,6 +1661,26 @@ mod tests {
             let entry = entry.unwrap();
             fs::copy(entry.path(), destination.join(entry.file_name())).unwrap();
         }
+    }
+
+    fn assemble_root(
+        root: &Path,
+        profile_names: &[String],
+        overlay: &str,
+        exceptions_document: &ExceptionsDocument,
+        source_repository: &str,
+        source_commit: &str,
+    ) -> Result<(Manifest, String)> {
+        assemble_import(
+            root,
+            profile_names,
+            overlay,
+            exceptions_document,
+            source_repository,
+            source_commit,
+            Vec::new(),
+        )
+        .map(|(manifest, agents, _)| (manifest, agents))
     }
 
     fn exception(protocol: &str, scope: &str) -> Exception {
@@ -1511,7 +1764,7 @@ mod tests {
         );
         for profile in profiles.keys() {
             let names = [profile.clone()];
-            let first = assemble_import(
+            let first = assemble_root(
                 &root(),
                 &names,
                 "Local truth.\n",
@@ -1520,7 +1773,7 @@ mod tests {
                 COMMIT,
             )
             .unwrap();
-            let second = assemble_import(
+            let second = assemble_root(
                 &root(),
                 &names,
                 "Local truth.\n",
@@ -1554,7 +1807,7 @@ mod tests {
             (SOURCE_REPOSITORY, vec!["greenfield`\n\n## Injected".into()]),
         ] {
             assert!(
-                assemble_import(
+                assemble_root(
                     &root(),
                     &profiles,
                     "Local truth.\n",
@@ -1576,7 +1829,7 @@ mod tests {
         let (_, profiles) = validate_repository(&root()).unwrap();
         let local_rules = render_local_rules("");
         for profile in profiles.keys() {
-            let (_, agents) = assemble_import(
+            let (_, agents) = assemble_root(
                 &root(),
                 std::slice::from_ref(profile),
                 "",
@@ -1592,7 +1845,7 @@ mod tests {
             );
         }
         let selected = vec!["greenfield".into(), "terminal-engine".into()];
-        let (_, agents) = assemble_import(
+        let (_, agents) = assemble_root(
             &root(),
             &selected,
             "",
@@ -1611,7 +1864,7 @@ mod tests {
 
     #[test]
     fn release_requires_delivery_before_promotion() {
-        let (manifest, agents) = assemble_import(
+        let (manifest, agents) = assemble_root(
             &root(),
             &["release".into()],
             "Local truth.\n",
@@ -1642,7 +1895,7 @@ mod tests {
         };
         document.exceptions[0].reason = "Recorded\r\nexception.".into();
         document.exceptions[0].review_condition = Some("Review later.\r\n".into());
-        let (manifest, agents) = assemble_import(
+        let (manifest, agents) = assemble_root(
             &root(),
             &["greenfield".into()],
             "Local truth.\n",
@@ -1678,7 +1931,7 @@ mod tests {
             exceptions: vec![exception("AP-TERMINAL-001", "all")],
         };
         assert!(
-            assemble_import(
+            assemble_root(
                 &root(),
                 &["greenfield".into()],
                 "Local truth.\n",
@@ -1937,6 +2190,7 @@ mod tests {
             &exceptions,
             &alias,
             &agents,
+            &[],
             SOURCE_REPOSITORY,
         )
         .unwrap_err();
@@ -1954,7 +2208,7 @@ mod tests {
             schema: 1,
             exceptions: Vec::new(),
         };
-        let (manifest, agents) = assemble_import(
+        let (manifest, agents) = assemble_root(
             &root(),
             &["greenfield".into()],
             "Local truth.\n",
@@ -1964,7 +2218,7 @@ mod tests {
         )
         .unwrap();
         validate_consumer_import(&manifest, "Local truth.\n", &empty, &agents).unwrap();
-        validate_source_import(&root(), &manifest, "Local truth.\n", &agents, COMMIT).unwrap();
+        validate_source_import(&root(), &manifest, "Local truth.\n", &[], &agents, COMMIT).unwrap();
 
         assert!(
             validate_consumer_import(
@@ -1988,6 +2242,7 @@ mod tests {
                 &root(),
                 &manifest,
                 "Local truth.\n",
+                &[],
                 &agents,
                 &"f".repeat(40),
             )
@@ -2012,10 +2267,17 @@ mod tests {
         assert_ne!(changed_prose, agents);
         validate_consumer_import(&manifest, "Local truth.\n", &empty, &changed_prose).unwrap();
         assert!(
-            validate_source_import(&root(), &manifest, "Local truth.\n", &changed_prose, COMMIT,)
-                .unwrap_err()
-                .to_string()
-                .contains("AGENTS.md drifted")
+            validate_source_import(
+                &root(),
+                &manifest,
+                "Local truth.\n",
+                &[],
+                &changed_prose,
+                COMMIT,
+            )
+            .unwrap_err()
+            .to_string()
+            .contains("AGENTS.md drifted")
         );
     }
 
@@ -2025,7 +2287,7 @@ mod tests {
             schema: 1,
             exceptions: Vec::new(),
         };
-        let (manifest, agents) = assemble_import(
+        let (manifest, agents) = assemble_root(
             &root(),
             &["greenfield".into()],
             "Local truth.\n",
@@ -2084,9 +2346,163 @@ mod tests {
         rejected(&changed, "lowercase SHA-256");
     }
 
+    fn nested_fixture(directories: &[(&str, &str)]) -> (Manifest, String, Vec<NestedFiles>) {
+        assemble_import(
+            &root(),
+            &["greenfield".into()],
+            "Local truth.\n",
+            &EMPTY_EXCEPTIONS,
+            SOURCE_REPOSITORY,
+            COMMIT,
+            directories
+                .iter()
+                .map(|(path, overlay)| (path.to_string(), overlay.to_string()))
+                .collect(),
+        )
+        .unwrap()
+    }
+
+    #[test]
+    fn nested_directories_must_be_plain_relative_names() {
+        assert_eq!(nested_path("orbit").unwrap(), "orbit");
+        assert_eq!(nested_path("orbit/./crates/").unwrap(), "orbit/crates");
+        for invalid in [
+            "",
+            ".",
+            "/orbit",
+            "../orbit",
+            "orbit/../venus",
+            "or`bit",
+            "or\nbit",
+        ] {
+            assert_error(nested_path(invalid), "nested directory");
+        }
+    }
+
+    #[test]
+    fn nested_rules_render_deterministically_and_reject_drift() {
+        let (manifest, agents, files) =
+            nested_fixture(&[("venus", "Venus truth.\n"), ("orbit", "Orbit truth.\n")]);
+        assert_eq!(
+            manifest
+                .nested
+                .iter()
+                .map(|entry| entry.path.as_str())
+                .collect::<Vec<_>>(),
+            ["orbit", "venus"]
+        );
+        assert!(agents.contains("- Directory rules: `orbit/`, `venus/`;"));
+        assert_eq!(
+            files[0].agents,
+            render_nested_agents("orbit", "Orbit truth.\n")
+        );
+        assert!(
+            files[0]
+                .agents
+                .starts_with("# Agent Guidelines for `orbit/`\n")
+        );
+        assert!(files[0].agents.ends_with("\n\nOrbit truth.\n"));
+        validate_consumer_import(&manifest, "Local truth.\n", &EMPTY_EXCEPTIONS, &agents).unwrap();
+        validate_nested(&manifest, &agents, &files).unwrap();
+        validate_source_import(
+            &root(),
+            &manifest,
+            "Local truth.\n",
+            &files,
+            &agents,
+            COMMIT,
+        )
+        .unwrap();
+
+        let (plain, plain_agents, _) = nested_fixture(&[]);
+        assert!(!plain_agents.contains("Directory rules"));
+        assert!(!json_text(&plain).unwrap().contains("nested"));
+
+        let mut changed = files.clone();
+        changed[1].overlay = "Changed truth.\n".into();
+        assert_error(
+            validate_nested(&manifest, &agents, &changed),
+            "overlay drifted",
+        );
+
+        let mut changed = files.clone();
+        changed[0].agents.push_str("manual edit\n");
+        assert_error(
+            validate_nested(&manifest, &agents, &changed),
+            "orbit/AGENTS.md drifted",
+        );
+
+        let mut changed = manifest.clone();
+        changed.nested.reverse();
+        assert_error(
+            validate_nested(&changed, &agents, &files),
+            "sorted and unique",
+        );
+
+        let large = "x".repeat(INSTRUCTION_CHAIN_LIMIT);
+        let (manifest, agents, files) = nested_fixture(&[("orbit", &large)]);
+        assert_error(
+            validate_nested(&manifest, &agents, &files),
+            "above the 32768-byte",
+        );
+    }
+
+    #[test]
+    fn nested_chains_include_every_ancestor_directory() {
+        let (manifest, agents, files) = nested_fixture(&[
+            ("orbit", &"x".repeat(INSTRUCTION_CHAIN_LIMIT / 3)),
+            ("orbit/crates", &"y".repeat(INSTRUCTION_CHAIN_LIMIT / 3)),
+            ("venus", &"z".repeat(INSTRUCTION_CHAIN_LIMIT / 3)),
+        ]);
+        assert_error(
+            validate_nested(&manifest, &agents, &files),
+            "orbit/crates/ total",
+        );
+    }
+
+    #[test]
+    fn consumer_check_reads_nested_files_and_rejects_escaping_paths() {
+        let directory = TestDirectory::copy_catalog();
+        let (mut manifest, agents, files) = nested_fixture(&[("orbit", "Orbit truth.\n")]);
+        fs::write(directory.0.join("overlay.md"), "Local truth.\n").unwrap();
+        fs::write(
+            directory.0.join("exceptions.json"),
+            json_text(&EMPTY_EXCEPTIONS).unwrap(),
+        )
+        .unwrap();
+        fs::write(directory.0.join("AGENTS.md"), &agents).unwrap();
+        fs::create_dir(directory.0.join("orbit")).unwrap();
+        fs::write(
+            directory.0.join("orbit").join(LOCAL_OVERLAY),
+            "Orbit truth.\n",
+        )
+        .unwrap();
+        fs::write(directory.0.join("orbit/AGENTS.md"), &files[0].agents).unwrap();
+        let check = |manifest: &Manifest| {
+            fs::write(
+                directory.0.join("manifest.json"),
+                json_text(manifest).unwrap(),
+            )
+            .unwrap();
+            command_check_consumer(
+                &directory.0.join("overlay.md"),
+                &directory.0.join("exceptions.json"),
+                &directory.0.join("manifest.json"),
+                &directory.0.join("AGENTS.md"),
+            )
+        };
+        assert!(check(&manifest).unwrap().contains("1 directory file"));
+
+        fs::write(directory.0.join("orbit/AGENTS.md"), "edited\n").unwrap();
+        assert_error(check(&manifest), "orbit/AGENTS.md drifted");
+
+        manifest.nested[0].path = "../orbit".into();
+        assert_error(check(&manifest), "nested directory");
+    }
+
     #[test]
     fn profiles_compose_in_order_without_duplicates() {
-        let (manifest, agents) = assemble_import(
+        let (manifest, agents) = assemble_root(
             &root(),
             &["greenfield".into(), "terminal-engine".into()],
             "Local truth.\n",
