@@ -61,10 +61,11 @@ therefore requires a version bump.
 `AP-SCOPE-001` and `AP-EXCEPTION-001` remain mandatory in every profile while
 active; retirement releases that membership requirement.
 
-`AP-SCOPE-001` treats inspection, audit, diagnosis, explanation, and
-recommendation as non-mutating requests unless the user also chooses a change.
-It preserves user-owned inputs and artifacts unless replacing or deleting the
-exact target is required by the requested outcome.
+`AP-SCOPE-001` treats inspection, audit, diagnosis, explanation, and advice
+as non-mutating requests unless the user also chooses a change. It preserves
+user inputs and artifacts unless replacing or deleting the exact target is
+required by the requested outcome, and it requires a recommended, justified
+answer for every choice offered to the user.
 
 `AP-CONTRACT-001` selects the contract with the fewest unsupported guarantees or
 restrictions that fits the user request and available evidence. It leaves
@@ -410,5 +411,5 @@ and lockfiles.
 | Rust checker and package manifest | 1,649 |
 | Tests | 1,081 |
 | Enforcement skills | 179 |
-| Repository policy, docs, and licenses | 1,828 |
-| **Total** | **5,333** |
+| Repository policy, docs, and licenses | 1,830 |
+| **Total** | **5,335** |

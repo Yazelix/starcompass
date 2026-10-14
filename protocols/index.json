@@ -129,10 +129,10 @@
     },
     {
       "id": "AP-SCOPE-001",
-      "version": 3,
+      "version": 4,
       "title": "User-owned scope",
       "path": "protocols/AP-SCOPE-001.md",
-      "sha256": "cae30f9031beea4f831a89445f35807f50618e0f2cb0432f3b94bec40da9aeef"
+      "sha256": "8d84dc6fca6097b2055eb3ca8467565709e4c474a18c3030ae3064cc612bdfab"
     },
     {
       "id": "AP-SESSION-001",

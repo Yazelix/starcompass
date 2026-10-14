@@ -81,10 +81,11 @@
   guidance. Every individual profile fits a 12 KiB canonical/import budget, and
   the measured Orbit profile combination preserves 2 KiB of host-instruction
   headroom.
-- `AP-SCOPE-001` keeps inspection, audit, diagnosis, explanation, and
-  recommendation non-mutating unless the user also chooses a change, and
-  preserves user-owned inputs and artifacts from implicit replacement or
-  deletion.
+- `AP-SCOPE-001` keeps inspection, audit, diagnosis, explanation, and advice
+  non-mutating unless the user also chooses a change, and preserves user inputs
+  and artifacts from implicit replacement or deletion. Since version 4, every
+  choice offered to the user carries a recommended answer and its reason;
+  tighter wording keeps the orchestrator profile within its 12 KiB budget.
 - `AP-CONTRACT-001` selects the contract with the fewest unsupported guarantees
   or restrictions, leaves reasonable future behavior unspecified, and treats
   current user-facing documentation as a contract surface.
