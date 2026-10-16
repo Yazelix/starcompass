@@ -9,7 +9,7 @@ use super::check::{
     validate_source_import,
 };
 use super::manifest::{
-    ExceptionsDocument, LOCAL_OVERLAY, Manifest, nested_path, protocol_file_path,
+    ExceptionsDocument, LOCAL_OVERLAY, Manifest, nested_path, protocol_file_path, reject_symlinks,
 };
 use super::render::assemble_import;
 use super::{Error, Result, json_text, read_json, read_text, valid_commit_id};
@@ -228,6 +228,12 @@ fn command_render(
                     .flat_map(|(input, output)| [input.as_path(), output.as_path()]),
             ),
     )?;
+    for path in &directories {
+        reject_symlinks(base, path, "nested directory")?;
+    }
+    if let Some(file) = &protocol_file {
+        reject_symlinks(base, file, "protocol file")?;
+    }
     require_clean_source(root)?;
     let overlay = read_text(overlay_path)?;
     let exceptions = read_json(exceptions_path)?;
@@ -602,5 +608,63 @@ mod tests {
 
         manifest.nested[0].path = "../orbit".into();
         assert_error(check(&manifest), "nested directory");
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn symlinked_consumer_paths_are_rejected_before_reads_or_writes() {
+        use std::os::unix::fs::symlink;
+
+        let directory = TestDirectory::copy_catalog();
+        let consumer = directory.0.join("consumer");
+        let outside = directory.0.join("outside");
+        fs::create_dir(&consumer).unwrap();
+        fs::create_dir(&outside).unwrap();
+        fs::write(outside.join(LOCAL_OVERLAY), "Outside truth.\n").unwrap();
+        symlink(&outside, consumer.join("orbit")).unwrap();
+        symlink(&outside, consumer.join("ext")).unwrap();
+        let overlay = consumer.join("overlay.md");
+        let exceptions = consumer.join("exceptions.json");
+        let manifest_path = consumer.join("manifest.json");
+        let agents_path = consumer.join("AGENTS.md");
+        fs::write(&overlay, "Local truth.\n").unwrap();
+        fs::write(&exceptions, json_text(&EMPTY_EXCEPTIONS).unwrap()).unwrap();
+
+        let render = |nested: &[String], protocol_file: Option<&str>| {
+            command_render(
+                &root(),
+                &["greenfield".into()],
+                &overlay,
+                &exceptions,
+                &manifest_path,
+                &agents_path,
+                nested,
+                protocol_file,
+                SOURCE_REPOSITORY,
+            )
+        };
+        assert_error(
+            render(&["orbit".into()], None),
+            "nested directory \"orbit\" must not pass through a symlink",
+        );
+        assert_error(
+            render(&[], Some("ext/PROTOCOLS.md")),
+            "protocol file \"ext/PROTOCOLS.md\" must not pass through a symlink",
+        );
+        assert_eq!(fs::read_dir(&outside).unwrap().count(), 1);
+        assert!(!agents_path.exists() && !manifest_path.exists());
+
+        for (directories, protocol_file) in [
+            (&[("orbit", "Orbit truth.\n")][..], None),
+            (&[][..], Some("ext/PROTOCOLS.md")),
+        ] {
+            let (manifest, agents, _, _) = import_fixture(directories, protocol_file);
+            fs::write(&manifest_path, json_text(&manifest).unwrap()).unwrap();
+            fs::write(&agents_path, agents).unwrap();
+            assert_error(
+                command_check_consumer(&overlay, &exceptions, &manifest_path, &agents_path),
+                "must not pass through a symlink",
+            );
+        }
     }
 }

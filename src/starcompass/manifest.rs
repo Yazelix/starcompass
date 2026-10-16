@@ -1,10 +1,11 @@
 //! Consumer file formats: the import manifest, the exceptions document, and
-//! consumer-relative path normalization.
+//! consumer-relative path rules.
 
 use super::{Error, Result, present, valid_inline_code};
 use serde::{Deserialize, Serialize};
 use std::{
     collections::BTreeSet,
+    fs,
     path::{Component, Path},
 };
 
@@ -218,6 +219,29 @@ pub(super) fn nested_path(value: &str) -> Result<String> {
         return Err(invalid());
     }
     Ok(path)
+}
+
+/// Rejects a symlink among the existing components of a normalized path below
+/// the consumer base, which lexical normalization cannot see and which would
+/// let a generated file resolve outside the consumer. A missing or unreadable
+/// component ends the walk, so render can still create it and later I/O
+/// reports any other failure.
+pub(super) fn reject_symlinks(base: &Path, path: &str, kind: &str) -> Result<()> {
+    let mut current = base.to_path_buf();
+    for name in path.split('/') {
+        current.push(name);
+        match fs::symlink_metadata(&current) {
+            Ok(metadata) if metadata.file_type().is_symlink() => {
+                return Err(Error::new(format!(
+                    "{kind} {path:?} must not pass through a symlink: {}",
+                    current.display()
+                )));
+            }
+            Ok(_) => {}
+            Err(_) => break,
+        }
+    }
+    Ok(())
 }
 
 #[cfg(test)]

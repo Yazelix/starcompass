@@ -1,9 +1,9 @@
 //! Drift detection for consumer imports, with or without the pinned source.
 
 use super::catalog::valid_protocol_id;
-use super::manifest::LOCAL_OVERLAY;
 use super::manifest::{
-    ExceptionsDocument, Manifest, NestedFiles, nested_path, protocol_file_path, validate_exceptions,
+    ExceptionsDocument, LOCAL_OVERLAY, Manifest, NestedFiles, nested_path, protocol_file_path,
+    reject_symlinks, validate_exceptions,
 };
 use super::render::{
     PROTOCOL_FILE_HEADER, assemble_import, render_import_record, render_local_rules,
@@ -19,7 +19,8 @@ use std::{collections::BTreeSet, path::Path};
 const INSTRUCTION_CHAIN_LIMIT: usize = 32 * 1024;
 
 /// Reads each manifest directory's files after rejecting paths that are not
-/// normalized plain relative names, so a manifest cannot escape the consumer.
+/// normalized plain relative names or pass through a symlink, so a manifest
+/// cannot escape the consumer.
 pub(super) fn read_nested(base: &Path, manifest: &Manifest) -> Result<Vec<NestedFiles>> {
     manifest
         .nested
@@ -31,6 +32,7 @@ pub(super) fn read_nested(base: &Path, manifest: &Manifest) -> Result<Vec<Nested
                     entry.path
                 )));
             }
+            reject_symlinks(base, &entry.path, "nested directory")?;
             let directory = base.join(&entry.path);
             Ok(NestedFiles {
                 path: entry.path.clone(),
@@ -187,7 +189,8 @@ pub(super) fn validate_consumer_import(
 }
 
 /// Reads the manifest's protocol file after rejecting a path that is not a
-/// normalized plain relative name, so a manifest cannot escape the consumer.
+/// normalized plain relative name or passes through a symlink, so a manifest
+/// cannot escape the consumer.
 pub(super) fn read_protocol_file(base: &Path, manifest: &Manifest) -> Result<Option<String>> {
     let Some(file) = &manifest.protocol_file else {
         return Ok(None);
@@ -197,6 +200,7 @@ pub(super) fn read_protocol_file(base: &Path, manifest: &Manifest) -> Result<Opt
             "protocol file {file:?} must be written in normalized form"
         )));
     }
+    reject_symlinks(base, file, "protocol file")?;
     let text = read_text(&base.join(file))?;
     if !text.starts_with(PROTOCOL_FILE_HEADER)
         || text[PROTOCOL_FILE_HEADER.len()..].trim().is_empty()

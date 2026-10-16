@@ -74,6 +74,9 @@
   commands, including an empty document when the consumer has no exceptions.
 - Disable Cargo library auto-discovery so the package exposes only the selected
   binary interface.
+- Reject `--nested` directories and protocol-file paths that pass through a
+  symlink below the consumer, in `render` before any consumer file is read or
+  written and in both checks before those files are read.
 
 ### Changed
 

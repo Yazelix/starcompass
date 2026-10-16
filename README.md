@@ -297,7 +297,11 @@ and special files are rejected because their bytes are not owned by the
 recorded Git revision. Before writing, `render` resolves the overlay, exception
 input, manifest, `AGENTS.md`, nested, and protocol-file paths and rejects
 aliases that identify the same location. Parent-directory traversal or a
-symlink cannot let an output replace another input or output.
+symlink cannot let an output replace another input or output. `render` and both
+checks also reject a nested directory or protocol-file path that passes through
+a symlink below the root `AGENTS.md` directory, so those files are never
+written or read outside the consumer; the consumer directory itself may be a
+symlink.
 
 Writes use atomic replacement. On Unix, generated files are fresh owner-written
 artifacts with mode `0644`, matching the established consumer format.
@@ -312,10 +316,11 @@ The source-independent `check-consumer` command rejects:
 - an empty canonical protocol section, or a non-empty one when the manifest
   names a protocol file;
 - a protocol file that is missing, has a drifted header or no text, is not a
-  normalized plain relative path, or is named `AGENTS.md` or
-  `AGENTS.override.md`;
-- a declared directory that is not a normalized plain relative path, or is
-  unsorted or duplicated, rejected before any of its files are read;
+  normalized plain relative path, passes through a symlink, or is named
+  `AGENTS.md` or `AGENTS.override.md`;
+- a declared directory that is not a normalized plain relative path, passes
+  through a symlink, or is unsorted or duplicated, rejected before any of its
+  files are read;
 - a missing, drifted, or edited directory overlay or `AGENTS.md`;
 - a root-to-directory chain above 32,768 bytes.
 
@@ -433,8 +438,8 @@ and lockfiles.
 | --- | ---: |
 | Protocols and generated index | 490 |
 | Profiles | 106 |
-| Rust checker and package manifest | 1,852 |
-| Tests | 1,203 |
+| Rust checker and package manifest | 1,886 |
+| Tests | 1,261 |
 | Enforcement skills | 189 |
-| Repository policy, docs, and licenses | 1,892 |
-| **Total** | **5,732** |
+| Repository policy, docs, and licenses | 1,900 |
+| **Total** | **5,832** |
