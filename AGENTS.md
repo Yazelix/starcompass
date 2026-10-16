@@ -8,7 +8,7 @@ or `.agent-protocols.exceptions.json`, then render from the pinned source.
 ## Protocol import record
 
 - Source: `https://github.com/Yazelix/starcompass`
-- Source commit: `7f393d50c241950a037768d774857c3024e3093d`
+- Source commit: `aa967647bc106ca22bbb165f7f9efd678036dbb2`
 - Profiles: `greenfield`
 - Manifest: `.agent-protocols.json` (schema 1)
 
