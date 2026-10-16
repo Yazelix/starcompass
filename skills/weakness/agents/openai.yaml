@@ -1,0 +1,4 @@
+interface:
+  display_name: "Weakness"
+  short_description: "Find weak points and creative leverage areas"
+  default_prompt: "Use $weakness to identify the weakest parts of the project and where creative improvements would have the most leverage."

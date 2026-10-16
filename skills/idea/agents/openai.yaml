@@ -1,0 +1,4 @@
+interface:
+  display_name: "Idea"
+  short_description: "Generate and critically filter project ideas"
+  default_prompt: "Use $idea to propose 30 project improvement ideas, critically filter them, and expand only the strongest ones."

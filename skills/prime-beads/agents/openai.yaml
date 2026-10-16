@@ -1,0 +1,4 @@
+interface:
+  display_name: "Prime Beads"
+  short_description: "Audit and refine Beads plans"
+  default_prompt: "Use $prime-beads to reread AGENTS.md, audit every relevant bead, and revise Beads planning with the project's bd or br CLI."

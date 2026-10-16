@@ -1,0 +1,4 @@
+interface:
+  display_name: "Fresh Eyes"
+  short_description: "Reread recent work for mistakes"
+  default_prompt: "Use $fresh-eyes to check recent work again for blunders, omissions, logical issues, bugs, and confusion."

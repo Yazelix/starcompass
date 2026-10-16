@@ -1,0 +1,4 @@
+interface:
+  display_name: "Opinion"
+  short_description: "Give a candid project judgment"
+  default_prompt: "Use $opinion to give a candid, evidence-backed judgment of the project and how to make it more useful."

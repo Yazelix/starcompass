@@ -1,0 +1,4 @@
+interface:
+  display_name: "Isomorphic Refactor"
+  short_description: "Ruthlessly simplify code with proof"
+  default_prompt: "Use $simplify-and-refactor-code-isomorphically to ruthlessly reduce agent-written code while proving behavior stays equivalent."

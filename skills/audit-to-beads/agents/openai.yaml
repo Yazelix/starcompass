@@ -1,0 +1,4 @@
+interface:
+  display_name: "Audit To Beads"
+  short_description: "Audit repos and create Beads plans"
+  default_prompt: "Use $audit-to-beads to audit this repo and create Beads for the best implementation plans."

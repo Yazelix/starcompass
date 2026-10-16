@@ -1,0 +1,4 @@
+interface:
+  display_name: "List Beads"
+  short_description: "List the top ready Beads by priority"
+  default_prompt: "Use $list-beads to list this project's 10 highest-priority ready beads with br."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "UI"
+  short_description: "Build polished, Stripe-level interfaces"
+  default_prompt: "Use $ui to design and implement a polished, intuitive interface."
