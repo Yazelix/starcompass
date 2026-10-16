@@ -129,3 +129,7 @@
   catalog, protocol digest, canonical prose, and complete generated-file proof.
 - Exact public Git revisions are the initial distribution surface; crates.io,
   prebuilt binaries, and hosted CI remain separate release gates.
+- The checker is split into private, concern-owned modules under
+  `src/starcompass/` (catalog, manifest, render, check, and command dispatch)
+  with unit tests beside the code they cover. Commands, generated output, and
+  error messages are unchanged.

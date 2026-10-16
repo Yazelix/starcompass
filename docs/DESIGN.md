@@ -257,14 +257,14 @@ channel. The decision gate compares:
 | Authenticated private binary | Preserves repository and artifact privacy | Every consumer needs read credentials; cross-repository Actions and forks need explicit token/secret behavior; revocation can break cold CI |
 
 The package disables Cargo library auto-discovery and exposes only the
-executable target. `src/starcompass.rs` remains a private module for separation
-and unit tests. crates.io is the leading artifact candidate because Cargo
-supplies host compilation, exact-version installation, and lockfile use without
-a target matrix. A crate-installed binary would make `check-consumer`
-source-independent, while `render`, source-backed `check`, `validate`, and
-`index` still require the canonical catalog from a checkout. Its permanent
-source publication and release-contract consequences keep it unselected. A
-public prebuilt binary is the fallback when consumer compile cost becomes
-material enough to justify release targets and artifact maintenance.
+executable target. `src/starcompass.rs` and its submodules remain private
+modules for separation and unit tests. crates.io is the leading artifact
+candidate because Cargo supplies host compilation, exact-version installation,
+and lockfile use without a target matrix. A crate-installed binary would make
+`check-consumer` source-independent, while `render`, source-backed `check`,
+`validate`, and `index` still require the canonical catalog from a checkout.
+Its permanent source publication and release-contract consequences keep it
+unselected. A public prebuilt binary is the fallback when consumer compile cost
+becomes material enough to justify release targets and artifact maintenance.
 Authenticated private artifacts and copied or vendored checkers do not fit
 unattended downstream adoption.

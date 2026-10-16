@@ -208,8 +208,8 @@ only when the author omitted it.
 Build a standalone local binary with `cargo build --locked --release`; the
 result is `target/release/starcompass`. Starcompass distributes its source
 through GitHub and does not publish release artifacts or an installer. Cargo
-exposes no library target; `src/starcompass.rs` is a private module of the
-executable.
+exposes no library target; `src/starcompass.rs` and its submodules are private
+modules of the executable.
 
 Validate the source catalog:
 
@@ -369,7 +369,8 @@ Consumers upgrade intentionally:
 ```text
 protocols/                 canonical Markdown and generated index
 profiles/                  ordered JSON protocol sets
-src/starcompass.rs         index, render, and drift-check owner
+src/starcompass.rs         index, render, and drift-check module root
+src/starcompass/           catalog, manifest, render, check, and command modules
 src/main.rs                `starcompass` process boundary
 tests/                     focused contract tests
 skills/                    protocol-only Codex skills
@@ -432,8 +433,8 @@ and lockfiles.
 | --- | ---: |
 | Protocols and generated index | 490 |
 | Profiles | 106 |
-| Rust checker and package manifest | 1,761 |
-| Tests | 1,163 |
+| Rust checker and package manifest | 1,852 |
+| Tests | 1,203 |
 | Enforcement skills | 189 |
-| Repository policy, docs, and licenses | 1,885 |
-| **Total** | **5,594** |
+| Repository policy, docs, and licenses | 1,892 |
+| **Total** | **5,732** |
