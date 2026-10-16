@@ -36,6 +36,13 @@
   and lists it in the root import record. Both checks reject a drifted,
   edited, or escaping directory file, and any root-to-directory chain above
   Codex's 32 KiB default.
+- Optional separate protocol file: `render --protocol-file NAME` writes the
+  canonical protocol text to a consumer file that the root `AGENTS.md` names;
+  `AGENTS.md` keeps the import record and local rules and tells agents to read
+  the file. The manifest records it; `check` compares it with the pinned
+  source, and `check-consumer` checks its header and rejects inlined protocol
+  text, an escaping path, or an auto-loaded `AGENTS.md` or `AGENTS.override.md`
+  name.
 - `AP-SESSION-001` in the `greenfield` and `fork` profiles: treat context
   compaction as lossy, record user decisions when they are made, reread the
   active issue after compaction, and restart sessions at clean breaks rather

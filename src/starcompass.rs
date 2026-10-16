@@ -148,6 +148,14 @@ struct Manifest {
     overlay: Overlay,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     nested: Vec<Nested>,
+    /// Consumer file, beside the root `AGENTS.md`, that holds the canonical
+    /// protocol text instead of the always-loaded `AGENTS.md`.
+    #[serde(
+        default,
+        deserialize_with = "present",
+        skip_serializing_if = "Option::is_none"
+    )]
+    protocol_file: Option<String>,
 }
 
 /// A directory whose generated `AGENTS.md` adds local rules to the root import.
@@ -669,6 +677,7 @@ fn valid_date(value: &str) -> bool {
     (1..=days).contains(&day)
 }
 
+#[allow(clippy::too_many_arguments)]
 fn assemble_import(
     root: &Path,
     profile_names: &[String],
@@ -677,7 +686,8 @@ fn assemble_import(
     source_repository: &str,
     source_commit: &str,
     directories: Vec<(String, String)>,
-) -> Result<(Manifest, String, Vec<NestedFiles>)> {
+    protocol_file: Option<String>,
+) -> Result<(Manifest, String, Option<String>, Vec<NestedFiles>)> {
     let (protocols, profiles) = validate_repository(root)?;
     if profile_names.is_empty()
         || profile_names.iter().any(|name| !valid_inline_code(name))
@@ -739,10 +749,36 @@ fn assemble_import(
             sha256: digest(overlay.as_bytes()),
         },
         nested: Vec::new(),
+        protocol_file,
     };
     let files = nest(&mut manifest, directories);
     let agents = render_agents(&manifest, &selected, overlay);
-    Ok((manifest, agents, files))
+    let protocols = manifest
+        .protocol_file
+        .is_some()
+        .then(|| render_protocol_file(&selected));
+    Ok((manifest, agents, protocols, files))
+}
+
+/// Normalizes the protocol file to a consumer-relative path of plain names.
+/// Codex loads `AGENTS.md` and `AGENTS.override.md` itself, so a protocol file
+/// with either name would escape the chain limit or displace the import.
+fn protocol_file_path(value: &str) -> Result<String> {
+    let path = nested_path(value).map_err(|_| {
+        Error::new(format!(
+            "protocol file must be a relative path of plain names without backticks or line breaks: {value:?}"
+        ))
+    })?;
+    let name = path.rsplit('/').next().unwrap_or_default();
+    if ["AGENTS.md", "AGENTS.override.md"]
+        .iter()
+        .any(|loaded| name.eq_ignore_ascii_case(loaded))
+    {
+        return Err(Error::new(format!(
+            "protocol file must not be named like an auto-loaded instruction file: {value:?}"
+        )));
+    }
+    Ok(path)
 }
 
 /// One directory's overlay and generated `AGENTS.md`.
@@ -804,13 +840,23 @@ fn markdown_text(value: &str) -> String {
 }
 
 fn render_import_record(manifest: &Manifest) -> String {
-    let mut lines = vec![
-        "# Agent Guidelines".into(),
-        String::new(),
-        "This file is self-contained. Canonical protocol text was rendered into it;".into(),
-        "the source repository is needed only to update or verify the import.".into(),
-        "Do not edit this generated file directly. Edit `.agent-protocols.local.md`".into(),
-        "or `.agent-protocols.exceptions.json`, then render from the pinned source.".into(),
+    let mut lines: Vec<String> = vec!["# Agent Guidelines".into(), String::new()];
+    match &manifest.protocol_file {
+        None => lines.extend([
+            "This file is self-contained. Canonical protocol text was rendered into it;".into(),
+            "the source repository is needed only to update or verify the import.".into(),
+            "Do not edit this generated file directly. Edit `.agent-protocols.local.md`".into(),
+            "or `.agent-protocols.exceptions.json`, then render from the pinned source.".into(),
+        ]),
+        Some(file) => lines.extend([
+            format!("Read `{file}` before planning, changing, or reviewing work."),
+            "It holds the canonical protocol text, which binds as if written here. The".into(),
+            "source repository is needed only to update or verify the import. Do not".into(),
+            "edit generated files directly. Edit `.agent-protocols.local.md` or".into(),
+            "`.agent-protocols.exceptions.json`, then render from the pinned source.".into(),
+        ]),
+    }
+    lines.extend([
         String::new(),
         "## Protocol import record".into(),
         String::new(),
@@ -826,7 +872,7 @@ fn render_import_record(manifest: &Manifest) -> String {
                 .join(", ")
         ),
         "- Manifest: `.agent-protocols.json` (schema 1)".into(),
-    ];
+    ]);
     if !manifest.nested.is_empty() {
         lines.push(format!(
             "- Directory rules: {}; read a directory's `AGENTS.md` before changing files under it.",
@@ -879,12 +925,27 @@ fn render_import_record(manifest: &Manifest) -> String {
             ));
         }
     }
-    lines.extend([
-        String::new(),
-        "## Canonical protocols".into(),
-        String::new(),
-    ]);
+    lines.push(String::new());
+    if manifest.protocol_file.is_none() {
+        lines.extend(["## Canonical protocols".into(), String::new()]);
+    }
     lines.join("\n") + "\n"
+}
+
+const PROTOCOL_FILE_HEADER: &str = "# Canonical Agent Protocols\n\n\
+    The `AGENTS.md` that names this file imports these protocols and records\n\
+    their source, versions, digests, and local exceptions. Do not edit this\n\
+    generated file directly; render it from the pinned source.\n";
+
+fn render_protocol_file(protocols: &[&Protocol]) -> String {
+    let mut output = PROTOCOL_FILE_HEADER.to_owned();
+    for protocol in protocols {
+        output.push_str(&format!(
+            "\n## {} — {}\n\n{}\n",
+            protocol.id, protocol.title, protocol.body
+        ));
+    }
+    output
 }
 
 fn render_local_rules(overlay: &str) -> String {
@@ -902,7 +963,10 @@ fn render_local_rules(overlay: &str) -> String {
 
 fn render_agents(manifest: &Manifest, protocols: &[&Protocol], overlay: &str) -> String {
     let mut output = render_import_record(manifest);
-    for protocol in protocols {
+    for protocol in protocols
+        .iter()
+        .filter(|_| manifest.protocol_file.is_none())
+    {
         output.push_str(&format!(
             "### {} — {}\n\n{}\n\n",
             protocol.id, protocol.title, protocol.body
@@ -1087,16 +1151,41 @@ fn validate_consumer_import(
             "AGENTS.md drifted in its repository-local rules",
         ));
     }
-    if agents.len() < prefix.len() + suffix.len()
-        || agents[prefix.len()..agents.len() - suffix.len()]
-            .trim()
-            .is_empty()
-    {
-        return Err(Error::new(
-            "AGENTS.md canonical protocol section must be non-empty",
-        ));
+    if agents.len() < prefix.len() + suffix.len() {
+        return Err(Error::new("AGENTS.md drifted from its import record"));
     }
-    Ok(())
+    let inline = &agents[prefix.len()..agents.len() - suffix.len()];
+    match (&manifest.protocol_file, inline.trim().is_empty()) {
+        (None, true) => Err(Error::new(
+            "AGENTS.md canonical protocol section must be non-empty",
+        )),
+        (Some(file), false) => Err(Error::new(format!(
+            "AGENTS.md must not inline protocol text that the manifest assigns to {file}"
+        ))),
+        _ => Ok(()),
+    }
+}
+
+/// Reads the manifest's protocol file after rejecting a path that is not a
+/// normalized plain relative name, so a manifest cannot escape the consumer.
+fn read_protocol_file(base: &Path, manifest: &Manifest) -> Result<Option<String>> {
+    let Some(file) = &manifest.protocol_file else {
+        return Ok(None);
+    };
+    if protocol_file_path(file)? != *file {
+        return Err(Error::new(format!(
+            "protocol file {file:?} must be written in normalized form"
+        )));
+    }
+    let text = read_text(&base.join(file))?;
+    if !text.starts_with(PROTOCOL_FILE_HEADER)
+        || text[PROTOCOL_FILE_HEADER.len()..].trim().is_empty()
+    {
+        return Err(Error::new(format!(
+            "{file} drifted in its header or has no protocol text"
+        )));
+    }
+    Ok(Some(text))
 }
 
 fn validate_source_import(
@@ -1105,6 +1194,7 @@ fn validate_source_import(
     overlay: &str,
     nested: &[NestedFiles],
     agents: &str,
+    protocols: Option<&str>,
     source_commit: &str,
 ) -> Result<()> {
     if manifest.source.commit != source_commit {
@@ -1117,7 +1207,7 @@ fn validate_source_import(
         schema: 1,
         exceptions: manifest.exceptions.clone(),
     };
-    let (wanted, wanted_agents, _) = assemble_import(
+    let (wanted, wanted_agents, wanted_protocols, _) = assemble_import(
         root,
         &manifest.profiles,
         overlay,
@@ -1128,6 +1218,7 @@ fn validate_source_import(
             .iter()
             .map(|file| (file.path.clone(), file.overlay.clone()))
             .collect(),
+        manifest.protocol_file.clone(),
     )?;
     if manifest != &wanted {
         return Err(Error::new(
@@ -1137,6 +1228,11 @@ fn validate_source_import(
     if agents != wanted_agents {
         return Err(Error::new(
             "AGENTS.md drifted from its pinned protocol import",
+        ));
+    }
+    if protocols != wanted_protocols.as_deref() {
+        return Err(Error::new(
+            "protocol file drifted from its pinned protocol import",
         ));
     }
     Ok(())
@@ -1316,8 +1412,10 @@ fn command_render(
     manifest_path: &Path,
     agents_path: &Path,
     nested: &[String],
+    protocol_file: Option<&str>,
     source_repository: &str,
 ) -> Result<String> {
+    let protocol_file = protocol_file.map(protocol_file_path).transpose()?;
     let mut directories = BTreeSet::new();
     for value in nested {
         let path = nested_path(value)?;
@@ -1337,9 +1435,11 @@ fn command_render(
             )
         })
         .collect::<Vec<_>>();
+    let protocol_path = protocol_file.as_ref().map(|file| base.join(file));
     require_distinct_paths(
         [overlay_path, exceptions_path, manifest_path, agents_path]
             .into_iter()
+            .chain(protocol_path.as_deref())
             .chain(
                 nested_paths
                     .iter()
@@ -1354,7 +1454,7 @@ fn command_render(
         .zip(&nested_paths)
         .map(|(path, (input, _))| Ok((path, read_text(input)?)))
         .collect::<Result<Vec<_>>>()?;
-    let (manifest, agents, files) = assemble_import(
+    let (manifest, agents, protocols, files) = assemble_import(
         root,
         profiles,
         &overlay,
@@ -1362,18 +1462,25 @@ fn command_render(
         source_repository,
         &source_head(root)?,
         nested_overlays,
+        protocol_file,
     )?;
     validate_nested(&manifest, &agents, &files)?;
     for ((_, output), file) in nested_paths.iter().zip(&files) {
         atomic_write(output, &file.agents)?;
     }
+    if let (Some(path), Some(text)) = (&protocol_path, &protocols) {
+        atomic_write(path, text)?;
+    }
     atomic_write(manifest_path, &json_text(&manifest)?)?;
     atomic_write(agents_path, &agents)?;
     Ok(format!(
-        "wrote {} and {}{}",
+        "wrote {} and {}{}{}",
         manifest_path.display(),
         agents_path.display(),
-        directory_files(files.len())
+        directory_files(files.len()),
+        protocol_path
+            .map(|path| format!(", with protocol text in {}", path.display()))
+            .unwrap_or_default()
     ))
 }
 
@@ -1389,6 +1496,7 @@ fn command_check(
     let manifest: Manifest = read_json(manifest_path)?;
     let agents = read_text(agents_path)?;
     let nested = read_nested(consumer_base(agents_path), &manifest)?;
+    let protocols = read_protocol_file(consumer_base(agents_path), &manifest)?;
     validate_consumer_import(&manifest, &overlay, &exceptions, &agents)?;
     validate_nested(&manifest, &agents, &nested)?;
     require_clean_source(root)?;
@@ -1398,6 +1506,7 @@ fn command_check(
         &overlay,
         &nested,
         &agents,
+        protocols.as_deref(),
         &source_head(root)?,
     )?;
     Ok(format!(
@@ -1419,6 +1528,7 @@ fn command_check_consumer(
     let manifest: Manifest = read_json(manifest_path)?;
     let agents = read_text(agents_path)?;
     let nested = read_nested(consumer_base(agents_path), &manifest)?;
+    read_protocol_file(consumer_base(agents_path), &manifest)?;
     validate_consumer_import(&manifest, &overlay, &exceptions, &agents)?;
     validate_nested(&manifest, &agents, &nested)?;
     Ok(format!(
@@ -1585,6 +1695,7 @@ fn run_inner(mut arguments: Vec<String>) -> Result<String> {
             let manifest = PathBuf::from(require_option(&mut arguments, "--manifest-out")?);
             let agents = PathBuf::from(require_option(&mut arguments, "--agents-out")?);
             let nested = take_options(&mut arguments, "--nested")?;
+            let protocol_file = take_option(&mut arguments, "--protocol-file")?;
             let repository = take_option(&mut arguments, "--source-repository")?
                 .unwrap_or_else(|| SOURCE_REPOSITORY.into());
             reject_extra(&arguments)?;
@@ -1596,6 +1707,7 @@ fn run_inner(mut arguments: Vec<String>) -> Result<String> {
                 &manifest,
                 &agents,
                 &nested,
+                protocol_file.as_deref(),
                 &repository,
             )
         }
@@ -1679,8 +1791,9 @@ mod tests {
             source_repository,
             source_commit,
             Vec::new(),
+            None,
         )
-        .map(|(manifest, agents, _)| (manifest, agents))
+        .map(|(manifest, agents, _, _)| (manifest, agents))
     }
 
     fn exception(protocol: &str, scope: &str) -> Exception {
@@ -2191,6 +2304,7 @@ mod tests {
             &alias,
             &agents,
             &[],
+            None,
             SOURCE_REPOSITORY,
         )
         .unwrap_err();
@@ -2218,7 +2332,16 @@ mod tests {
         )
         .unwrap();
         validate_consumer_import(&manifest, "Local truth.\n", &empty, &agents).unwrap();
-        validate_source_import(&root(), &manifest, "Local truth.\n", &[], &agents, COMMIT).unwrap();
+        validate_source_import(
+            &root(),
+            &manifest,
+            "Local truth.\n",
+            &[],
+            &agents,
+            None,
+            COMMIT,
+        )
+        .unwrap();
 
         assert!(
             validate_consumer_import(
@@ -2244,6 +2367,7 @@ mod tests {
                 "Local truth.\n",
                 &[],
                 &agents,
+                None,
                 &"f".repeat(40),
             )
             .unwrap_err()
@@ -2273,6 +2397,7 @@ mod tests {
                 "Local truth.\n",
                 &[],
                 &changed_prose,
+                None,
                 COMMIT,
             )
             .unwrap_err()
@@ -2346,7 +2471,10 @@ mod tests {
         rejected(&changed, "lowercase SHA-256");
     }
 
-    fn nested_fixture(directories: &[(&str, &str)]) -> (Manifest, String, Vec<NestedFiles>) {
+    fn import_fixture(
+        directories: &[(&str, &str)],
+        protocol_file: Option<&str>,
+    ) -> (Manifest, String, Option<String>, Vec<NestedFiles>) {
         assemble_import(
             &root(),
             &["greenfield".into()],
@@ -2358,8 +2486,14 @@ mod tests {
                 .iter()
                 .map(|(path, overlay)| (path.to_string(), overlay.to_string()))
                 .collect(),
+            protocol_file.map(Into::into),
         )
         .unwrap()
+    }
+
+    fn nested_fixture(directories: &[(&str, &str)]) -> (Manifest, String, Vec<NestedFiles>) {
+        let (manifest, agents, _, files) = import_fixture(directories, None);
+        (manifest, agents, files)
     }
 
     #[test]
@@ -2410,6 +2544,7 @@ mod tests {
             "Local truth.\n",
             &files,
             &agents,
+            None,
             COMMIT,
         )
         .unwrap();
@@ -2498,6 +2633,65 @@ mod tests {
 
         manifest.nested[0].path = "../orbit".into();
         assert_error(check(&manifest), "nested directory");
+    }
+
+    #[test]
+    fn protocol_file_moves_canonical_text_out_of_agents() {
+        let (_, inline_agents, _, _) = import_fixture(&[], None);
+        let (manifest, agents, protocols, files) =
+            import_fixture(&[("orbit", "Orbit truth.\n")], Some("AGENT-PROTOCOLS.md"));
+        let protocols = protocols.unwrap();
+        assert!(agents.contains("Read `AGENT-PROTOCOLS.md` before planning"));
+        assert!(agents.contains("| `AP-SCOPE-001` |"));
+        assert!(!agents.contains("### AP-SCOPE-001"));
+        assert!(protocols.starts_with(PROTOCOL_FILE_HEADER));
+        assert!(protocols.contains("\n## AP-SCOPE-001 — "));
+        assert!(agents.len() < inline_agents.len());
+        validate_consumer_import(&manifest, "Local truth.\n", &EMPTY_EXCEPTIONS, &agents).unwrap();
+        validate_nested(&manifest, &agents, &files).unwrap();
+        let source = |agents: &str, protocols: &str| {
+            validate_source_import(
+                &root(),
+                &manifest,
+                "Local truth.\n",
+                &files,
+                agents,
+                Some(protocols),
+                COMMIT,
+            )
+        };
+        source(&agents, &protocols).unwrap();
+        assert_error(
+            source(&agents, &(protocols.clone() + "manual edit\n")),
+            "protocol file drifted",
+        );
+
+        let inlined = agents.replacen(
+            "## Repository-local rules",
+            "### AP-SCOPE-001 — copied\n\n## Repository-local rules",
+            1,
+        );
+        assert_error(
+            validate_consumer_import(&manifest, "Local truth.\n", &EMPTY_EXCEPTIONS, &inlined),
+            "must not inline protocol text",
+        );
+
+        let directory = TestDirectory::copy_catalog();
+        let mut manifest = manifest;
+        let read = |manifest: &Manifest| read_protocol_file(&directory.0, manifest);
+        assert!(read(&manifest).is_err());
+        fs::write(directory.0.join("AGENT-PROTOCOLS.md"), &protocols).unwrap();
+        assert_eq!(
+            read(&manifest).unwrap().as_deref(),
+            Some(protocols.as_str())
+        );
+        fs::write(directory.0.join("AGENT-PROTOCOLS.md"), "edited\n").unwrap();
+        assert_error(read(&manifest), "drifted in its header");
+        manifest.protocol_file = Some("../AGENT-PROTOCOLS.md".into());
+        assert_error(read(&manifest), "protocol file must be");
+        for loaded in ["AGENTS.md", "docs/agents.override.md"] {
+            assert_error(protocol_file_path(loaded), "auto-loaded instruction file");
+        }
     }
 
     #[test]

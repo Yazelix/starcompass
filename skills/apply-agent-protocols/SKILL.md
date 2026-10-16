@@ -5,9 +5,9 @@ description: Apply or update a pinned Starcompass profile in a repository while 
 
 # Apply Starcompass Protocols
 
-Render canonical protocols into a consumer's self-contained `AGENTS.md`. Keep
-the repository's own rules in a separate overlay and pin every imported rule to
-an exact source commit.
+Render canonical protocols into a consumer's `AGENTS.md`, self-contained
+within the consumer. Keep the repository's own rules in a separate overlay and
+pin every imported rule to an exact source commit.
 
 ## Preconditions
 
@@ -37,7 +37,9 @@ Maintain exactly these inputs and outputs:
 - `.agent-protocols.exceptions.json`: explicit approved exceptions, including an
   empty schema-1 list when none exist.
 - `.agent-protocols.json`: generated import manifest; do not edit manually.
-- `AGENTS.md`: generated self-contained instructions; do not edit manually.
+- `AGENTS.md`: generated instructions; do not edit manually.
+- The protocol file, when the manifest records `protocol_file`: generated
+  canonical protocol text that `AGENTS.md` names; do not edit manually.
 
 For first adoption, move every existing repository rule into the local overlay
 without weakening, summarizing, or silently deduplicating it. Normalize only the
@@ -71,9 +73,13 @@ When a subdirectory needs its own rules, add `--nested <dir>` for each one, and
 keep that directory's rules in `<dir>/.agent-protocols.local.md`. Starcompass
 renders `<dir>/AGENTS.md` from it. Never hand-write a directory `AGENTS.md`.
 
-Read the full rendered `AGENTS.md`. Verify that its import record contains the
-expected source commit, ordered profiles, protocol IDs and versions, and every
-exception.
+When the root instructions near Codex's 32 KiB chain limit, add
+`--protocol-file <name>` to write the canonical protocol text to that consumer
+file instead of into `AGENTS.md`.
+
+Read the full rendered `AGENTS.md` and any protocol file. Verify that the
+import record contains the expected source commit, ordered profiles, protocol
+IDs and versions, and every exception.
 Verify that its repository-local section preserves the overlay.
 
 Then run:
@@ -97,7 +103,9 @@ First verify the current files with a Starcompass checkout at the manifest's
 pinned commit. Inspect the protocol, version, profile, and checker diff between
 that commit and the proposed source commit. Re-evaluate exceptions whose target
 changed. Render only after the user has chosen any semantic profile or exception
-change, then repeat the full check.
+change, then repeat the full check. Render reads `--nested` and
+`--protocol-file` from flags, not from the manifest: pass every directory and
+the protocol file the manifest records, or the render silently drops them.
 
 Report the old and new source commits, protocol version changes, profile changes,
 exception changes, preserved local overlay, and verification result.

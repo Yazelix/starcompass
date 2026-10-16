@@ -7,7 +7,8 @@ It provides:
 
 - 22 individually identified and versioned protocols;
 - five ordered, composable profiles;
-- deterministic, self-contained `AGENTS.md` rendering;
+- deterministic, self-contained `AGENTS.md` rendering, optionally with the
+  canonical text in a separate generated protocol file;
 - exact source-commit, protocol-version, overlay, and exception records;
 - typed Rust source-backed and source-independent drift checks plus rendering;
 - one owning implementation Bead per run or an explicit bounded planning-only
@@ -51,6 +52,14 @@ root down to the working directory, so each directory file carries only its
 local rules and never repeats the canonical import. Checks reject a
 root-to-directory chain above Codex's default 32,768-byte
 `project_doc_max_bytes`, beyond which Codex stops adding files.
+
+A consumer near that limit can render the canonical protocol text into a
+separate consumer file that the root `AGENTS.md` names. The root file keeps the
+import record, local exceptions, and repository-local rules, and tells agents to
+read the protocol file before planning, changing, or reviewing work. Both files
+stay in the consumer, so it remains self-contained. Only `AGENTS.md` files count
+toward the chain limit, because Codex does not load the protocol file
+automatically.
 
 Protocol IDs remain reserved after retirement. Active protocols must appear in
 at least one profile. A retired protocol stays in `protocols/` and the generated
@@ -149,7 +158,8 @@ repository contents.
 | `.agent-protocols.local.md` | Consumer | Repository-specific instructions that add to the canonical rules |
 | `.agent-protocols.exceptions.json` | Consumer | Explicit approved changes to imported rules, including an empty list when none exist |
 | `.agent-protocols.json` | Renderer | Exact source, profile, protocol, exception, and overlay record |
-| `AGENTS.md` | Renderer | Self-contained instructions read by coding agents |
+| `AGENTS.md` | Renderer | Instructions read by coding agents, self-contained with any protocol file it names |
+| Protocol file | Renderer | Optional canonical protocol text named by `--protocol-file` and `AGENTS.md` |
 | `<dir>/.agent-protocols.local.md` | Consumer | Optional rules for one declared directory |
 | `<dir>/AGENTS.md` | Renderer | That directory's generated local rules, read after the root file |
 
@@ -237,6 +247,15 @@ the directory of `--agents-out`, written as plain directory names. Render reads
 and overlay digest in the manifest, and lists the directories in the root
 import record. Without `--nested`, every output is unchanged.
 
+Add `--protocol-file NAME` to write the canonical protocol text to `NAME`
+instead of into `AGENTS.md`. `NAME` is relative to the directory of
+`--agents-out`, written as plain names. The manifest records it, `check`
+compares it with the pinned source, and `check-consumer` checks its generated
+header. `NAME` may not be `AGENTS.md` or `AGENTS.override.md`, which Codex
+loads itself. Rendering again without the flag or with another name leaves the
+old file in place; delete it. Without `--protocol-file`, every output is
+unchanged.
+
 Check the consumer using a Starcompass checkout at the exact commit pinned
 in its manifest when the complete source-backed proof is required:
 
@@ -248,7 +267,7 @@ cargo run --locked --quiet -- check \
   --agents /path/to/consumer/AGENTS.md
 ```
 
-Check every relationship derivable from the four consumer files without a
+Check every relationship derivable from the consumer files without a
 Starcompass checkout, Git repository, catalog, credentials, or network:
 
 ```sh
@@ -263,9 +282,10 @@ starcompass check-consumer \
 parity, the generated import record, the complete repository-local suffix, and
 every declared directory file byte for byte, since those files contain no
 canonical prose. Both checks find directories relative to the root
-`AGENTS.md`. `check-consumer` treats the canonical protocol section as opaque
-and reports that it did not verify canonical prose or manifest protocol digests
-against source. It does not accept `--root`.
+`AGENTS.md`. `check-consumer` treats the canonical protocol section, or the
+protocol file's body after its generated header, as opaque and reports that it
+did not verify canonical prose or manifest protocol digests against source. It
+does not accept `--root`.
 
 `validate` and `index` can run during source development. `render` and `check`
 refuse a dirty protocol, profile, or checker source because an uncommitted change
@@ -275,9 +295,9 @@ Canonical protocol and profile directories must be real directories, while
 their source files and `protocols/index.json` must be regular files. Symlinks
 and special files are rejected because their bytes are not owned by the
 recorded Git revision. Before writing, `render` resolves the overlay, exception
-input, manifest, and `AGENTS.md` paths and rejects aliases that identify
-the same location. Parent-directory traversal or a symlink cannot let an output
-replace another input or output.
+input, manifest, `AGENTS.md`, nested, and protocol-file paths and rejects
+aliases that identify the same location. Parent-directory traversal or a
+symlink cannot let an output replace another input or output.
 
 Writes use atomic replacement. On Unix, generated files are fresh owner-written
 artifacts with mode `0644`, matching the established consumer format.
@@ -289,7 +309,11 @@ The source-independent `check-consumer` command rejects:
 - malformed manifest, source, profile, protocol, digest, or exception records;
 - overlay or exception-input drift from the manifest;
 - generated source, commit, profile, schema, import-table, or local-rule drift;
-- an empty canonical protocol section;
+- an empty canonical protocol section, or a non-empty one when the manifest
+  names a protocol file;
+- a protocol file that is missing, has a drifted header or no text, is not a
+  normalized plain relative path, or is named `AGENTS.md` or
+  `AGENTS.override.md`;
 - a declared directory that is not a normalized plain relative path, or is
   unsorted or duplicated, rejected before any of its files are read;
 - a missing, drifted, or edited directory overlay or `AGENTS.md`;
@@ -408,8 +432,8 @@ and lockfiles.
 | --- | ---: |
 | Protocols and generated index | 490 |
 | Profiles | 106 |
-| Rust checker and package manifest | 1,649 |
-| Tests | 1,081 |
-| Enforcement skills | 179 |
-| Repository policy, docs, and licenses | 1,830 |
-| **Total** | **5,335** |
+| Rust checker and package manifest | 1,761 |
+| Tests | 1,163 |
+| Enforcement skills | 189 |
+| Repository policy, docs, and licenses | 1,885 |
+| **Total** | **5,594** |

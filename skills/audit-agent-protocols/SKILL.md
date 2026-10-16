@@ -11,7 +11,8 @@ from semantic review and from claims about historical agent compliance.
 ## Establish the Pin
 
 1. Read the consumer's full `AGENTS.md`, `.agent-protocols.json`,
-   `.agent-protocols.local.md`, and `.agent-protocols.exceptions.json`.
+   `.agent-protocols.local.md`, `.agent-protocols.exceptions.json`, and any
+   protocol file the manifest records.
 2. Inspect repository status and instructions. Do not clean or rewrite drift.
 3. Locate a Starcompass checkout at the exact source commit recorded in the
    manifest. If it is unavailable, report structural verification as blocked;
@@ -38,7 +39,8 @@ cargo run --locked --quiet --manifest-path "$STARCOMPASS/Cargo.toml" -- \
 
 This proves the canonical catalog and profiles are intact, the source commit and
 protocol versions are pinned, the overlay and exception input match the
-manifest, and `AGENTS.md` is the exact deterministic rendering.
+manifest, and `AGENTS.md` and any protocol file are the exact deterministic
+rendering.
 
 It does not prove that an agent followed the instructions. Never describe a
 clean drift check as compliance evidence.

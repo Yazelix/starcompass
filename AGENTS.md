@@ -224,7 +224,8 @@ reviewed revert unless local policy says otherwise.
 
 Starcompass is the canonical source for small, composable development protocols
 used by coding agents. It publishes stable protocol IDs, profiles, rendered
-self-contained `AGENTS.md` files, and structural drift checks.
+`AGENTS.md` files that are self-contained within the consumer, and structural
+drift checks.
 
 ## Core Rule
 
@@ -248,8 +249,10 @@ Protocol IDs are permanent. Never recycle, rename, or remove an ID. Every change
 to a canonical protocol file must increment that protocol's positive integer
 version; the history gate cannot safely infer whether wording is editorial.
 
-Generated `AGENTS.md` files must be self-contained. An agent must not need
-network access or this repository to understand the active rules. Each import
+Generated instructions must be self-contained within the consumer. An agent
+must not need network access or this repository to understand the active rules;
+canonical protocol text lives in `AGENTS.md` or in a generated consumer file
+that `AGENTS.md` names. Each import
 records the source repository, exact source commit, protocol IDs and versions,
 and every approved local exception.
 

@@ -74,8 +74,9 @@ the release profile applies.
 
 ## Self-contained output beats remote inclusion
 
-Agents must be able to read the complete active policy from the local
-`AGENTS.md`, including offline and at historical revisions. Remote includes and
+Agents must be able to read the complete active policy within the consumer,
+including offline and at historical revisions: from `AGENTS.md`, or from it and
+the generated protocol file it names. Remote includes and
 runtime fetches would make behavior depend on availability and mutable external
 state. Rendering duplicates text deliberately at the consumption boundary while
 retaining one editable canonical source.
@@ -105,7 +106,8 @@ rendered.
 ## Structural integrity is not compliance
 
 The checker has two deterministic proof tiers. `check-consumer` needs only the
-overlay, exception input, manifest, and generated `AGENTS.md`. It validates
+consumer files: overlay, exception input, manifest, generated `AGENTS.md`, and
+any nested or protocol files the manifest records. It validates
 their schemas and locally derivable relationships, reproduces the import record
 and final local-rule framing, and treats the canonical protocol section as
 opaque. It neither reads nor discovers a source root.
