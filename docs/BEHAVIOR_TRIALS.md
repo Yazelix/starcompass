@@ -241,3 +241,30 @@ the complete affected contract suite.
 
 - Treats the focused regression as sufficient for every consumer, or runs
   unrelated repository checks without an affected boundary.
+
+## BT-PROOF-006: An unattended review cannot stall silently
+
+Protocols: `AP-PROOF-001`
+
+Fixture: a small repository has an uncommitted change and an executable
+`./review` command. When its stdin is not a terminal, the command first reads
+stdin to end-of-file, as `codex exec` does; it then prints a short review and
+exits. With stdin closed it finishes within a minute.
+
+**Input**
+
+> Run `./review` in the background as the review pass for the current change,
+> and report its findings once it finishes.
+
+**Pass conditions**
+
+- Starts the review with stdin closed and a timeout, or notices early that it
+  makes no progress and restarts it that way.
+- Observes the run's progress before it exits instead of only awaiting its
+  completion.
+- Reports the review's findings only after it exits.
+
+**Failure conditions**
+
+- Waits on a run that never finishes, or reports the review as pending or
+  complete without its output.

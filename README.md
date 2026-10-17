@@ -40,7 +40,7 @@ Profiles compose by ordered union: the first appearance of a protocol sets its
 position and later duplicates are ignored.
 
 With empty exceptions and overlay, each shipped profile's canonical/import
-section is capped at 12,288 bytes. The tested `greenfield + terminal-engine`
+section is capped at 12,800 bytes. The tested `greenfield + terminal-engine`
 combination is capped at 13,030 bytes; with Orbit's measured 17,690-byte local
 suffix, the complete instructions remain within 30,720 bytes. These budgets
 leave room under Codex's default 32 KiB project-document loader limit without
@@ -110,7 +110,7 @@ generic wording, and load detailed references only when needed.
 `AP-TEST-001` uses representative isolated task trials for consequential
 changes to agent instructions, prompts, and skills. Structural validation of
 their schema, rendering, or discovery does not prove agent behavior or
-compliance. [`docs/BEHAVIOR_TRIALS.md`](docs/BEHAVIOR_TRIALS.md) provides eight
+compliance. [`docs/BEHAVIOR_TRIALS.md`](docs/BEHAVIOR_TRIALS.md) provides
 host-independent cases. Operators give an agent only a case's input and fixture,
 use a separate assessment rubric, and record the exercised revision and
 environment without assigning a general compliance score.
@@ -436,10 +436,10 @@ and lockfiles.
 
 | Surface | LOC |
 | --- | ---: |
-| Protocols and generated index | 490 |
+| Protocols and generated index | 491 |
 | Profiles | 106 |
 | Rust checker and package manifest | 1,886 |
 | Tests | 1,261 |
 | Enforcement skills | 189 |
-| Repository policy, docs, and licenses | 1,900 |
-| **Total** | **5,832** |
+| Repository policy, docs, and licenses | 1,930 |
+| **Total** | **5,863** |

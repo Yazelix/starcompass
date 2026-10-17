@@ -88,14 +88,14 @@
   corrections after external reliance from unpublished amendments.
 - Canonical protocol wording retains non-obvious model weaknesses, high-cost
   boundaries, and repository workflows while removing generic or repeated
-  guidance. Every individual profile fits a 12 KiB canonical/import budget, and
+  guidance. Every individual profile fits a 12.5 KiB canonical/import budget, and
   the measured Orbit profile combination preserves 2 KiB of host-instruction
   headroom.
 - `AP-SCOPE-001` keeps inspection, audit, diagnosis, explanation, and advice
   non-mutating unless the user also chooses a change, and preserves user inputs
   and artifacts from implicit replacement or deletion. Since version 4, every
   choice offered to the user carries a recommended answer and its reason;
-  tighter wording keeps the orchestrator profile within its 12 KiB budget.
+  tighter wording keeps the orchestrator profile within its budget.
 - `AP-CONTRACT-001` selects the contract with the fewest unsupported guarantees
   or restrictions, leaves reasonable future behavior unspecified, and treats
   current user-facing documentation as a contract surface.
@@ -115,6 +115,9 @@
   unchanged source proof survives focused metadata, documentation, and planning
   follow-ups. Proof targets the highest sufficient changed boundary and expands
   only for affected ownership, failure, trust, delivery, or promotion surfaces.
+  Since version 7, unattended checks and reviews close unused stdin, have a
+  timeout, and get an early progress check, and a stalled run counts as a
+  failure.
 - `AP-PLAN-001` permits one owning implementation issue or a user-authorized
   bounded planning-only batch, prevents a run from combining both shapes, and
   keeps execution and reference-gate comments delta-only. Acceptance records

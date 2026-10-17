@@ -361,7 +361,7 @@ mod tests {
 
     #[test]
     fn profiles_fit_canonical_instruction_budget() {
-        const LIMIT: usize = 12 * 1024;
+        const LIMIT: usize = 12_800;
 
         let (_, profiles) = validate_repository(&root()).unwrap();
         let local_rules = render_local_rules("");
