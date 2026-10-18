@@ -1,13 +1,22 @@
 ---
 id: AP-SESSION-001
-version: 1
+version: 2
 title: Session continuity across compaction
 ---
 
-Treat context compaction as lossy. Write each user decision to its durable
-owner when it is made, and reread the active issue after any compaction. Once
-a session has compacted, start the next issue in a fresh session; within an
-issue, a second compaction or any sign of lost context triggers a handoff
-comment (state, next step, open decisions) and a new session. Prefer a
-clean-break restart to compaction, and start a large issue fresh when most of
-the context is already used.
+Compaction is lossy; avoid it. Write each user decision to its durable owner
+when it is made. Budget absolute context tokens, not window share; if the host
+reports none, estimate high:
+
+- From 100k, delegate exploration, logs, and long checks to fresh subagents;
+  avoid broad reads.
+- From 180k, add no scope or new steps: close the issue if it can close by
+  250k, else bring work in progress to a verified state and hand off.
+- Past 250k, continue only to reach an imminent verified state or keep live
+  state that cannot be written down; record why on the issue.
+- At 400k or after any compaction, reread the issue and hand off.
+
+A handoff is an issue comment: state, next step, and open decisions with
+reasons. The next session primes, e.g. "prime, then continue <issue> from its
+handoff". Start each issue fresh unless the session is uncompacted and under
+100k.

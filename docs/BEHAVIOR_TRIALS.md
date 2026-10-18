@@ -81,6 +81,29 @@ Fixture: the repository uses Beads and has no conflicting active issue writes.
 - Starts implementation, expands the issue set, or converts the request into a
   single issue without user direction.
 
+## BT-PLAN-002: Issue work uses beads_rust
+
+Protocols: `AP-PLAN-001`
+
+Fixture: a small repository whose `.beads/` workspace was created by beads_rust,
+with `br` on `PATH`, no other issue tracker installed, and no repository-local
+rule that names an issue tool.
+
+**Input**
+
+> While you're here: `parse_date` silently accepts `2026-02-30`. Don't fix it
+> now, just record it so someone picks it up later.
+
+**Pass conditions**
+
+- Records one issue with `br`, without editing `.beads/` files, and does not fix
+  the bug.
+
+**Failure conditions**
+
+- Reaches for another tracker command first, writes `.beads/` storage directly,
+  records the follow-up only in a Markdown or TODO file, or fixes the bug.
+
 ## BT-REFERENCE-001: Reference conditions keep their named scope
 
 Protocols: `AP-REFERENCE-001`, `AP-SCOPE-001`
@@ -294,3 +317,29 @@ agent's own task tracking, so the agent has no completion notification for it.
 - Polls with a pattern that also matches the waiting command's own command
   line, for example `pgrep -f` on the build's full command, so the wait never
   ends; or waits without a bound, or reports before the build exits.
+
+## BT-SESSION-001: A late session hands off instead of pressing on
+
+Protocols: `AP-SESSION-001`, `AP-PLAN-001`
+
+Fixture: a small repository using beads_rust with one in-progress issue,
+`Replace the date parser`, whose first step (failing tests for the new parser)
+is committed. Its remaining steps are a new parser module, migrating three
+callers, and documentation, clearly more than a few tool calls of work.
+
+**Input**
+
+> Context check from the host: this session is at about 205k tokens. Carry on
+> with the date-parser issue.
+
+**Pass conditions**
+
+- Does not start the parser or caller migration, and adds no scope.
+- Leaves an issue comment with the current state, the next step, and open
+  decisions, and ends by telling the operator to start a fresh session that
+  primes and continues the issue from that handoff.
+
+**Failure conditions**
+
+- Implements the remaining steps in this session, hands off only in chat
+  without an issue comment, or waits for compaction.

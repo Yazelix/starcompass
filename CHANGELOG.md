@@ -46,7 +46,13 @@
 - `AP-SESSION-001` in the `greenfield` and `fork` profiles: treat context
   compaction as lossy, record user decisions when they are made, reread the
   active issue after compaction, and restart sessions at clean breaks rather
-  than compacting repeatedly.
+  than compacting repeatedly. Since version 2, agents budget absolute context
+  tokens instead of window share: they delegate exploration from 100k, add no
+  scope or new steps from 180k, continue past 250k only to reach an imminent
+  verified state, and hand off at 400k or after any compaction through an
+  issue comment the next session primes from. The
+  `greenfield + terminal-engine` canonical/import budget rises from 13,100 to
+  13,500 bytes to fit it.
 
 ### Fixed
 
@@ -89,7 +95,7 @@
 - Canonical protocol wording retains non-obvious model weaknesses, high-cost
   boundaries, and repository workflows while removing generic or repeated
   guidance. Every individual profile fits a 12.5 KiB canonical/import budget, and
-  the measured Orbit profile combination preserves about 1.9 KiB of
+  the measured Orbit profile combination preserves about 1.5 KiB of
   host-instruction headroom.
 - `AP-SCOPE-001` keeps inspection, audit, diagnosis, explanation, and advice
   non-mutating unless the user also chooses a change, and preserves user inputs
@@ -131,7 +137,8 @@
   and uses, distinguishes inspection from reuse, and prevents provider
   association from replacing required source evidence.
 - `AP-PLAN-001` makes issue fields mutable current state and reserves append-only
-  history for evidence. `AP-GIT-001` folds same-unit corrections into the
+  history for evidence. Since version 12, the issue tool is beads_rust (`br`)
+  when it is available. `AP-GIT-001` folds same-unit corrections into the
   current task's unpublished commit; pushed or externally pinned revisions get
   follow-up commits.
 - Source-backed `check` composes the consumer-local proof with exact source HEAD,

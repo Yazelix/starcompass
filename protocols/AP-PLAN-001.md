@@ -1,6 +1,6 @@
 ---
 id: AP-PLAN-001
-version: 11
+version: 12
 title: Durable planning state
 ---
 
@@ -24,4 +24,4 @@ Keep fields current; append only needed contracts, decisions, dependencies,
 acceptance, material failures/negatives, constraining rejections, and approvals.
 Baseline/reference comments record only changed identities, dirty state,
 mechanism/stop decisions, and first check. Keep status/prerequisites honest; use
-the issue tool, never its storage.
+the issue tool (beads_rust `br` when available), never its storage.
