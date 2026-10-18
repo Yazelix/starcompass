@@ -89,8 +89,8 @@
 - Canonical protocol wording retains non-obvious model weaknesses, high-cost
   boundaries, and repository workflows while removing generic or repeated
   guidance. Every individual profile fits a 12.5 KiB canonical/import budget, and
-  the measured Orbit profile combination preserves 2 KiB of host-instruction
-  headroom.
+  the measured Orbit profile combination preserves about 1.9 KiB of
+  host-instruction headroom.
 - `AP-SCOPE-001` keeps inspection, audit, diagnosis, explanation, and advice
   non-mutating unless the user also chooses a change, and preserves user inputs
   and artifacts from implicit replacement or deletion. Since version 4, every
@@ -117,7 +117,10 @@
   only for affected ownership, failure, trust, delivery, or promotion surfaces.
   Since version 7, unattended checks and reviews close unused stdin, have a
   timeout, and get an early progress check, and a stalled run counts as a
-  failure.
+  failure. Since version 8, the same applies to waits on a run, and a wait never
+  matches itself as its target, so the waiter cannot keep its own wait open.
+  The `greenfield + terminal-engine` canonical/import budget rises from 13,030
+  to 13,100 bytes to fit it.
 - `AP-PLAN-001` permits one owning implementation issue or a user-authorized
   bounded planning-only batch, prevents a run from combining both shapes, and
   keeps execution and reference-gate comments delta-only. Acceptance records

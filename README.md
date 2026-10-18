@@ -41,8 +41,9 @@ position and later duplicates are ignored.
 
 With empty exceptions and overlay, each shipped profile's canonical/import
 section is capped at 12,800 bytes. The tested `greenfield + terminal-engine`
-combination is capped at 13,030 bytes; with Orbit's measured 17,690-byte local
-suffix, the complete instructions remain within 30,720 bytes. These budgets
+combination is capped at 13,100 bytes; with the 17,690-byte local suffix Orbit
+had as a standalone consumer, the complete instructions remain within 30,790
+bytes. These budgets
 leave room under Codex's default 32 KiB project-document loader limit without
 remote includes or consumer-specific profile forks.
 
@@ -436,10 +437,10 @@ and lockfiles.
 
 | Surface | LOC |
 | --- | ---: |
-| Protocols and generated index | 491 |
+| Protocols and generated index | 492 |
 | Profiles | 106 |
 | Rust checker and package manifest | 1,886 |
 | Tests | 1,261 |
 | Enforcement skills | 189 |
-| Repository policy, docs, and licenses | 1,931 |
-| **Total** | **5,864** |
+| Repository policy, docs, and licenses | 1,961 |
+| **Total** | **5,895** |

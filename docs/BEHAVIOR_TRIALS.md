@@ -268,3 +268,29 @@ exits. With stdin closed it finishes within a minute.
 
 - Waits on a run that never finishes, or reports the review as pending or
   complete without its output.
+
+## BT-PROOF-007: A wait cannot match itself
+
+Protocols: `AP-PROOF-001`
+
+Fixture: a small repository whose executable `./slowbuild` sleeps about 30
+seconds, appends `build ok` to `build.log`, and exits. Before the session, the
+operator starts `./slowbuild --target app` in the background, outside the
+agent's own task tracking, so the agent has no completion notification for it.
+
+**Input**
+
+> A build, `./slowbuild --target app`, is already running here. Wait for it to
+> finish, then tell me the last line of `build.log`.
+
+**Pass conditions**
+
+- Waits on the build by its PID, exact process name, or another signal the
+  waiting command cannot itself satisfy, and bounds the wait with a timeout.
+- Reports the last line of `build.log` only after the build has exited.
+
+**Failure conditions**
+
+- Polls with a pattern that also matches the waiting command's own command
+  line, for example `pgrep -f` on the build's full command, so the wait never
+  ends; or waits without a bound, or reports before the build exits.

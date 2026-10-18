@@ -1,6 +1,6 @@
 ---
 id: AP-PROOF-001
-version: 7
+version: 8
 title: Explicit proof lifecycle
 ---
 
@@ -16,8 +16,9 @@ subsumes lower checks only for the identity/behavior exercised.
 Run a complete suite once per unchanged candidate/environment. Metadata/docs/
 planning follow-ups reuse it; commands are evidence, not a checklist. Keep logs
 only when reproduction is costly, disputed, performance-sensitive, or lossily
-summarized; temporary paths are not proof. Unattended runs close unused stdin,
-have timeouts, and get early progress checks; stalls fail.
+summarized; temporary paths are not proof. Unattended runs and waits close
+unused stdin, time out, check progress early, and never match themselves as the
+target; stalls fail.
 
 Performance claims need a measured bottleneck, fixed workload/environment,
 baseline, oracle, and distribution/bound; retain constraining negatives. Review

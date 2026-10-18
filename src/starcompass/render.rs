@@ -392,10 +392,10 @@ mod tests {
         )
         .unwrap();
         let actual = agents.len() - local_rules.len();
-        const ORBIT_LIMIT: usize = 30 * 1024 - 17_690;
+        const COMBINED_LIMIT: usize = 13_100;
         assert!(
-            actual <= ORBIT_LIMIT,
-            "greenfield + terminal-engine canonical/import section is {actual} bytes; limit is {ORBIT_LIMIT}"
+            actual <= COMBINED_LIMIT,
+            "greenfield + terminal-engine canonical/import section is {actual} bytes; limit is {COMBINED_LIMIT}"
         );
     }
 
