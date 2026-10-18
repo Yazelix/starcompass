@@ -8,7 +8,7 @@ or `.agent-protocols.exceptions.json`, then render from the pinned source.
 ## Protocol import record
 
 - Source: `https://github.com/Yazelix/starcompass`
-- Source commit: `c88a6b25d1ed54fbb362e2f223545dd68112eae6`
+- Source commit: `13396990efb49301b37b771328044eb472e3fcae`
 - Profiles: `greenfield`
 - Manifest: `.agent-protocols.json` (schema 1)
 
@@ -20,8 +20,8 @@ or `.agent-protocols.exceptions.json`, then render from the pinned source.
 | `AP-MINIMAL-001` | 4 | `612bc9c62a20adf7332724d4663af0a0e591d624de2a76b1c257a9ed428db1f6` |
 | `AP-DEPENDENCY-001` | 2 | `ded49add538b82de0a9c522bc8a34720f4ebbb47f39fc2f7ddb25e7aad1700d3` |
 | `AP-OWNERSHIP-001` | 2 | `d218a4e0625b659ec366284110bdfce02bd66cb229ab6ba07f2317092ea13053` |
-| `AP-TEST-001` | 3 | `58b5837cb679e958192b366bb15d6e34649f5a91ff9f4accdc7edb4ef5cdb873` |
-| `AP-PROOF-001` | 8 | `a953744b74e4ac3b7d9ec71009939494e271395b39f7a55f371e7e4b32a909f3` |
+| `AP-TEST-001` | 4 | `1c1c5eafa1f611fd7575ecf00b32a2068a477614c8be78ac4efa41630ec8b5ad` |
+| `AP-PROOF-001` | 9 | `fc5961c27a4847b866de60b0c31d12e64f7f1580694813f75d718f5055ab9f1c` |
 | `AP-PLAN-001` | 12 | `5ee8deccb4b3c61ddd4a52b8ed6f69ebd30e24b65ace867871a89c75ef02a984` |
 | `AP-SESSION-001` | 2 | `b901ad980f05bd52164e31b4745e87e0fa2f2e9cc0a616716670135df3d9fc82` |
 | `AP-CI-001` | 3 | `c7cb65a81ce8434d02f2d19306bf93358f3624d0b77886bc91d4de93f7a779ba` |
@@ -129,11 +129,12 @@ and regressions whose expected behavior is known first; use contract-first
 integration checks for layout, runtime, architecture, forks, and dogfood.
 
 For consequential agent-instruction, prompt, or skill changes, run isolated
-representative tasks without supplying the expected conclusion. Structural
-checks prove structure, not agent behavior. Test observable effects; delete
-duplicate proof, implementation trivia, and scaffolding. Guard absence only
-when absence is a security, licensing, size, ownership, or known-regression
-contract.
+representative tasks without supplying the expected conclusion when the user
+authorizes a separate agent; otherwise validate in the active context and
+report agent behavior as unproven. Structural checks prove structure, not
+agent behavior. Test observable effects; delete duplicate proof,
+implementation trivia, and scaffolding. Guard absence only when absence is a
+security, licensing, size, ownership, or known-regression contract.
 
 ### AP-PROOF-001 — Explicit proof lifecycle
 
@@ -155,7 +156,8 @@ target; stalls fail.
 
 Performance claims need a measured bottleneck, fixed workload/environment,
 baseline, oracle, and distribution/bound; retain constraining negatives. Review
-changes require another pass; convergence needs a full clean pass.
+changes require another pass; convergence needs a full clean pass. Nits never
+block it, and text-only fixes restart a review at most twice per slice.
 
 ### AP-PLAN-001 — Durable planning state
 
