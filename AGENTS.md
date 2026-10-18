@@ -8,7 +8,7 @@ or `.agent-protocols.exceptions.json`, then render from the pinned source.
 ## Protocol import record
 
 - Source: `https://github.com/Yazelix/starcompass`
-- Source commit: `535d4145b4c18bfa70d1ad80c352b5fdd037c77b`
+- Source commit: `c88a6b25d1ed54fbb362e2f223545dd68112eae6`
 - Profiles: `greenfield`
 - Manifest: `.agent-protocols.json` (schema 1)
 
@@ -22,8 +22,8 @@ or `.agent-protocols.exceptions.json`, then render from the pinned source.
 | `AP-OWNERSHIP-001` | 2 | `d218a4e0625b659ec366284110bdfce02bd66cb229ab6ba07f2317092ea13053` |
 | `AP-TEST-001` | 3 | `58b5837cb679e958192b366bb15d6e34649f5a91ff9f4accdc7edb4ef5cdb873` |
 | `AP-PROOF-001` | 8 | `a953744b74e4ac3b7d9ec71009939494e271395b39f7a55f371e7e4b32a909f3` |
-| `AP-PLAN-001` | 11 | `fcb7c8d2b99c6641a7cd1244072eda6230f1ccfc3a4aa47c29cf2525fcb1376d` |
-| `AP-SESSION-001` | 1 | `f8bdac637027895ec8d1ad4f192e13808d095a809d091b76eadadaf936b2a340` |
+| `AP-PLAN-001` | 12 | `5ee8deccb4b3c61ddd4a52b8ed6f69ebd30e24b65ace867871a89c75ef02a984` |
+| `AP-SESSION-001` | 2 | `b901ad980f05bd52164e31b4745e87e0fa2f2e9cc0a616716670135df3d9fc82` |
 | `AP-CI-001` | 3 | `c7cb65a81ce8434d02f2d19306bf93358f3624d0b77886bc91d4de93f7a779ba` |
 | `AP-EXCEPTION-001` | 2 | `2c4f00299922edac83286821af07ad485e5a630bca6acbbce918d87614abb395` |
 | `AP-GIT-001` | 5 | `f2c3254311de57a23a13aa382fe3285e65bb34e535ecd813d1be783ca79d4bf9` |
@@ -179,17 +179,26 @@ Keep fields current; append only needed contracts, decisions, dependencies,
 acceptance, material failures/negatives, constraining rejections, and approvals.
 Baseline/reference comments record only changed identities, dirty state,
 mechanism/stop decisions, and first check. Keep status/prerequisites honest; use
-the issue tool, never its storage.
+the issue tool (beads_rust `br` when available), never its storage.
 
 ### AP-SESSION-001 — Session continuity across compaction
 
-Treat context compaction as lossy. Write each user decision to its durable
-owner when it is made, and reread the active issue after any compaction. Once
-a session has compacted, start the next issue in a fresh session; within an
-issue, a second compaction or any sign of lost context triggers a handoff
-comment (state, next step, open decisions) and a new session. Prefer a
-clean-break restart to compaction, and start a large issue fresh when most of
-the context is already used.
+Compaction is lossy; avoid it. Write each user decision to its durable owner
+when it is made. Budget absolute context tokens, not window share; if the host
+reports none, estimate high:
+
+- From 100k, delegate exploration, logs, and long checks to fresh subagents;
+  avoid broad reads.
+- From 180k, add no scope or new steps: close the issue if it can close by
+  250k, else bring work in progress to a verified state and hand off.
+- Past 250k, continue only to reach an imminent verified state or keep live
+  state that cannot be written down; record why on the issue.
+- At 400k or after any compaction, reread the issue and hand off.
+
+A handoff is an issue comment: state, next step, and open decisions with
+reasons. The next session primes, e.g. "prime, then continue <issue> from its
+handoff". Start each issue fresh unless the session is uncompacted and under
+100k.
 
 ### AP-CI-001 — Bounded continuous integration
 
