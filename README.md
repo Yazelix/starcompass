@@ -401,6 +401,7 @@ Skills reference the protocols by ID instead of copying their text.
 | `fresh-eyes` | Reread recent work for bugs, omissions, and confusion, without editing |
 | `fresh-pass` | Reread recent work, simplify it, and fix what turns up |
 | `fix-or-bead` | One bounded review pass: fix in-scope regressions, bead the rest |
+| `converge` | Finish a code change through fresh-subagent fix passes until one changes nothing |
 | `simplify-and-refactor-code-isomorphically` | Shrink code while proving behavior stays the same |
 | `opinion` | Get a candid assessment of a project |
 | `weakness` | Find a project's weakest and most limiting parts |
@@ -501,6 +502,6 @@ and lockfiles.
 | Profiles | 106 |
 | Rust checker and package manifest | 1,886 |
 | Tests | 1,261 |
-| Skills and install script | 2,161 |
-| Repository policy, docs, and licenses | 2,138 |
-| **Total** | **8,055** |
+| Skills and install script | 2,227 |
+| Repository policy, docs, and licenses | 2,139 |
+| **Total** | **8,122** |

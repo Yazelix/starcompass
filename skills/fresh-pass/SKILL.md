@@ -27,7 +27,8 @@ Reread recent work as if seeing it for the first time, simplify it, and fix what
    - wasted work: redundant computation, repeated I/O, needless re-renders or loops
 4. **Fix.** Apply every confirmed finding directly. Keep each fix scoped; preserve behavior, features, supported edge cases, and safety checks. Do not simplify away anything the task required. When a finding is uncertain or a fix would change intended behavior, leave it and report it instead.
 5. **Verify.** Rerun the project's relevant checks (tests, typecheck, lint, build, or a run of the changed behavior) after fixing. If a fix breaks something, fix or revert it.
-6. **Repeat once if warranted.** If the fixes were substantial, take one more quick pass over the new diff; stop when a pass finds nothing worth changing.
+
+This is one pass. To repeat passes until one changes nothing, use the `converge` skill.
 
 ## Standards
 
