@@ -24,6 +24,9 @@
 - Host-independent protocol behavior trials with isolated agent inputs and
   separate assessment rubrics.
 - Protocol-only apply and audit Codex skills.
+- The owner's general agent skills, imported from `luccahuguet/skills` with
+  their history, and `skills/install.sh`, which links every skill into Claude
+  Code and Codex.
 - Generated `AGENTS.md` files identify their editable consumer-owned inputs.
 - Exact-pinned `greenfield` self-adoption through the ordinary consumer format
   and a two-revision bootstrap sequence for canonical source changes.

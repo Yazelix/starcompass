@@ -255,8 +255,8 @@ direction.
 - `src/starcompass.rs` and its `src/starcompass/` modules are the sole owner of
   validation, rendering, and drift detection; each module's `//!` header names
   the one concern it owns. `src/main.rs` owns only process I/O and exit status.
-- `skills/` contains only skills whose sole purpose is applying or auditing
-  these protocols.
+- `skills/` holds the owner's agent skills and `skills/install.sh`. Skills
+  reference protocols by ID instead of copying their text.
 - A consumer repository owns its local overlay and explicit exceptions.
 
 Protocol IDs are permanent. Never recycle, rename, or remove an ID. Every change

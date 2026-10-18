@@ -13,12 +13,13 @@ It provides:
 - typed Rust source-backed and source-independent drift checks plus rendering;
 - one owning implementation Bead per run or an explicit bounded planning-only
   batch;
-- two Codex skills dedicated only to applying and auditing the protocols; and
+- the owner's agent skills, two of which apply and audit the protocols, and an
+  install script that links them into Claude Code and Codex; and
 - self-adoption of the `greenfield` profile through the ordinary consumer
   format.
 
-The source repository is public under either the MIT or Apache-2.0 license. It
-has no hosted CI; local verification is the current proof surface.
+The source repository is public under either the MIT or Apache-2.0 license,
+except `skills/stop-slop`, which keeps its own MIT license. It has no hosted CI; local verification is the current proof surface.
 
 Starcompass is the project and repository identity. `AP` means Agent Protocol,
 the publisher-neutral namespace for IDs such as `AP-SCOPE-001`. Consumer files
@@ -374,6 +375,45 @@ Consumers upgrade intentionally:
 4. render from the chosen clean commit;
 5. run the drift check and the consumer's own verification.
 
+## Skills
+
+Each folder in `skills/` is one skill: a `SKILL.md` with frontmatter, plus
+optional references, scripts, and Codex display metadata in `agents/openai.yaml`.
+Skills reference the protocols by ID instead of copying their text.
+
+| Skill | Use it to |
+| --- | --- |
+| `apply-agent-protocols` | Adopt, render, or update a consumer's protocol import |
+| `audit-agent-protocols` | Audit a consumer's import for drift and semantic conflicts |
+| `prime` | Read a repository's instructions, README, and architecture before working, or only what one bead needs |
+| `prime-beads` | Review and refine a Beads plan, keeping beads small enough for one session |
+| `create-beads` | Turn chosen work into right-sized beads, with epics for larger work |
+| `list-beads` | List in-progress Beads issues and the 10 highest-priority ready ones |
+| `handoff` | End a session with a handoff on the owning bead for a fresh agent |
+| `audit-to-beads` | Audit a codebase and record improvements as Beads, without editing code |
+| `fresh-eyes` | Reread recent work for bugs, omissions, and confusion, without editing |
+| `fresh-pass` | Reread recent work, simplify it, and fix what turns up |
+| `fix-or-bead` | One bounded review pass: fix in-scope regressions, bead the rest |
+| `simplify-and-refactor-code-isomorphically` | Shrink code while proving behavior stays the same |
+| `opinion` | Get a candid assessment of a project |
+| `weakness` | Find a project's weakest and most limiting parts |
+| `idea` | Generate 30 improvement ideas and keep only the strongest |
+| `readme` | Bring README and docs in line with the current code |
+| `ui` | Design and build polished frontend UI |
+| `stop-slop` | Remove AI writing patterns from prose |
+
+`skills/install.sh` symlinks every skill into `~/.claude/skills` and
+`~/.codex/skills` for each host that is installed, so an edit here reaches both.
+It moves any existing entry with the same name to
+`~/.local/state/skills-backup/` first and can be rerun safely.
+
+The general skills came from `luccahuguet/skills` with their history.
+`stop-slop` is by [Hardik Pandya](https://hvpandya.com) and keeps its MIT
+license in `skills/stop-slop/LICENSE`.
+`simplify-and-refactor-code-isomorphically` was written independently, inspired
+by ideas Jeffrey Emanuel shared publicly. `audit-to-beads` is inspired by
+`shadcn/improve`.
+
 ## Repository layout
 
 ```text
@@ -383,7 +423,7 @@ src/starcompass.rs         index, render, and drift-check module root
 src/starcompass/           catalog, manifest, render, check, and command modules
 src/main.rs                `starcompass` process boundary
 tests/                     focused contract tests
-skills/                    protocol-only Codex skills
+skills/                    agent skills and install.sh
 docs/DESIGN.md             architecture decisions and boundaries
 docs/BEHAVIOR_TRIALS.md    manual isolated agent-behavior cases
 .agent-protocols.local.md  Starcompass-specific policy input
@@ -445,6 +485,6 @@ and lockfiles.
 | Profiles | 106 |
 | Rust checker and package manifest | 1,886 |
 | Tests | 1,261 |
-| Enforcement skills | 189 |
-| Repository policy, docs, and licenses | 2,039 |
-| **Total** | **5,984** |
+| Skills and install script | 2,161 |
+| Repository policy, docs, and licenses | 2,084 |
+| **Total** | **8,001** |
