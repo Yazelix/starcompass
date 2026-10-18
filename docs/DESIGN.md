@@ -210,13 +210,33 @@ Serialization, hashing, and atomic replacement each have one narrow call
 boundary, so a future replacement does not change the Markdown or JSON
 compatibility surface.
 
+## Claude Code first, Codex supported
+
+Starcompass is written for Claude Code first. Protocols and skills may name its
+mechanisms, such as subagents, skills, and hooks, instead of describing a
+neutral host. Codex stays a supported client: it reads the same rendered
+`AGENTS.md`, its skill metadata stays in each skill's `agents/openai.yaml`, and
+it serves as a second-model reviewer. A Claude-only stance was rejected because
+it would demote that reviewer to a guest tool.
+
+Supporting Codex keeps its limits binding. Codex is the second most important
+client, so its default 32 KiB project-document limit still sets the byte budgets
+above and the nested-chain check; Claude-primary wording never loosens them.
+
+Skill validation runs on the primary host: `claude plugin validate --strict`
+checks each skill as Claude Code loads it. It tolerates malformed YAML
+frontmatter that Codex's `quick_validate.py` rejects, so that script remains an
+extra check where Codex is installed.
+
 ## Skill boundary
 
-Skills live here only when their sole responsibility is applying or auditing
-these protocols. General writing, UI, review, opinion, and repository-management
-skills have independent lifecycles and belong elsewhere. Co-location is not a
-claim that skills are canonical protocol text; skills must reference the catalog
-and checker rather than copy protocol wording.
+Starcompass holds the owner's agent skills of any kind, not only the two that
+apply and audit these protocols, so one repository owns both the rules and the
+skills that carry them out. A rule may name a skill that lives here. The
+skills came from `luccahuguet/skills` with their history; that repository is
+archived. Co-location is not a claim that skills are canonical protocol text;
+skills reference protocols by ID and use the catalog and checker rather than
+copy protocol wording.
 
 Durable agent context is part of system lifecycle cost. Instructions belong at
 the narrowest scope that needs them, retain non-obvious constraints and reusable

@@ -350,9 +350,18 @@ cargo fmt --check
 cargo check --locked
 cargo test --locked
 cargo clippy --locked --all-targets -- -D warnings
-python3 /home/lucca/.codex/skills/.system/skill-creator/scripts/quick_validate.py skills/apply-agent-protocols
-python3 /home/lucca/.codex/skills/.system/skill-creator/scripts/quick_validate.py skills/audit-agent-protocols
+claude plugin validate --strict skills
 git diff --check
+```
+
+`claude plugin validate --strict` checks every skill's frontmatter the way
+Claude Code loads it, but it accepts malformed YAML. Where Codex is installed,
+its stricter checker also parses the YAML; it prints any skill that fails:
+
+```sh
+for skill in skills/*/; do
+  python3 ~/.codex/skills/.system/skill-creator/scripts/quick_validate.py "$skill" >/dev/null || echo "invalid: $skill"
+done
 ```
 
 Do not add hosted CI until the user explicitly chooses its cost and trust

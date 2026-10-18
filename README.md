@@ -18,8 +18,15 @@ It provides:
 - self-adoption of the `greenfield` profile through the ordinary consumer
   format.
 
+Starcompass is written for Claude Code first: protocols and skills may name its
+mechanisms, such as subagents, skills, and hooks. Codex stays supported. Both
+read the rendered `AGENTS.md`, the size budgets below keep each import inside
+Codex's default project-document limit, and Codex remains a second-model
+reviewer.
+
 The source repository is public under either the MIT or Apache-2.0 license,
-except `skills/stop-slop`, which keeps its own MIT license. It has no hosted CI; local verification is the current proof surface.
+except `skills/stop-slop`, which keeps its own MIT license. It has no hosted CI;
+local verification is the current proof surface.
 
 Starcompass is the project and repository identity. `AP` means Agent Protocol,
 the publisher-neutral namespace for IDs such as `AP-SCOPE-001`. Consumer files
@@ -456,9 +463,18 @@ target/debug/starcompass check-consumer \
   --exceptions .agent-protocols.exceptions.json \
   --manifest .agent-protocols.json \
   --agents AGENTS.md
-python3 /home/lucca/.codex/skills/.system/skill-creator/scripts/quick_validate.py skills/apply-agent-protocols
-python3 /home/lucca/.codex/skills/.system/skill-creator/scripts/quick_validate.py skills/audit-agent-protocols
+claude plugin validate --strict skills
 git diff --check
+```
+
+`claude plugin validate --strict` checks every skill's frontmatter the way
+Claude Code loads it, but it accepts malformed YAML. Where Codex is installed,
+its stricter checker also parses the YAML; it prints any skill that fails:
+
+```sh
+for skill in skills/*/; do
+  python3 ~/.codex/skills/.system/skill-creator/scripts/quick_validate.py "$skill" >/dev/null || echo "invalid: $skill"
+done
 ```
 
 The self-import check must use a clean checkout at the source commit recorded in
@@ -486,5 +502,5 @@ and lockfiles.
 | Rust checker and package manifest | 1,886 |
 | Tests | 1,261 |
 | Skills and install script | 2,161 |
-| Repository policy, docs, and licenses | 2,084 |
-| **Total** | **8,001** |
+| Repository policy, docs, and licenses | 2,138 |
+| **Total** | **8,055** |
