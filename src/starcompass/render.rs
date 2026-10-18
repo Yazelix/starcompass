@@ -392,7 +392,7 @@ mod tests {
         )
         .unwrap();
         let actual = agents.len() - local_rules.len();
-        const COMBINED_LIMIT: usize = 13_500;
+        const COMBINED_LIMIT: usize = 13_700;
         assert!(
             actual <= COMBINED_LIMIT,
             "greenfield + terminal-engine canonical/import section is {actual} bytes; limit is {COMBINED_LIMIT}"

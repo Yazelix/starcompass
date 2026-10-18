@@ -112,7 +112,9 @@
   duplicate or generic wording, and loads details only when needed.
 - `AP-TEST-001` uses representative isolated task trials for consequential
   agent-instruction changes and keeps structural validation distinct from
-  behavioral compliance.
+  behavioral compliance. Since version 4, trials run when the user authorizes
+  a separate agent; otherwise the active agent validates in its own context
+  and reports agent behavior as unproven.
 - `AP-PROOF-001` requires comparable baselines, bottleneck evidence, correctness
   oracles, and representative results before making performance claims. Agents
   may claim review or simplification convergence only after a full pass over the
@@ -127,6 +129,10 @@
   matches itself as its target, so the waiter cannot keep its own wait open.
   The `greenfield + terminal-engine` canonical/import budget rises from 13,030
   to 13,100 bytes to fit it.
+  Since version 9, nits never block convergence, and text-only fixes restart a
+  review at most twice per slice. With `AP-TEST-001` version 4, the
+  `greenfield + terminal-engine` canonical/import budget rises from 13,500 to
+  13,700 bytes to fit both.
 - `AP-PLAN-001` permits one owning implementation issue or a user-authorized
   bounded planning-only batch, prevents a run from combining both shapes, and
   keeps execution and reference-gate comments delta-only. Acceptance records

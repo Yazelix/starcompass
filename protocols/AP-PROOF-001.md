@@ -1,6 +1,6 @@
 ---
 id: AP-PROOF-001
-version: 8
+version: 9
 title: Explicit proof lifecycle
 ---
 
@@ -22,4 +22,5 @@ target; stalls fail.
 
 Performance claims need a measured bottleneck, fixed workload/environment,
 baseline, oracle, and distribution/bound; retain constraining negatives. Review
-changes require another pass; convergence needs a full clean pass.
+changes require another pass; convergence needs a full clean pass. Nits never
+block it, and text-only fixes restart a review at most twice per slice.

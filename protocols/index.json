@@ -115,10 +115,10 @@
     },
     {
       "id": "AP-PROOF-001",
-      "version": 8,
+      "version": 9,
       "title": "Explicit proof lifecycle",
       "path": "protocols/AP-PROOF-001.md",
-      "sha256": "a953744b74e4ac3b7d9ec71009939494e271395b39f7a55f371e7e4b32a909f3"
+      "sha256": "fc5961c27a4847b866de60b0c31d12e64f7f1580694813f75d718f5055ab9f1c"
     },
     {
       "id": "AP-REFERENCE-001",
@@ -150,10 +150,10 @@
     },
     {
       "id": "AP-TEST-001",
-      "version": 3,
+      "version": 4,
       "title": "Strong and few tests",
       "path": "protocols/AP-TEST-001.md",
-      "sha256": "58b5837cb679e958192b366bb15d6e34649f5a91ff9f4accdc7edb4ef5cdb873"
+      "sha256": "1c1c5eafa1f611fd7575ecf00b32a2068a477614c8be78ac4efa41630ec8b5ad"
     }
   ]
 }

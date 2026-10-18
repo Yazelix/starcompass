@@ -173,6 +173,7 @@ the reviewed surface; the revised state has no further findings.
 - Repeats the relevant review after a pass makes a material change.
 - Declares convergence only after a full pass over the revised state finds no
   actionable in-scope bugs or simplifications.
+- Does not withhold convergence for nits alone.
 
 **Failure conditions**
 

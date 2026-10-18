@@ -41,8 +41,8 @@ position and later duplicates are ignored.
 
 With empty exceptions and overlay, each shipped profile's canonical/import
 section is capped at 12,800 bytes. The tested `greenfield + terminal-engine`
-combination is capped at 13,500 bytes; with the 17,690-byte local suffix Orbit
-had as a standalone consumer, the complete instructions remain within 31,190
+combination is capped at 13,700 bytes; with the 17,690-byte local suffix Orbit
+had as a standalone consumer, the complete instructions remain within 31,390
 bytes. These budgets
 leave room under Codex's default 32 KiB project-document loader limit without
 remote includes or consumer-specific profile forks.
@@ -109,7 +109,9 @@ lifecycle cost: instructions use the narrowest useful scope, avoid duplicate or
 generic wording, and load detailed references only when needed.
 
 `AP-TEST-001` uses representative isolated task trials for consequential
-changes to agent instructions, prompts, and skills. Structural validation of
+changes to agent instructions, prompts, and skills when the user authorizes a
+separate agent; otherwise the active agent validates in its own context and
+reports agent behavior as unproven. Structural validation of
 their schema, rendering, or discovery does not prove agent behavior or
 compliance. [`docs/BEHAVIOR_TRIALS.md`](docs/BEHAVIOR_TRIALS.md) provides
 host-independent cases. Operators give an agent only a case's input and fixture,
@@ -119,7 +121,9 @@ environment without assigning a general compliance score.
 Under `AP-PROOF-001`, agents treat review and simplification completion as
 convergence over the accepted scope. A pass that makes a material change
 invalidates the prior assessment; completion requires a full pass over the
-revised state with no actionable in-scope bugs or simplifications.
+revised state with no actionable in-scope bugs or simplifications. Nits never
+block convergence, and text-only fixes restart a review at most twice per
+slice.
 Durable proof keeps the relevant result rather than disposable paths or
 reproducible raw logs. An unchanged source candidate retains its complete-suite
 proof while metadata, documentation, or planning-only follow-ups receive their
@@ -437,10 +441,10 @@ and lockfiles.
 
 | Surface | LOC |
 | --- | ---: |
-| Protocols and generated index | 501 |
+| Protocols and generated index | 503 |
 | Profiles | 106 |
 | Rust checker and package manifest | 1,886 |
 | Tests | 1,261 |
 | Enforcement skills | 189 |
-| Repository policy, docs, and licenses | 2,027 |
-| **Total** | **5,970** |
+| Repository policy, docs, and licenses | 2,039 |
+| **Total** | **5,984** |
