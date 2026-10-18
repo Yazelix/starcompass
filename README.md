@@ -9,7 +9,7 @@ Codex display metadata in `agents/openai.yaml`.
 | `prime` | Read a repository's instructions, README, and architecture before working, or only what one bead needs |
 | `prime-beads` | Review and refine a Beads plan, keeping beads small enough for one session |
 | `create-beads` | Turn chosen work into right-sized beads, with epics for larger work |
-| `list-beads` | List the 10 highest-priority ready Beads issues |
+| `list-beads` | List in-progress Beads issues and the 10 highest-priority ready ones |
 | `handoff` | End a session with a handoff on the owning bead for a fresh agent |
 | `audit-to-beads` | Audit a codebase and record improvements as Beads, without editing code |
 | `fresh-eyes` | Reread recent work for bugs, omissions, and confusion, without editing |
