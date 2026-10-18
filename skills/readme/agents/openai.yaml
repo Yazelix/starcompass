@@ -1,0 +1,4 @@
+interface:
+  display_name: "Readme"
+  short_description: "Refresh README and docs from current code"
+  default_prompt: "Use $readme to update README and related documentation so they describe the current project state."

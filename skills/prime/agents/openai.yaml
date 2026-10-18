@@ -1,0 +1,4 @@
+interface:
+  display_name: "Prime"
+  short_description: "Prime a repository before coding"
+  default_prompt: "Use $prime to read the repo instructions and understand the project architecture before making changes."

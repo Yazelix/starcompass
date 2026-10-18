@@ -1,0 +1,4 @@
+interface:
+  display_name: "Fix or Bead"
+  short_description: "Fix in-scope regressions; bead the rest"
+  default_prompt: "Use $fix-or-bead to take one bounded fresh-eyes pass, fix only regressions or blockers in scope, and bead actionable follow-ups."
