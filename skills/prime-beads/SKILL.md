@@ -1,6 +1,6 @@
 ---
 name: prime-beads
-description: Audit and refine Beads planning before implementation by rereading AGENTS.md, reviewing every relevant bead carefully, checking whether each bead and dependency makes sense, and revising Beads only through the project's Beads CLI (`bd` or `br`). Use when the user asks to review, optimize, restructure, improve, or sanity-check beads, issues, dependencies, acceptance criteria, scope, or plan-space before coding. Prefer `br` when the project does not clearly specify `bd`.
+description: Audit and refine Beads planning before implementation by rereading AGENTS.md, reviewing every relevant bead carefully, checking whether each bead and dependency makes sense, and revising Beads only through the project's Beads CLI (`bd` or `br`). Keeps each bead small enough to finish in one fresh agent session, turning bigger work into an epic of child beads. Use when the user asks to review, optimize, restructure, improve, split, or sanity-check beads, issues, dependencies, acceptance criteria, scope, or plan-space before coding. Prefer `br` when the project does not clearly specify `bd`.
 ---
 
 # Prime Beads
@@ -28,6 +28,10 @@ Use the Beads CLI that belongs to the project:
 - Do not oversimplify by deleting necessary scope, acceptance criteria, edge cases, user-visible behavior, or features.
 - Do not lose functionality. If simplifying a bead, preserve the real user outcome and make removed scope explicit.
 
+## Bead Size
+
+Judge and fix bead size by the Bead Size rule in the `create-beads` skill (`../create-beads/SKILL.md`): each implementation bead fits one fresh agent session, and bigger work becomes an epic of self-contained child beads (`<beads> create --parent <epic-id> ...`).
+
 ## Workflow
 
 1. Read applicable `AGENTS.md` files completely.
@@ -43,13 +47,14 @@ Use the Beads CLI that belongs to the project:
    - Does the title describe a real outcome?
    - Does the description explain the current problem clearly?
    - Are acceptance criteria concrete and verifiable?
-   - Is the scope neither too broad nor artificially narrow?
+   - Is the scope neither too broad nor artificially narrow? Does it fit one fresh session under the Bead Size rule?
    - Are dependencies directionally correct and complete?
    - Are priority, type, labels, and status appropriate?
    - Are hidden migration, compatibility, docs, tests, or validation needs captured?
    - Is there any lost feature, user workflow, or edge case?
 6. Improve the plan while it is cheap:
    - split beads that bundle unrelated work
+   - turn beads too big for one session into epics with child beads
    - merge or close duplicates
    - clarify acceptance criteria and verification paths
    - add missing blockers or parent-child relationships

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Create Beads"
+  short_description: "Plan chosen work as right-sized Beads"
+  default_prompt: "Use $create-beads to turn this work into right-sized beads, with an epic of child beads when it does not fit one session."

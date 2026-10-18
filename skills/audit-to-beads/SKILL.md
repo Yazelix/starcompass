@@ -40,8 +40,9 @@ If no Beads CLI exists in the repo and no equivalent command is documented, repo
 - **deep**: inspect every major package/subsystem and create a broader prioritized Beads set.
 - **branch**: audit only current branch changes plus direct callers/owners. Tag findings as `introduced` or `pre-existing in touched files`.
 - **security**, **perf**, **tests**, **tech-debt**, **dx**, **docs**, **direction**: focus on one category.
-- **plan <description>**: skip broad audit and create one self-contained Bead for the described work after enough recon to specify it safely.
 - **reconcile**: inspect existing advisor-created Beads, close obsolete ones, unblock/update drifted ones, and add dependencies. Do not implement.
+
+To plan already-chosen work without an audit, use the `create-beads` skill instead.
 
 ## Workflow
 
@@ -86,15 +87,11 @@ Before creating any Bead:
 - Decide the smallest durable unit of implementation.
 - Assign priority by leverage: impact divided by effort, discounted by confidence and fix risk.
 
-Use Beads hierarchy/dependencies rather than giant issues:
-
-- Create an epic/parent only when multiple independent implementation beads are clearly needed.
-- Add dependencies with `br dep add <blocked> <blocker>` when sequencing matters.
-- Prefer one implementation Bead per independently reviewable change.
+Size and structure Beads by the Bead Size rule in the `create-beads` skill (`../create-beads/SKILL.md`): one fresh agent session per bead, and an epic of child Beads for anything larger. Add dependencies with `br dep add <blocked> <blocker>` when sequencing matters.
 
 ### 4. Create Beads
 
-Read `references/bead-body-template.md` before writing the first Bead in a session.
+Read the `create-beads` template (`../create-beads/references/bead-body-template.md`) before writing the first Bead in a session.
 
 Each Bead body must be self-contained enough for a later agent with no access to the audit conversation:
 

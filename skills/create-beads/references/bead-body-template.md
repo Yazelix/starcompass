@@ -1,6 +1,6 @@
 # Bead Body Template
 
-Use this shape when creating implementation Beads. Adapt labels/types/priorities to the project.
+Use this shape for every implementation bead, including epic children. Adapt labels, types, and priorities to the project. An epic body needs only Why, Acceptance, and the planned children.
 
 ```markdown
 ## Why
@@ -20,6 +20,10 @@ In scope:
 Out of scope:
 - <nearby files/surfaces not to touch>
 - <behavior that must not change>
+
+## Acceptance
+
+- <observable outcome that shows this bead is done>
 
 ## Implementation Notes
 
@@ -46,10 +50,12 @@ Out of scope:
 Recommended Beads commands:
 
 ```bash
-br create "<title>" -t task -p 2 --labels improve,<category>,<subsystem> --description "<body>"
+br create "<title>" -t task -p 2 --labels <category>,<subsystem> --description-file <body.md>
+br create "<epic title>" -t epic -p 2 --description-file <epic.md>
+br create "<child title>" -t task --parent <epic-id> --description-file <child.md>
 br dep add <blocked-id> <blocker-id>
 br update <id> --priority 1
 br sync --flush-only
 ```
 
-Prefer `task` for implementation slices, `bug` for confirmed defects, `decision` for unresolved architectural choices, and `epic` only for multi-bead programs.
+Prefer `task` for implementation slices, `bug` for confirmed defects, `decision` for unresolved architectural choices, and `epic` when the work does not fit one session under the Bead Size rule.

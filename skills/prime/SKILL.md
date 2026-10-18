@@ -1,6 +1,6 @@
 ---
 name: prime
-description: Prime the agent on a repository before implementation, review, planning, or debugging by fully reading AGENTS.md and README.md, extracting repo-specific workflow rules, and investigating the codebase architecture, purpose, entrypoints, and verification surfaces. Use when the user asks to prime, onboard, understand a repo/project, "read the instructions first", "use code investigation agent mode", or otherwise wants deep project context before work begins.
+description: Prime the agent on a repository before implementation, review, planning, or debugging by fully reading AGENTS.md and README.md, extracting repo-specific workflow rules, and investigating the codebase architecture, purpose, entrypoints, and verification surfaces. When given a bead or a handoff to continue ("prime, then continue ap-123 from its handoff"), primes in a focused mode that reads only the rules, the bead, and the files it touches, to keep context for the work. Use when the user asks to prime, onboard, understand a repo/project, "read the instructions first", "use code investigation agent mode", or otherwise wants deep project context before work begins.
 ---
 
 # Prime
@@ -8,6 +8,19 @@ description: Prime the agent on a repository before implementation, review, plan
 ## Overview
 
 Prime the working context before changing code. Read the project instructions and README in full, then build a concise architecture map from the repository itself.
+
+## Modes
+
+- **Focused**: the request names a bead or a handoff to continue, for example "prime, then continue ap-123 from its handoff". Keep context small; the session must leave room to finish the bead. Follow the Focused Workflow.
+- **Full**: first-time onboarding with no specific bead. Follow the Workflow below.
+
+## Focused Workflow
+
+1. Read every applicable `AGENTS.md` completely. Repository rules are never skipped.
+2. Read the bead and its comments with the repository's Beads CLI (`br show <id>`), plus its parent epic if it has one. The latest handoff comment is the starting point: treat recorded decisions as decided and do not retry approaches it rules out.
+3. Check the tree: `git status`, and whether the revision the handoff names has moved since.
+4. Read only the files, README sections, and tests the bead and handoff name, plus direct callers when you need them. Skip the architecture survey. If a wider question comes up, delegate it to a subagent when the instructions allow it and keep only the conclusion.
+5. Summarize in a few lines: the bead's goal, the state from the handoff, the next step, open decisions, and the check that verifies the work. If the user asked to continue, proceed with the next step.
 
 ## Workflow
 

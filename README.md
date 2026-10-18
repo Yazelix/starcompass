@@ -6,12 +6,15 @@ Codex display metadata in `agents/openai.yaml`.
 
 | Skill | Use it to |
 | --- | --- |
-| `prime` | Read a repository's instructions, README, and architecture before working |
-| `prime-beads` | Review and refine a Beads plan before implementation |
+| `prime` | Read a repository's instructions, README, and architecture before working, or only what one bead needs |
+| `prime-beads` | Review and refine a Beads plan, keeping beads small enough for one session |
+| `create-beads` | Turn chosen work into right-sized beads, with epics for larger work |
 | `list-beads` | List the 10 highest-priority ready Beads issues |
+| `handoff` | End a session with a handoff on the owning bead for a fresh agent |
 | `audit-to-beads` | Audit a codebase and record improvements as Beads, without editing code |
 | `fresh-eyes` | Reread recent work for bugs, omissions, and confusion, without editing |
 | `fresh-pass` | Reread recent work, simplify it, and fix what turns up |
+| `fix-or-bead` | One bounded review pass: fix in-scope regressions, bead the rest |
 | `simplify-and-refactor-code-isomorphically` | Shrink code while proving behavior stays the same |
 | `opinion` | Get a candid assessment of a project |
 | `weakness` | Find a project's weakest and most limiting parts |

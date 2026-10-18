@@ -1,0 +1,4 @@
+interface:
+  display_name: "Handoff"
+  short_description: "End a session with a bead handoff"
+  default_prompt: "Use $handoff to stop starting new work, verify what is done, and write a handoff on the owning bead for the next session."
