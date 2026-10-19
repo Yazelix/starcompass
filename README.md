@@ -5,7 +5,7 @@ agent projects without turning `AGENTS.md` into a remote dependency.
 
 It provides:
 
-- 23 individually identified and versioned protocols;
+- 24 individually identified and versioned protocols;
 - five ordered, composable profiles;
 - deterministic, self-contained `AGENTS.md` rendering, optionally with the
   canonical text in a separate generated protocol file;
@@ -97,7 +97,8 @@ request may authorize a bounded planning-only batch over a named or accepted
 issue set; that run may create, update, or close those records but cannot claim
 or implement work.
 
-`AP-REFERENCE-001` requires direct evidence and exact license interpretation.
+`AP-REFERENCE-001` requires direct evidence before a consequential code shape.
+`AP-LICENSE-001`, in the `fork` profile, requires exact license interpretation.
 It distinguishes public-source inspection for ideas from copying, dependency
 selection, adaptation, and redistribution, and it forbids treating an
 independent user as acting for an agent provider merely because the user chose
@@ -148,7 +149,7 @@ full verification catalog.
 | Profile | Intended role | Specialized protocols |
 | --- | --- | --- |
 | `greenfield` | Small new projects | dependency, proof, planning, and bounded-CI gates |
-| `fork` | Maintained downstream forks | minimal delta and upstream/removal discipline |
+| `fork` | Maintained downstream forks | minimal delta, upstream/removal discipline, and license interpretation |
 | `orchestrator` | Thin composition layers | orchestrator ownership, one active frontier, portability |
 | `release` | Products with ordered release channels | installed-artifact proof, fresh-session dogfood, exact-revision promotion |
 | `terminal-engine` | Terminal/session engines | terminal authority, lifecycle, failure, and portability |
@@ -498,10 +499,10 @@ and lockfiles.
 
 | Surface | LOC |
 | --- | ---: |
-| Protocols and generated index | 517 |
-| Profiles | 108 |
+| Protocols and generated index | 529 |
+| Profiles | 109 |
 | Rust checker and package manifest | 1,886 |
 | Tests | 1,261 |
 | Skills and install script | 2,227 |
-| Repository policy, docs, and licenses | 2,146 |
-| **Total** | **8,145** |
+| Repository policy, docs, and licenses | 2,150 |
+| **Total** | **8,162** |

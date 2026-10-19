@@ -4,7 +4,7 @@
 
 ### Added
 
-- Twenty-three stable-ID, individually versioned canonical protocols.
+- Twenty-four stable-ID, individually versioned canonical protocols.
 - Starcompass project and repository identity with stable protocol and
   consumer-format names.
 - Minimum-sufficient-implementation discipline with Ponytail as its adopted,
@@ -149,9 +149,12 @@
   observable outcomes and cheapest falsifiers instead of full command catalogs.
 - `AP-DELIVERY-001` lets one outer composed proof cover an unchanged embedded
   artifact only for its recorded exact identity and exercised behavior.
-- `AP-REFERENCE-001` applies source-license conditions to their actual actors
-  and uses, distinguishes inspection from reuse, and prevents provider
-  association from replacing required source evidence.
+- `AP-REFERENCE-001` requires direct evidence before a consequential code
+  shape. Version 4 moves license interpretation to `AP-LICENSE-001`, shrinking
+  `greenfield`.
+- `AP-LICENSE-001`, in the `fork` profile, applies source-license conditions to
+  their actual actors and uses, distinguishes inspection from reuse, and
+  prevents provider association from replacing required source evidence.
 - `AP-PLAN-001` makes issue fields mutable current state and reserves append-only
   history for evidence. Since version 12, the issue tool is beads_rust (`br`)
   when it is available. `AP-GIT-001` folds same-unit corrections into the

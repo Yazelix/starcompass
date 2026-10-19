@@ -284,7 +284,7 @@ mod tests {
     #[test]
     fn repository_and_profiles_render_deterministically() {
         let (protocols, profiles) = validate_repository(&root()).unwrap();
-        assert_eq!(protocols.len(), 23);
+        assert_eq!(protocols.len(), 24);
         assert_eq!(
             json_text(&expected_index(&root()).unwrap()).unwrap(),
             fs::read_to_string(root().join("protocols/index.json")).unwrap()

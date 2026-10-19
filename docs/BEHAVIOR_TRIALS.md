@@ -106,7 +106,7 @@ rule that names an issue tool.
 
 ## BT-REFERENCE-001: Reference conditions keep their named scope
 
-Protocols: `AP-REFERENCE-001`, `AP-SCOPE-001`
+Protocols: `AP-LICENSE-001`, `AP-SCOPE-001`
 
 Fixture: a public source license prohibits using the software to train models on
 behalf of an AI service provider, including supervised fine-tuning for that

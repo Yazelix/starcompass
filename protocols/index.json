@@ -72,6 +72,13 @@
       "sha256": "f2c3254311de57a23a13aa382fe3285e65bb34e535ecd813d1be783ca79d4bf9"
     },
     {
+      "id": "AP-LICENSE-001",
+      "version": 1,
+      "title": "Exact license interpretation",
+      "path": "protocols/AP-LICENSE-001.md",
+      "sha256": "cc490313be0b53952c4adfd390600e243c3dfeb14713de9088fdcb8f99e874ac"
+    },
+    {
       "id": "AP-MINIMAL-001",
       "version": 4,
       "title": "Minimum sufficient implementation",
@@ -129,10 +136,10 @@
     },
     {
       "id": "AP-REFERENCE-001",
-      "version": 3,
+      "version": 4,
       "title": "Evidence before code shape",
       "path": "protocols/AP-REFERENCE-001.md",
-      "sha256": "186fa74aa530c9c76ae507685461dff2b1506ecb5087230ded51f02cecb9231a"
+      "sha256": "906bcda869549979647d20e957ff48909fa5f36024f584be6657bdc058d58e72"
     },
     {
       "id": "AP-SCOPE-001",
