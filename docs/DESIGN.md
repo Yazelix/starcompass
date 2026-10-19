@@ -47,10 +47,16 @@ a separate archive, retirement registry, or synthetic profile.
 
 ## Profiles compose; projects still own policy
 
-The five profiles are curated ordered sets, not inheritance trees. Repeated
+The six profiles are curated ordered sets, not inheritance trees. Repeated
 `--profile` arguments form an ordered union and discard duplicate protocol IDs at
 their second occurrence. This supports combinations such as `regular` plus
 `terminal-engine` without inventing a profile for every project type.
+
+`regular` and `surgical` are postures: how much change a project welcomes.
+`surgical` contains every `regular` protocol, and a test keeps it that way, so
+a consumer picks one of the two. `AP-SURGICAL-001` states in its own text that
+it wins where `AP-MINIMAL-001` differs, so an agent does not have to resolve
+that conflict itself.
 
 Profiles contain shared rules only. Repository-specific commands, branches,
 tools, paths, ownership, and release rules belong in the consumer overlay. A
@@ -86,7 +92,7 @@ commit, profiles, protocol IDs, versions, hashes, and approved exceptions are
 visible without opening another file.
 
 Self-contained does not mean unbounded. Every individual shipped profile keeps
-its empty-overlay canonical/import section within 12,850 bytes. The current
+its empty-overlay canonical/import section within 12,900 bytes. The current
 `regular + terminal-engine` consumer case is limited to 13,900 bytes, leaving
 about 1.1 KiB under Codex's default 32 KiB project-document limit after the
 local suffix Orbit had as a standalone consumer. The budget belongs to canonical composition; consumers

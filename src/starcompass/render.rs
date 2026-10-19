@@ -284,7 +284,7 @@ mod tests {
     #[test]
     fn repository_and_profiles_render_deterministically() {
         let (protocols, profiles) = validate_repository(&root()).unwrap();
-        assert_eq!(protocols.len(), 24);
+        assert_eq!(protocols.len(), 25);
         assert_eq!(
             json_text(&expected_index(&root()).unwrap()).unwrap(),
             fs::read_to_string(root().join("protocols/index.json")).unwrap()
@@ -296,6 +296,7 @@ mod tests {
                 "orchestrator",
                 "regular",
                 "release",
+                "surgical",
                 "terminal-engine"
             ]
         );
@@ -361,7 +362,7 @@ mod tests {
 
     #[test]
     fn profiles_fit_canonical_instruction_budget() {
-        const LIMIT: usize = 12_850;
+        const LIMIT: usize = 12_900;
 
         let (_, profiles) = validate_repository(&root()).unwrap();
         let local_rules = render_local_rules("");
@@ -397,6 +398,15 @@ mod tests {
             actual <= COMBINED_LIMIT,
             "regular + terminal-engine canonical/import section is {actual} bytes; limit is {COMBINED_LIMIT}"
         );
+    }
+
+    #[test]
+    fn surgical_contains_every_regular_protocol() {
+        let (_, profiles) = validate_repository(&root()).unwrap();
+        let surgical = &profiles["surgical"].protocols;
+        for id in &profiles["regular"].protocols {
+            assert!(surgical.contains(id), "surgical lacks {id}");
+        }
     }
 
     #[test]

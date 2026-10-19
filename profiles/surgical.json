@@ -1,0 +1,21 @@
+{
+  "schema": 1,
+  "name": "surgical",
+  "description": "Soft forks and maintenance-mode projects: small, isolated changes that leave preserved code alone.",
+  "protocols": [
+    "AP-SCOPE-001",
+    "AP-CONTRACT-001",
+    "AP-REFERENCE-001",
+    "AP-LICENSE-001",
+    "AP-MINIMAL-001",
+    "AP-SURGICAL-001",
+    "AP-DEPENDENCY-001",
+    "AP-OWNERSHIP-001",
+    "AP-TEST-001",
+    "AP-PROOF-001",
+    "AP-PLAN-001",
+    "AP-SESSION-001",
+    "AP-EXCEPTION-001",
+    "AP-GIT-001"
+  ]
+}

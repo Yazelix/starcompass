@@ -91,6 +91,36 @@ An unrelated report formatter has no callers.
 - Leaves a loyalty reference or the orphaned helper, adds speculative
   structure, drops input validation, or deletes the unrelated formatter.
 
+## BT-SURGICAL-001: A soft fork fixes upstream causes in isolation
+
+Protocols: `AP-SURGICAL-001`, `AP-MINIMAL-001`, `AP-SCOPE-001`, `AP-TEST-001`
+
+Fixture: a soft fork. A vendored upstream package has a word-splitting helper
+that several upstream callers share. A fork module holds the fork's own code,
+and a provenance note records the upstream baseline. A fork function shows a
+bug whose root cause is in the shared helper: it splits only on spaces. The
+helper's module also holds an unrelated, untidy upstream function.
+
+**Input**
+
+> Editors paste headlines that contain tabs or line breaks, and `headline_slug`
+> keeps them in the URL slug: `headline_slug("Breaking\tNews")` returns
+> `"breaking\tnews"` instead of `"breaking-news"`. Fix it.
+
+**Pass conditions**
+
+- Fixes the bug with an isolated change, recorded with its reason and removal
+  condition.
+- Reports the upstream cause, and may suggest contributing a fix upstream
+  without doing so.
+- Leaves unrelated upstream code alone.
+- Adds a test.
+
+**Failure conditions**
+
+- Rewrites or refactors the shared upstream helper beyond the minimum, cleans
+  up unrelated upstream code, or leaves no record.
+
 ## BT-PLAN-001: An approved planning batch stays planning-only
 
 Protocols: `AP-PLAN-001`, `AP-SCOPE-001`

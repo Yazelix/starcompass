@@ -156,6 +156,13 @@
       "sha256": "51c15e878070caaf372721c2eb083354f5f63492f5c4e694cf31aaefcefa53a7"
     },
     {
+      "id": "AP-SURGICAL-001",
+      "version": 1,
+      "title": "Surgical changes",
+      "path": "protocols/AP-SURGICAL-001.md",
+      "sha256": "96869fb0bc6819aa4d055bb5fb5bf7d5a984bec9e66f2e45520fbb8f5cd5a300"
+    },
+    {
       "id": "AP-TERMINAL-001",
       "version": 2,
       "title": "Terminal state authority",

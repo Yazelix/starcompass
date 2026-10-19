@@ -4,13 +4,13 @@
 
 ### Added
 
-- Twenty-four stable-ID, individually versioned canonical protocols.
+- Twenty-five stable-ID, individually versioned canonical protocols.
 - Starcompass project and repository identity with stable protocol and
   consumer-format names.
 - Minimum-sufficient-implementation discipline.
 - Installed-artifact and fresh-session delivery proof plus exact-revision
   channel promotion.
-- Composable `regular`, `fork`, `orchestrator`, `release`, and
+- Composable `regular`, `surgical`, `fork`, `orchestrator`, `release`, and
   `terminal-engine` profiles.
 - Typed Rust catalog indexing, self-contained `AGENTS.md` rendering, pinned
   structural drift detection, and atomic cross-platform output replacement.
@@ -191,6 +191,15 @@
   only new ones, and its protocols are unchanged. There is no `greenfield`
   alias. Existing imports still verify from their pinned source commit, and
   consumers pass `--profile regular` on their next upgrade.
+- `AP-SURGICAL-001` and the `surgical` profile serve soft forks and projects in
+  maintenance. `surgical` is `regular` plus `AP-LICENSE-001` and
+  `AP-SURGICAL-001`, which treats preserved code as owned elsewhere: prefer
+  configuration and extension points, then isolated patches, over rewrites;
+  keep changes separable; leave unrelated preserved code alone. Where it
+  differs from `AP-MINIMAL-001`, it wins: fix a shared cause in preserved code
+  locally and report it. With an upstream, record its baseline revision and
+  each patch's reason and removal condition. The single-profile
+  canonical/import budget rises from 12,850 to 12,900 bytes to fit it.
 - `AP-PLAN-001` makes issue fields mutable current state and reserves append-only
   history for evidence. Since version 12, the issue tool is beads_rust (`br`)
   when it is available. `AP-GIT-001` folds same-unit corrections into the

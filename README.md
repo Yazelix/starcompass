@@ -5,8 +5,8 @@ agent projects without turning `AGENTS.md` into a remote dependency.
 
 It provides:
 
-- 24 individually identified and versioned protocols;
-- five ordered, composable profiles;
+- 25 individually identified and versioned protocols;
+- six ordered, composable profiles;
 - deterministic, self-contained `AGENTS.md` rendering, optionally with the
   canonical text in a separate generated protocol file;
 - exact source-commit, protocol-version, overlay, and exception records;
@@ -47,7 +47,7 @@ Profiles compose by ordered union: the first appearance of a protocol sets its
 position and later duplicates are ignored.
 
 With empty exceptions and overlay, each shipped profile's canonical/import
-section is capped at 12,850 bytes. The tested `regular + terminal-engine`
+section is capped at 12,900 bytes. The tested `regular + terminal-engine`
 combination is capped at 13,900 bytes; with the 17,690-byte local suffix Orbit
 had as a standalone consumer, the complete instructions remain within 31,590
 bytes. These budgets
@@ -97,11 +97,11 @@ issue set; that run may create, update, or close those records but cannot claim
 or implement work.
 
 `AP-REFERENCE-001` requires direct evidence before a consequential code shape.
-`AP-LICENSE-001`, in the `fork` profile, requires exact license interpretation.
-It distinguishes public-source inspection for ideas from copying, dependency
-selection, adaptation, and redistribution, and it forbids treating an
-independent user as acting for an agent provider merely because the user chose
-that provider's tool.
+`AP-LICENSE-001`, in the `fork` and `surgical` profiles, requires exact
+license interpretation. It distinguishes public-source inspection for ideas
+from copying, dependency selection, adaptation, and redistribution, and it
+forbids treating an independent user as acting for an agent provider merely
+because the user chose that provider's tool.
 
 Every profile includes `AP-MINIMAL-001`: accepted contracts, correct
 ownership, evidence, and net system complexity determine the valid shape before
@@ -112,6 +112,17 @@ orphans; unrelated dead code is reported, not deleted. Minimal code still
 handles empty, malformed, and boundary input. Durable agent context is included
 in lifecycle cost: instructions use the narrowest useful scope, avoid duplicate
 or generic wording, and load detailed references only when needed.
+
+`AP-SURGICAL-001`, in the `surgical` profile, is the posture for soft forks and
+projects in maintenance. Agents treat preserved code as owned elsewhere: they
+prefer configuration and extension points, then isolated patches, over
+rewrites, keep their changes in separate modules, commits, and tests, and leave
+unrelated preserved code alone. Where it differs from `AP-MINIMAL-001`, it
+wins: a shared cause in preserved code is fixed locally and reported, and a new
+file beats edits across preserved files, while agents still delete orphans in
+code they own and handle implied bad input. With an upstream, agents record its
+baseline revision and each patch's reason and removal condition, and audit
+upstream changes instead of replaying patches mechanically.
 
 `AP-TEST-001` uses representative isolated task trials for consequential
 changes to agent instructions, prompts, and skills when the user authorizes a
@@ -148,6 +159,7 @@ full verification catalog.
 | Profile | Intended role | Specialized protocols |
 | --- | --- | --- |
 | `regular` | Every project | dependency, proof, and planning gates |
+| `surgical` | Soft forks and projects in maintenance | everything in `regular`, plus surgical changes and license interpretation |
 | `fork` | Maintained downstream forks | minimal delta, upstream/removal discipline, and license interpretation |
 | `orchestrator` | Thin composition layers | orchestrator ownership, one active frontier, portability |
 | `release` | Products with ordered release channels | installed-artifact proof, fresh-session dogfood, exact-revision promotion |
@@ -498,10 +510,10 @@ and lockfiles.
 
 | Surface | LOC |
 | --- | ---: |
-| Protocols and generated index | 529 |
-| Profiles | 108 |
+| Protocols and generated index | 556 |
+| Profiles | 129 |
 | Rust checker and package manifest | 1,886 |
-| Tests | 1,261 |
+| Tests | 1,271 |
 | Skills and install script | 2,335 |
-| Repository policy, docs, and licenses | 2,269 |
-| **Total** | **8,388** |
+| Repository policy, docs, and licenses | 2,326 |
+| **Total** | **8,503** |
