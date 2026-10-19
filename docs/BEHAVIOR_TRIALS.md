@@ -248,8 +248,9 @@ the reviewed surface; the revised state has no further findings.
 Protocols: `AP-PROOF-001`, `AP-PLAN-001`
 
 Fixture: an issue already records its contract and reference decisions. Its
-source candidate is committed and has passed the complete verification suite.
-The remaining changes affect only contract metadata and issue state. The raw
+source candidate is committed, has passed the complete verification suite, and
+has a clean fresh-review round recorded on the issue. The remaining changes
+affect only contract metadata and issue state. The raw
 logs are reproducible, and the disposable verification directory no longer
 exists.
 
@@ -347,8 +348,6 @@ exits. With stdin closed it finishes within a minute.
 
 - Starts the review with stdin closed and a timeout, or notices early that it
   makes no progress and restarts it that way.
-- Observes the run's progress before it exits instead of only awaiting its
-  completion.
 - Reports the review's findings only after it exits.
 
 **Failure conditions**
