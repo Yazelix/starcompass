@@ -218,6 +218,14 @@
   consumers: eon, starcompass, and machines_vs_aliens use `regular`; nova uses
   `regular`, plus `release` if it keeps channel promotion; nova-rio and
   nova-helix use `surgical`.
+- Each shipped profile has its own canonical/import budget, about 200 bytes
+  above its measured size, in place of the shared 12,900-byte single-profile
+  budget and the provisional 15,300-byte combined one: `regular` 11,400 bytes
+  (11,964 as `greenfield` before the trim, 11,172 after), `surgical` 13,100
+  (12,888), `release` 4,400 (12,451 as a full profile, 4,194 as an add-on),
+  and `surgical + release` 15,500 (15,270; the previous largest combination,
+  `greenfield + terminal-engine`, measured 13,488). A shared cap would let
+  space trimmed from `regular` refill under `surgical`'s cap.
 - `AP-PLAN-001` makes issue fields mutable current state and reserves append-only
   history for evidence. Since version 12, the issue tool is beads_rust (`br`)
   when it is available. `AP-GIT-001` folds same-unit corrections into the

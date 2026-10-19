@@ -354,14 +354,28 @@ mod tests {
 
     #[test]
     fn profiles_fit_canonical_instruction_budget() {
-        const LIMIT: usize = 12_900;
+        const LIMITS: [(&[&str], usize); 4] = [
+            (&["regular"], 11_400),
+            (&["surgical"], 13_100),
+            (&["release"], 4_400),
+            (&["surgical", "release"], 15_500),
+        ];
 
         let (_, profiles) = validate_repository(&root()).unwrap();
-        let local_rules = render_local_rules("");
         for profile in profiles.keys() {
+            assert!(
+                LIMITS
+                    .iter()
+                    .any(|&(selected, _)| selected == [profile.as_str()]),
+                "{profile} has no canonical/import limit"
+            );
+        }
+        let local_rules = render_local_rules("");
+        for (selected, limit) in LIMITS {
+            let selected: Vec<String> = selected.iter().map(|name| name.to_string()).collect();
             let (_, agents) = assemble_root(
                 &root(),
-                std::slice::from_ref(profile),
+                &selected,
                 "",
                 &EMPTY_EXCEPTIONS,
                 SOURCE_REPOSITORY,
@@ -369,27 +383,12 @@ mod tests {
             )
             .unwrap();
             let actual = agents.len() - local_rules.len();
+            let selected = selected.join(" + ");
             assert!(
-                actual <= LIMIT,
-                "{profile} canonical/import section is {actual} bytes; limit is {LIMIT}"
+                actual <= limit,
+                "{selected} canonical/import section is {actual} bytes; limit is {limit}"
             );
         }
-        let selected = vec!["surgical".into(), "release".into()];
-        let (_, agents) = assemble_root(
-            &root(),
-            &selected,
-            "",
-            &EMPTY_EXCEPTIONS,
-            SOURCE_REPOSITORY,
-            COMMIT,
-        )
-        .unwrap();
-        let actual = agents.len() - local_rules.len();
-        const COMBINED_LIMIT: usize = 15_300;
-        assert!(
-            actual <= COMBINED_LIMIT,
-            "surgical + release canonical/import section is {actual} bytes; limit is {COMBINED_LIMIT}"
-        );
     }
 
     #[test]

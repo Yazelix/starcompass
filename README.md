@@ -47,10 +47,18 @@ Profiles compose by ordered union: the first appearance of a protocol sets its
 position and later duplicates are ignored.
 
 With empty exceptions and overlay, each shipped profile's canonical/import
-section is capped at 12,900 bytes. The largest combination,
-`surgical + release`, is capped at 15,300 bytes, which leaves about 17 KiB for
-a consumer's local rules under Codex's default 32 KiB project-document loader
-limit without remote includes or consumer-specific profile forks.
+section has its own cap, about 200 bytes above its measured size:
+
+| Profiles | Cap | Measured | Before the trim |
+| --- | ---: | ---: | ---: |
+| `regular` | 11,400 | 11,172 | 11,964 as `greenfield` |
+| `surgical` | 13,100 | 12,888 | new |
+| `release` | 4,400 | 4,194 | 12,451 as a full profile |
+| `surgical + release` | 15,500 | 15,270 | new |
+
+`surgical + release` is the largest combination. Its cap leaves about 16.9 KiB
+for a consumer's local rules under Codex's default 32 KiB project-document
+loader limit without remote includes or consumer-specific profile forks.
 
 A consumer can also declare directories whose agents need extra local rules,
 such as subsystems in a monorepo. Codex loads `AGENTS.md` files from the Git
@@ -516,7 +524,7 @@ and lockfiles.
 | Protocols and generated index | 570 |
 | Profiles | 53 |
 | Rust checker and package manifest | 1,886 |
-| Tests | 1,244 |
+| Tests | 1,243 |
 | Skills and install script | 2,335 |
-| Repository policy, docs, and licenses | 2,351 |
-| **Total** | **8,439** |
+| Repository policy, docs, and licenses | 2,371 |
+| **Total** | **8,458** |

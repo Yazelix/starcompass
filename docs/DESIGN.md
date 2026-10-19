@@ -95,10 +95,14 @@ The generated import record makes that duplication auditable: repository, exact
 commit, profiles, protocol IDs, versions, hashes, and approved exceptions are
 visible without opening another file.
 
-Self-contained does not mean unbounded. Every individual shipped profile keeps
-its empty-overlay canonical/import section within 12,900 bytes. The largest
-combination, `surgical + release`, is limited to 15,300 bytes, leaving about
-17 KiB of local rules under Codex's default 32 KiB project-document limit. The
+Self-contained does not mean unbounded. Each shipped profile has its own cap
+on its empty-overlay canonical/import section, about 200 bytes above its
+measured size, so space trimmed from a small profile cannot quietly refill
+under a larger profile's cap: `regular` 11,400 bytes (measured 11,172; 11,964
+as `greenfield` before the trim), `surgical` 13,100 (12,888), and `release`
+4,400 (4,194; 12,451 as a full profile). The largest combination,
+`surgical + release`, is limited to 15,500 bytes (15,270), leaving about
+16.9 KiB of local rules under Codex's default 32 KiB project-document limit. The
 budget belongs to canonical composition; consumers
 still own their overlays, and the renderer does not reject host-specific total
 sizes.
