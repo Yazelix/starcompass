@@ -7,8 +7,8 @@
 - Twenty-four stable-ID, individually versioned canonical protocols.
 - Starcompass project and repository identity with stable protocol and
   consumer-format names.
-- Minimum-sufficient-implementation discipline with Ponytail as its adopted,
-  upstream-owned agent integration.
+- Minimum-sufficient-implementation discipline, with README overlay text for
+  repositories that use Ponytail.
 - Installed-artifact and fresh-session delivery proof plus exact-revision
   channel promotion.
 - Composable `greenfield`, `fork`, `orchestrator`, `release`, and
@@ -109,10 +109,13 @@
   or restrictions, leaves reasonable future behavior unspecified, and treats
   current user-facing documentation as a contract surface.
 - `AP-MINIMAL-001` evaluates minimality after contract and ownership selection,
-  across total system and lifecycle cost. Ponytail remains a fallible runtime
-  bias and cannot justify preserving a wrong owner or merely minimizing the
-  current diff. Durable agent context uses the narrowest useful scope, avoids
-  duplicate or generic wording, and loads details only when needed.
+  across total system and lifecycle cost, and rejects a patch that preserves a
+  wrong owner or merely minimizes the current diff. Durable agent context uses
+  the narrowest useful scope, avoids duplicate or generic wording, and loads
+  details only when needed. Version 5 removes the Ponytail paragraph, reversing
+  its adoption in every profile: it put directives in every profile for a tool
+  most consumers lack. Repositories that use Ponytail add the README's overlay
+  text instead.
 - `AP-TEST-001` uses representative isolated task trials for consequential
   agent-instruction changes and keeps structural validation distinct from
   behavioral compliance. Since version 4, trials run when the user authorizes

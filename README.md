@@ -104,18 +104,28 @@ selection, adaptation, and redistribution, and it forbids treating an
 independent user as acting for an agent provider merely because the user chose
 that provider's tool.
 
-Every profile includes `AP-MINIMAL-001`. Ponytail is its adopted agent-side
-implementation where the host supports it. Consumers use the
-[upstream project](https://github.com/DietrichGebert/ponytail/tree/16f29800fd2681bdf24f3eb4ccffe38be3baec6b)
-directly; Starcompass does not copy its modes, hooks, skills, or host
-adapters. Starcompass treats Ponytail as a fallible implementation bias, not an
-architectural authority: accepted contracts, correct ownership, evidence, and
-net system complexity determine the valid shape before patch size is minimized.
-The protocol remains self-contained so its invariant still applies offline or
-when Ponytail is unavailable. The checker does not install Ponytail or claim
-that its instructions were followed. Durable agent context is included in
-lifecycle cost: instructions use the narrowest useful scope, avoid duplicate or
-generic wording, and load detailed references only when needed.
+Every profile includes `AP-MINIMAL-001`: accepted contracts, correct
+ownership, evidence, and net system complexity determine the valid shape before
+patch size is minimized. Durable agent context is included in lifecycle cost:
+instructions use the narrowest useful scope, avoid duplicate or generic wording,
+and load detailed references only when needed.
+
+Ponytail, an agent-side code-shape tool, is an optional per-repository
+addition, not part of any profile. A repository that uses it can paste this into
+its `.agent-protocols.local.md`:
+
+```markdown
+### Ponytail
+
+When available, use upstream
+[Ponytail](https://github.com/DietrichGebert/ponytail/tree/16f29800fd2681bdf24f3eb4ccffe38be3baec6b)
+as a fallible code-shape bias after `AP-MINIMAL-001`. Its absence does not
+suspend that protocol, and its hooks do not prove compliance.
+```
+
+The repository uses the upstream project directly; Starcompass does not copy
+its modes, hooks, skills, or host adapters, and the checker neither installs
+Ponytail nor claims that its instructions were followed.
 
 `AP-TEST-001` uses representative isolated task trials for consequential
 changes to agent instructions, prompts, and skills when the user authorizes a
@@ -499,10 +509,10 @@ and lockfiles.
 
 | Surface | LOC |
 | --- | ---: |
-| Protocols and generated index | 529 |
+| Protocols and generated index | 524 |
 | Profiles | 109 |
 | Rust checker and package manifest | 1,886 |
 | Tests | 1,261 |
 | Skills and install script | 2,227 |
-| Repository policy, docs, and licenses | 2,150 |
-| **Total** | **8,162** |
+| Repository policy, docs, and licenses | 2,164 |
+| **Total** | **8,171** |

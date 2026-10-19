@@ -80,10 +80,10 @@
     },
     {
       "id": "AP-MINIMAL-001",
-      "version": 4,
+      "version": 5,
       "title": "Minimum sufficient implementation",
       "path": "protocols/AP-MINIMAL-001.md",
-      "sha256": "612bc9c62a20adf7332724d4663af0a0e591d624de2a76b1c257a9ed428db1f6"
+      "sha256": "a707f9f27a4ca42c4e78738830fdafd51d1c66acf80541590b9e32e016ddbe37"
     },
     {
       "id": "AP-ORCHESTRATOR-001",

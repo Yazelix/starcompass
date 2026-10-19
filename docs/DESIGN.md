@@ -152,26 +152,27 @@ commit. Agents refresh local SHA-pinned artifacts after amendment and add
 follow-up commits after publication or an external pin. A separate issue records
 only a material finding outside the owning scope or one worth scheduling.
 
-## Adopt upstream implementations without cloning them
+## Upstream agent tools belong in the consumer overlay
 
-The catalog owns stable, self-contained invariants. When an upstream project
-already owns a strong portable implementation, that project retains ownership
-of its runtime integration, modes, hooks, skills, and host adapters. A canonical
-protocol records the reviewed upstream revision and enough local wording to
-remain usable without network access.
+The catalog owns stable, self-contained invariants that every consumer of a
+profile needs. A third-party agent tool such as Ponytail keeps ownership of its
+runtime integration, modes, hooks, skills, and host adapters. Starcompass does
+not vendor or reproduce that surface, and the structural checker does not
+install or attest it. A fork is justified only after a recorded incompatibility
+cannot reasonably be fixed upstream.
 
-`AP-MINIMAL-001` follows this boundary with Ponytail. Consumers use Ponytail
-directly where supported; Starcompass does not vendor or reproduce its
-adapter surface. A fork is justified only after a recorded incompatibility
-cannot reasonably be fixed upstream. The structural checker does not install or
-attest third-party runtime integrations.
+Canonical text does not name such a tool. Each directive in a profile costs
+attention in every consumer, and most consumers lack any given tool. A
+repository that uses one records it, with the reviewed upstream revision, in its
+own overlay; the README gives the Ponytail text to paste.
 
-Ponytail supplies a code-shape bias after architecture selection; it does not
-select the architecture. Starcompass evaluates minimality across the accepted
-system and lifecycle, including ownership, duplicated truth, coordination,
-coupling, portability, migration, operations, and proof. Patch size is only a
-tie-breaker among shapes satisfying the same contract and ownership duties, so
-a locally larger root-cause or owner correction can be the minimum solution.
+`AP-MINIMAL-001` evaluates minimality across the accepted system and lifecycle,
+including ownership, duplicated truth, coordination, coupling, portability,
+migration, operations, and proof. Patch size is only a tie-breaker among shapes
+satisfying the same contract and ownership duties, so a locally larger
+root-cause or owner correction can be the minimum solution. A code-shape tool
+applies its bias after architecture selection; it does not select the
+architecture.
 
 ## Dependency decision
 

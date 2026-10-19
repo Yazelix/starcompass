@@ -1,6 +1,6 @@
 ---
 id: AP-MINIMAL-001
-version: 4
+version: 5
 title: Minimum sufficient implementation
 ---
 
@@ -21,8 +21,3 @@ Prefer deletion, direct ownership, and fewer files; use patch size only between
 equally correct system shapes. Never remove required behavior, trust-boundary
 validation, data-loss protection, security, accessibility, or the cheapest
 runnable check for non-trivial logic.
-
-When available, use upstream
-[Ponytail](https://github.com/DietrichGebert/ponytail/tree/16f29800fd2681bdf24f3eb4ccffe38be3baec6b)
-as a fallible code-shape bias after these constraints. Its absence does not
-suspend them, and its hooks do not prove compliance.
