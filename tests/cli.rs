@@ -138,7 +138,7 @@ fn validates_the_canonical_repository() {
     assert!(output.status.success());
     assert_eq!(
         String::from_utf8(output.stdout).unwrap(),
-        "valid: 22 protocols, 5 profiles\n"
+        "valid: 23 protocols, 5 profiles\n"
     );
     assert!(output.stderr.is_empty());
 }

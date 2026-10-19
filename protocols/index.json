@@ -93,6 +93,13 @@
       "sha256": "d218a4e0625b659ec366284110bdfce02bd66cb229ab6ba07f2317092ea13053"
     },
     {
+      "id": "AP-PERF-001",
+      "version": 1,
+      "title": "Measured performance claims",
+      "path": "protocols/AP-PERF-001.md",
+      "sha256": "500ddfc56c1293e74ba1e8e19dddca0129fbbec49e9a00735e975ee2e8a8790d"
+    },
+    {
       "id": "AP-PLAN-001",
       "version": 12,
       "title": "Durable planning state",
@@ -115,10 +122,10 @@
     },
     {
       "id": "AP-PROOF-001",
-      "version": 9,
+      "version": 10,
       "title": "Explicit proof lifecycle",
       "path": "protocols/AP-PROOF-001.md",
-      "sha256": "fc5961c27a4847b866de60b0c31d12e64f7f1580694813f75d718f5055ab9f1c"
+      "sha256": "ee27b90b4d6436d3f578ff42a8f5d33c0e77a90a1106a9cf69f20bc90c351570"
     },
     {
       "id": "AP-REFERENCE-001",

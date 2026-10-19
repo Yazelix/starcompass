@@ -86,9 +86,9 @@ commit, profiles, protocol IDs, versions, hashes, and approved exceptions are
 visible without opening another file.
 
 Self-contained does not mean unbounded. Every individual shipped profile keeps
-its empty-overlay canonical/import section within 12,800 bytes. The current
-`greenfield + terminal-engine` consumer case is limited to 13,700 bytes, leaving
-about 1.3 KiB under Codex's default 32 KiB project-document limit after the
+its empty-overlay canonical/import section within 12,850 bytes. The current
+`greenfield + terminal-engine` consumer case is limited to 13,900 bytes, leaving
+about 1.1 KiB under Codex's default 32 KiB project-document limit after the
 local suffix Orbit had as a standalone consumer. The budget belongs to canonical composition; consumers
 still own their overlays, and the renderer does not reject host-specific total
 sizes.

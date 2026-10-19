@@ -4,7 +4,7 @@
 
 ### Added
 
-- Twenty-two stable-ID, individually versioned canonical protocols.
+- Twenty-three stable-ID, individually versioned canonical protocols.
 - Starcompass project and repository identity with stable protocol and
   consumer-format names.
 - Minimum-sufficient-implementation discipline with Ponytail as its adopted,
@@ -118,9 +118,7 @@
   behavioral compliance. Since version 4, trials run when the user authorizes
   a separate agent; otherwise the active agent validates in its own context
   and reports agent behavior as unproven.
-- `AP-PROOF-001` requires comparable baselines, bottleneck evidence, correctness
-  oracles, and representative results before making performance claims. Agents
-  may claim review or simplification convergence only after a full pass over the
+- `AP-PROOF-001` lets agents claim review or simplification convergence only after a full pass over the
   revised state finds no actionable in-scope bugs or simplifications. Durable
   evidence excludes disposable paths and conditionally retains raw logs, while
   unchanged source proof survives focused metadata, documentation, and planning
@@ -136,6 +134,15 @@
   review at most twice per slice. With `AP-TEST-001` version 4, the
   `greenfield + terminal-engine` canonical/import budget rises from 13,500 to
   13,700 bytes to fit both.
+  Version 10 states its rules in plain sentences, drops the proof-phase list,
+  which no protocol relied on, and moves performance claims to `AP-PERF-001`,
+  shrinking `greenfield` by 150 bytes.
+- `AP-PERF-001`, in the `terminal-engine` and `release` profiles, requires a
+  measured bottleneck, a fixed workload and environment, a baseline, a
+  correctness oracle, and a distribution or bound before a performance claim,
+  and keeps the negative results that constrain it. To fit it, the
+  single-profile canonical/import budget rises from 12,800 to 12,850 bytes and
+  the `greenfield + terminal-engine` budget from 13,700 to 13,900 bytes.
 - `AP-PLAN-001` permits one owning implementation issue or a user-authorized
   bounded planning-only batch, prevents a run from combining both shapes, and
   keeps execution and reference-gate comments delta-only. Acceptance records

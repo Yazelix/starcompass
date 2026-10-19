@@ -284,7 +284,7 @@ mod tests {
     #[test]
     fn repository_and_profiles_render_deterministically() {
         let (protocols, profiles) = validate_repository(&root()).unwrap();
-        assert_eq!(protocols.len(), 22);
+        assert_eq!(protocols.len(), 23);
         assert_eq!(
             json_text(&expected_index(&root()).unwrap()).unwrap(),
             fs::read_to_string(root().join("protocols/index.json")).unwrap()
@@ -361,7 +361,7 @@ mod tests {
 
     #[test]
     fn profiles_fit_canonical_instruction_budget() {
-        const LIMIT: usize = 12_800;
+        const LIMIT: usize = 12_850;
 
         let (_, profiles) = validate_repository(&root()).unwrap();
         let local_rules = render_local_rules("");
@@ -392,7 +392,7 @@ mod tests {
         )
         .unwrap();
         let actual = agents.len() - local_rules.len();
-        const COMBINED_LIMIT: usize = 13_700;
+        const COMBINED_LIMIT: usize = 13_900;
         assert!(
             actual <= COMBINED_LIMIT,
             "greenfield + terminal-engine canonical/import section is {actual} bytes; limit is {COMBINED_LIMIT}"

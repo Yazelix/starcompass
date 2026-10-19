@@ -132,7 +132,7 @@ dependency selection, or redistribution.
 
 ## BT-PROOF-001: Performance claims need comparable proof
 
-Protocols: `AP-PROOF-001`, `AP-TEST-001`
+Protocols: `AP-PERF-001`, `AP-TEST-001`
 
 Fixture: a parser has correctness tests but no recorded representative workload,
 baseline distribution, profile, or comparison oracle.

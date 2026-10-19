@@ -5,7 +5,7 @@ agent projects without turning `AGENTS.md` into a remote dependency.
 
 It provides:
 
-- 22 individually identified and versioned protocols;
+- 23 individually identified and versioned protocols;
 - five ordered, composable profiles;
 - deterministic, self-contained `AGENTS.md` rendering, optionally with the
   canonical text in a separate generated protocol file;
@@ -48,9 +48,9 @@ Profiles compose by ordered union: the first appearance of a protocol sets its
 position and later duplicates are ignored.
 
 With empty exceptions and overlay, each shipped profile's canonical/import
-section is capped at 12,800 bytes. The tested `greenfield + terminal-engine`
-combination is capped at 13,700 bytes; with the 17,690-byte local suffix Orbit
-had as a standalone consumer, the complete instructions remain within 31,390
+section is capped at 12,850 bytes. The tested `greenfield + terminal-engine`
+combination is capped at 13,900 bytes; with the 17,690-byte local suffix Orbit
+had as a standalone consumer, the complete instructions remain within 31,590
 bytes. These budgets
 leave room under Codex's default 32 KiB project-document loader limit without
 remote includes or consumer-specific profile forks.
@@ -498,10 +498,10 @@ and lockfiles.
 
 | Surface | LOC |
 | --- | ---: |
-| Protocols and generated index | 503 |
-| Profiles | 106 |
+| Protocols and generated index | 517 |
+| Profiles | 108 |
 | Rust checker and package manifest | 1,886 |
 | Tests | 1,261 |
 | Skills and install script | 2,227 |
-| Repository policy, docs, and licenses | 2,139 |
-| **Total** | **8,122** |
+| Repository policy, docs, and licenses | 2,146 |
+| **Total** | **8,145** |
