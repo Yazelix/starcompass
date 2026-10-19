@@ -8,23 +8,22 @@ or `.agent-protocols.exceptions.json`, then render from the pinned source.
 ## Protocol import record
 
 - Source: `https://github.com/Yazelix/starcompass`
-- Source commit: `a65f9149d79c1eec47705ccdedef75a9e57d2bc0`
-- Profiles: `greenfield`
+- Source commit: `dc1e342338d85c65f08647ba01e9bc9106e733df`
+- Profiles: `regular`
 - Manifest: `.agent-protocols.json` (schema 1)
 
 | Protocol | Version | SHA-256 |
 | --- | ---: | --- |
-| `AP-SCOPE-001` | 4 | `8d84dc6fca6097b2055eb3ca8467565709e4c474a18c3030ae3064cc612bdfab` |
-| `AP-CONTRACT-001` | 4 | `cdf2e5d69cefd34ceeeaa6b7511b21f921e2be50c17d3c01b85120b20234cff7` |
+| `AP-SCOPE-001` | 5 | `f68b0606986b0ac083a0c7949e1b2ab5d34150e0f906ddae226b9d5429ee115a` |
+| `AP-CONTRACT-001` | 5 | `4e3695ec39a6d1eb01a18930d0ce3ed3241078b4dfefbee4f2e295e74fd13d1f` |
 | `AP-REFERENCE-001` | 4 | `906bcda869549979647d20e957ff48909fa5f36024f584be6657bdc058d58e72` |
-| `AP-MINIMAL-001` | 5 | `a707f9f27a4ca42c4e78738830fdafd51d1c66acf80541590b9e32e016ddbe37` |
+| `AP-MINIMAL-001` | 7 | `e8e671b46a04502f59d366a726cb94c8a91d279de238501c0a0a0de5a826cc61` |
 | `AP-DEPENDENCY-001` | 2 | `ded49add538b82de0a9c522bc8a34720f4ebbb47f39fc2f7ddb25e7aad1700d3` |
 | `AP-OWNERSHIP-001` | 2 | `d218a4e0625b659ec366284110bdfce02bd66cb229ab6ba07f2317092ea13053` |
 | `AP-TEST-001` | 4 | `1c1c5eafa1f611fd7575ecf00b32a2068a477614c8be78ac4efa41630ec8b5ad` |
 | `AP-PROOF-001` | 11 | `310e1f798c3334e08402f9e42f447ae9352d171fc92888afb141c6b228f84e56` |
 | `AP-PLAN-001` | 12 | `5ee8deccb4b3c61ddd4a52b8ed6f69ebd30e24b65ace867871a89c75ef02a984` |
 | `AP-SESSION-001` | 4 | `51c15e878070caaf372721c2eb083354f5f63492f5c4e694cf31aaefcefa53a7` |
-| `AP-CI-001` | 3 | `c7cb65a81ce8434d02f2d19306bf93358f3624d0b77886bc91d4de93f7a779ba` |
 | `AP-EXCEPTION-001` | 2 | `2c4f00299922edac83286821af07ad485e5a630bca6acbbce918d87614abb395` |
 | `AP-GIT-001` | 5 | `f2c3254311de57a23a13aa382fe3285e65bb34e535ecd813d1be783ca79d4bf9` |
 
@@ -40,13 +39,12 @@ The user owns scope. Inspection, audit, diagnosis, explanation, and advice
 authorize no implementation, external-state, or durable-planning write.
 Implement only a chosen outcome.
 
-Never silently add features, compatibility promises, public surfaces,
-migrations, repositories, or planning items. Preserve user inputs and
-artifacts; replace or delete an exact target only when required, else write a
-distinct result. State consequential assumptions; stop when a missing scope
-choice would materially change the result. Recommend and justify an answer to
-every choice. “Finish” adds persistence, not authority. Report out-of-scope
-findings unless the user chose a durable home.
+Never silently add features, migrations, repositories, or planning items.
+Preserve user inputs and artifacts; replace or delete an exact target only when
+required, else write a distinct result. State consequential assumptions; stop
+when a missing scope choice would materially change the result. Recommend and
+justify an answer to every choice. “Finish” adds persistence, not authority.
+Report out-of-scope findings unless the user chose a durable home.
 
 ### AP-CONTRACT-001 — Contract-driven changes
 
@@ -54,14 +52,12 @@ Before code shape, state the smallest observable contract: consumer, trigger,
 result, and important failures. Of the contracts consistent with the request
 and evidence, choose the fewest unsupported guarantees or restrictions; leave
 reasonable future behavior unspecified. Give it a stable ID only when later
-consumers need one.
+consumers need one. Choose the cheapest check that would falsify it.
 
 Keep docs, help, examples, and configuration aligned with current commands,
 paths, flags, defaults, and availability; label planned, partial, or gated
-behavior. Choose one source-of-truth owner, the cheapest falsifying check, and
-the smallest complete vertical slice. Update the contract first for an
-intentional behavior change. Implementation details are not contracts unless a
-component must rely on them.
+behavior. Update the contract first for an intentional behavior change.
+Implementation details are not contracts unless a component must rely on them.
 
 ### AP-REFERENCE-001 — Evidence before code shape
 
@@ -75,20 +71,22 @@ material shape change. Memory, summaries, and reputation are discovery only.
 After identifying the contract, evidence, owner, flow, and boundaries, take the
 first sufficient option: no change; existing owner, helper, or pattern;
 standard library or native platform; accepted dependency that owns the
-behavior; minimum correct local code.
+behavior; minimum correct local code. Build only for current callers, not
+forecasts; abstract only for a second caller: speculation costs every reader.
 
-Judge the whole lifecycle, including duplicate truth, coordination, coupling,
-migration and removal, portability, operations, proof, and agent context. Scope
-instructions narrowly; retain non-obvious constraints and reusable
-behavior-changing workflows, not generic or duplicated policy. Load details
-only when needed.
+Judge the whole lifecycle, including coordination, coupling, migration and
+removal, portability, operations, proof, and agent context. Scope instructions
+narrowly; retain non-obvious constraints and reusable behavior-changing
+workflows, not generic or duplicated policy. Load details only when needed.
 
-A patch is not minimal if it preserves a wrong or duplicate owner, treats a
-symptom below its shared cause, bypasses a boundary, or raises downstream cost.
-Prefer deletion, direct ownership, and fewer files; use patch size only between
-equally correct system shapes. Never remove required behavior, trust-boundary
-validation, data-loss protection, security, accessibility, or the cheapest
-runnable check for non-trivial logic.
+A patch is not minimal if it treats a symptom below its shared cause, bypasses
+a boundary, or raises downstream cost. Leftovers are a change's commonest
+defect: update every caller, test, fixture, config, and export it breaks and
+delete what it orphans. Prefer fewer files; report unrelated dead code as out of
+scope; use patch size only between equally correct system shapes. Handle empty,
+malformed, and boundary input; real callers send it. Never remove required
+behavior, trust-boundary validation, data-loss protection, security,
+accessibility, or the cheapest runnable check for non-trivial logic.
 
 ### AP-DEPENDENCY-001 — Dependency gate
 
@@ -192,15 +190,6 @@ A handoff is an issue comment: state, next step, and open decisions with
 reasons. The next session primes, e.g. "prime, then continue <issue> from its
 handoff".
 
-### AP-CI-001 — Bounded continuous integration
-
-Before hosted automation, name its contract and why local proof is
-insufficient. Bound triggers, jobs, timeouts, permissions, artifacts, cache,
-concurrency; specify fork and secret behavior. Prefer one cheap deterministic
-job. Record when to expand, reduce, or remove. Confidence must justify its
-financial, latency, security, and maintenance costs, including private minutes
-and storage.
-
 ### AP-EXCEPTION-001 — Explicit local exceptions
 
 Only an exception approved by the user or named authority may narrow, replace,
@@ -291,7 +280,7 @@ Work directly on `edge`. Keep commits focused.
 
 ## Bootstrap Self-Adoption
 
-Starcompass consumes its own `greenfield` profile from the exact prior
+Starcompass consumes its own `regular` profile from the exact prior
 protocol-bearing revision recorded in `.agent-protocols.json`. The root
 `AGENTS.md` and `.agent-protocols.json` are generated outputs; edit the local
 overlay or exception input instead.
