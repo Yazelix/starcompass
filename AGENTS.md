@@ -232,9 +232,8 @@ drift checks.
 
 ## Core Rule
 
-The user decides scope. Do not add a protocol, profile, enforcement skill,
-compatibility surface, or planning bead until the user has chosen that
-direction.
+Do not add a protocol, profile, enforcement skill, compatibility surface, or
+planning bead until the user has chosen that direction.
 
 ## Ownership Model
 
@@ -269,42 +268,26 @@ inside a custom profile; keep them in the consumer overlay.
 
 ## Method
 
-Before selecting a code shape for work with durable planning state:
-
-1. State the user-visible or operator-visible contract in the owning Bead.
-2. Inspect the affected protocol, profile, format, checker, and tests.
-3. Review relevant prior art or local precedent and record what is adopted or
-   rejected when the decision matters later.
-4. Consider the standard library and multiple credible dependencies before
-   adding one; record the winner, rejected candidates, and exit cost.
-5. Choose one owner and the cheapest check that proves the contract.
-6. Implement the smallest complete slice.
-
 Prefer dependency-free code and transparent formats. Do not add a parser,
 framework, template engine, or package merely to save a small amount of local
 code. Do not duplicate canonical protocol text in profiles, skills, or docs.
 
 ## Testing
 
-Keep tests strong and few. Tests should prove stable IDs and versions, invalid
-registry/profile rejection, deterministic rendering, exception recording, or
-drift detection. Avoid mirror tests for literals and implementation trivia.
+Tests should prove stable IDs and versions, invalid registry/profile rejection,
+deterministic rendering, exception recording, or drift detection.
 
 Use temporary directories for generated consumer fixtures. Do not commit
 generated test output unless it is a deliberate compatibility fixture.
 
 ## Beads
 
-Use `br` for all issue work. Do not edit `.beads/` files directly. Serialize
-`br` writes. Treat Bead fields as mutable current state and reserve comments or
-`br audit` for chronology needed as evidence. Run `br sync --flush-only` before
-committing Beads changes.
+Serialize `br` writes. Run `br sync --flush-only` before committing Beads
+changes.
 
 ## Git Workflow
 
-Work directly on `edge`. Do not create another branch unless the user asks.
-Keep commits focused, preserve unrelated user changes, and never rewrite
-published history or force-push.
+Work directly on `edge`. Keep commits focused.
 
 ## Bootstrap Self-Adoption
 
@@ -333,7 +316,7 @@ index is part of the published surface.
 
 ## Verification
 
-Run the cheapest checks for the changed surface. For the full repository:
+For the full repository, run:
 
 ```sh
 cargo fmt --check
