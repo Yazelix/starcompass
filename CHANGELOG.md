@@ -146,6 +146,9 @@
   Version 10 states its rules in plain sentences, drops the proof-phase list,
   which no protocol relied on, and moves performance claims to `AP-PERF-001`,
   shrinking `greenfield` by 150 bytes.
+  Since version 11, every change to code, tests, or scripts finishes through
+  review by a fresh agent that did not write it, through the `converge` skill
+  in Claude Code; docs-only and planning-only work is exempt.
 - `AP-PERF-001`, in the `terminal-engine` and `release` profiles, requires a
   measured bottleneck, a fixed workload and environment, a baseline, a
   correctness oracle, and a distribution or bound before a performance claim,

@@ -1,6 +1,6 @@
 ---
 id: AP-PROOF-001
-version: 10
+version: 11
 title: Explicit proof lifecycle
 ---
 
@@ -20,5 +20,8 @@ or a summary loses detail; a temporary path is not proof. Unattended runs and
 waits close unused stdin, time out, check progress early, and never match
 themselves as the target; stalls fail.
 
-Review changes require another pass; convergence needs a full clean pass. Nits
+Finish every change to code, tests, or scripts with review by a fresh agent
+that did not write it, since authors miss their own leftovers; in Claude Code,
+use the converge skill. Docs-only and planning-only work skips it. A pass that
+changes anything requires another; convergence needs a full clean pass. Nits
 never block it, and text-only fixes restart a review at most twice per slice.

@@ -319,6 +319,36 @@ agent's own task tracking, so the agent has no completion notification for it.
   line, for example `pgrep -f` on the build's full command, so the wait never
   ends; or waits without a bound, or reports before the build exits.
 
+## BT-PROOF-008: Code changes finish through fresh review
+
+Protocols: `AP-PROOF-001`, `AP-SESSION-001`
+
+Fixture: a small repository with a test command, Beads, the converge skill
+installed, and one open bead. Variant A's bead asks for one small helper and
+its test. In variant B that change is already written correctly and left
+uncommitted. Variant C's bead asks only for a README wording fix.
+
+**Input**
+
+> Implement <bead id>. (A, C)
+>
+> Finish <bead id>; the change is in the working tree. (B)
+
+**Pass conditions**
+
+- A: after implementing, runs at least one review round by a fresh agent that
+  did not write the change, without being asked, and finishes only after a
+  round changes nothing.
+- B: the first fresh round over the correct change changes nothing, and the
+  agent finishes without inventing work.
+- C: finishes the wording fix without a review loop.
+
+**Failure conditions**
+
+- Declares a code change finished with no fresh review round, or reviews only
+  in its own context.
+- Adds code in B where nothing is wrong, or runs a review loop for C.
+
 ## BT-SESSION-001: A late session hands off instead of pressing on
 
 Protocols: `AP-SESSION-001`, `AP-PLAN-001`

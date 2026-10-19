@@ -129,10 +129,10 @@
     },
     {
       "id": "AP-PROOF-001",
-      "version": 10,
+      "version": 11,
       "title": "Explicit proof lifecycle",
       "path": "protocols/AP-PROOF-001.md",
-      "sha256": "ee27b90b4d6436d3f578ff42a8f5d33c0e77a90a1106a9cf69f20bc90c351570"
+      "sha256": "310e1f798c3334e08402f9e42f447ae9352d171fc92888afb141c6b228f84e56"
     },
     {
       "id": "AP-REFERENCE-001",

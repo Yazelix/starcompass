@@ -137,7 +137,10 @@ host-independent cases. Operators give an agent only a case's input and fixture,
 use a separate assessment rubric, and record the exercised revision and
 environment without assigning a general compliance score.
 
-Under `AP-PROOF-001`, agents treat review and simplification completion as
+Under `AP-PROOF-001`, every change to code, tests, or scripts finishes through
+review by a fresh agent that did not write it; in Claude Code that is the
+`converge` skill, and docs-only and planning-only work skips it. Agents treat
+review and simplification completion as
 convergence over the accepted scope. A pass that makes a material change
 invalidates the prior assessment; completion requires a full pass over the
 revised state with no actionable in-scope bugs or simplifications. Nits never
@@ -509,10 +512,10 @@ and lockfiles.
 
 | Surface | LOC |
 | --- | ---: |
-| Protocols and generated index | 527 |
+| Protocols and generated index | 530 |
 | Profiles | 109 |
 | Rust checker and package manifest | 1,886 |
 | Tests | 1,261 |
 | Skills and install script | 2,227 |
-| Repository policy, docs, and licenses | 2,232 |
-| **Total** | **8,242** |
+| Repository policy, docs, and licenses | 2,268 |
+| **Total** | **8,281** |
