@@ -151,7 +151,7 @@
   artifact only for its recorded exact identity and exercised behavior.
 - `AP-REFERENCE-001` requires direct evidence before a consequential code
   shape. Version 4 moves license interpretation to `AP-LICENSE-001`, shrinking
-  `greenfield`.
+  `greenfield` by 535 bytes.
 - `AP-LICENSE-001`, in the `fork` profile, applies source-license conditions to
   their actual actors and uses, distinguishes inspection from reuse, and
   prevents provider association from replacing required source evidence.
