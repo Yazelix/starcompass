@@ -428,7 +428,7 @@ mod tests {
     fn exceptions_are_explicit_and_scoped_to_the_profile() {
         let mut document = ExceptionsDocument {
             schema: 1,
-            exceptions: vec![exception("AP-CI-001", "private alpha")],
+            exceptions: vec![exception("AP-GIT-001", "private alpha")],
         };
         document.exceptions[0].reason = "Recorded\r\nexception.".into();
         document.exceptions[0].review_condition = Some("Review later.\r\n".into());
@@ -455,7 +455,7 @@ mod tests {
 
         let mut year_zero = document.clone();
         year_zero.exceptions[0].approved_at = "0000-01-01".into();
-        let selected = BTreeSet::from(["AP-CI-001".into()]);
+        let selected = BTreeSet::from(["AP-GIT-001".into()]);
         assert!(
             validate_exceptions(&year_zero, &selected)
                 .unwrap_err()

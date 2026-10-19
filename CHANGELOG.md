@@ -167,6 +167,10 @@
 - `AP-LICENSE-001`, in the `fork` profile, applies source-license conditions to
   their actual actors and uses, distinguishes inspection from reuse, and
   prevents provider association from replacing required source evidence.
+- The `greenfield` profile drops `AP-CI-001`, shrinking by 529 bytes: a small
+  new project rarely has hosted CI. The `fork`, `orchestrator`, `release`, and
+  `terminal-engine` profiles keep it, so `greenfield + terminal-engine` is
+  unchanged.
 - `AP-PLAN-001` makes issue fields mutable current state and reserves append-only
   history for evidence. Since version 12, the issue tool is beads_rust (`br`)
   when it is available. `AP-GIT-001` folds same-unit corrections into the

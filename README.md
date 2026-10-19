@@ -161,7 +161,7 @@ full verification catalog.
 
 | Profile | Intended role | Specialized protocols |
 | --- | --- | --- |
-| `greenfield` | Small new projects | dependency, proof, planning, and bounded-CI gates |
+| `greenfield` | Small new projects | dependency, proof, and planning gates |
 | `fork` | Maintained downstream forks | minimal delta, upstream/removal discipline, and license interpretation |
 | `orchestrator` | Thin composition layers | orchestrator ownership, one active frontier, portability |
 | `release` | Products with ordered release channels | installed-artifact proof, fresh-session dogfood, exact-revision promotion |
@@ -513,9 +513,9 @@ and lockfiles.
 | Surface | LOC |
 | --- | ---: |
 | Protocols and generated index | 530 |
-| Profiles | 109 |
+| Profiles | 108 |
 | Rust checker and package manifest | 1,886 |
 | Tests | 1,261 |
 | Skills and install script | 2,227 |
-| Repository policy, docs, and licenses | 2,258 |
-| **Total** | **8,271** |
+| Repository policy, docs, and licenses | 2,262 |
+| **Total** | **8,274** |

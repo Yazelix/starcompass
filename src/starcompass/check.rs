@@ -331,7 +331,7 @@ mod tests {
 
         let changed = ExceptionsDocument {
             schema: 1,
-            exceptions: vec![exception("AP-CI-001", "alpha")],
+            exceptions: vec![exception("AP-GIT-001", "alpha")],
         };
         assert!(
             validate_consumer_import(&manifest, "Local truth.\n", &changed, &agents,)
