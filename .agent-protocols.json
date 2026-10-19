@@ -2,7 +2,7 @@
   "schema": 1,
   "source": {
     "repository": "https://github.com/Yazelix/starcompass",
-    "commit": "dc1e342338d85c65f08647ba01e9bc9106e733df"
+    "commit": "6c400322e229b879fa29ed4f640d0f5c779540e1"
   },
   "profiles": [
     "regular"
