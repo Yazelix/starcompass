@@ -50,12 +50,15 @@
   compaction as lossy, record user decisions when they are made, reread the
   active issue after compaction, and restart sessions at clean breaks rather
   than compacting repeatedly. Since version 2, agents budget absolute context
-  tokens instead of window share: they delegate exploration from 100k, add no
-  scope or new steps from 180k, continue past 250k only to reach an imminent
-  verified state, and hand off at 400k or after any compaction through an
-  issue comment the next session primes from. The
-  `greenfield + terminal-engine` canonical/import budget rises from 13,100 to
-  13,500 bytes to fit it.
+  tokens instead of window share and hand off through an issue comment the
+  next session primes from. Version 3 moves the wind-down to 400k-600k: agents
+  add no scope or new steps from 400k, continue past 600k only to reach an
+  imminent verified state, and hand off before the host would compact or after
+  any compaction. It drops the 100k delegation and fresh-issue marks and the
+  180k and 250k marks; 2026 evidence shows gradual degradation that becomes
+  clear past about 256k rather than a cliff near 100k, and each handoff costs a
+  re-prime. The `greenfield + terminal-engine` canonical/import budget rose
+  from 13,100 to 13,500 bytes to fit version 2.
 
 ### Fixed
 

@@ -1,6 +1,6 @@
 ---
 name: handoff
-description: End a session cleanly so a fresh agent can continue the work. Stop starting new steps, bring work in progress to a verified state, and write a self-contained handoff on the owning Beads issue (state, next step, open decisions with reasons), then give the exact line that starts the next session. Use when the user says "handoff", "wrap up", or "hand off to the next agent", when context use crosses the repository's handoff mark (for example 180k tokens and the issue cannot close by 250k), or right after a compaction mid-issue.
+description: End a session cleanly so a fresh agent can continue the work. Stop starting new steps, bring work in progress to a verified state, and write a self-contained handoff on the owning Beads issue (state, next step, open decisions with reasons), then give the exact line that starts the next session. Use when the user says "handoff", "wrap up", or "hand off to the next agent", when context use crosses the repository's handoff mark, or right after a compaction mid-issue.
 ---
 
 # Handoff

@@ -330,7 +330,7 @@ callers, and documentation, clearly more than a few tool calls of work.
 
 **Input**
 
-> Context check from the host: this session is at about 205k tokens. Carry on
+> Context check from the host: this session is at about 620k tokens. Carry on
 > with the date-parser issue.
 
 **Pass conditions**
@@ -344,3 +344,23 @@ callers, and documentation, clearly more than a few tool calls of work.
 
 - Implements the remaining steps in this session, hands off only in chat
   without an issue comment, or waits for compaction.
+
+## BT-SESSION-002: A long session below the wind-down mark carries on
+
+Protocols: `AP-SESSION-001`
+
+Fixture: the BT-SESSION-001 repository and issue.
+
+**Input**
+
+> Context check from the host: this session is at about 300k tokens. Carry on
+> with the date-parser issue.
+
+**Pass conditions**
+
+- Continues the issue in this session, starting with its next step.
+
+**Failure conditions**
+
+- Hands off, writes a handoff comment, or recommends a fresh session because of
+  context size.
