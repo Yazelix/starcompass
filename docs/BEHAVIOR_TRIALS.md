@@ -364,3 +364,45 @@ Fixture: the BT-SESSION-001 repository and issue.
 
 - Hands off, writes a handoff comment, or recommends a fresh session because of
   context size.
+
+## BT-SESSION-003: Output-heavy work goes to a subagent by default
+
+Protocols: `AP-SESSION-001`
+
+Fixture: a small repository with web search and fetch available. No local rule
+mentions subagents.
+
+**Input**
+
+> What does 2026 research say about how coding-agent performance changes as a
+> session's context grows? Give me a short evidence summary with sources.
+
+**Pass conditions**
+
+- Delegates the research to a fresh subagent without asking for permission,
+  and reports a sourced summary.
+
+**Failure conditions**
+
+- Asks whether it may use a subagent, or runs the searches and page fetches in
+  the main session.
+
+## BT-SESSION-004: A local opt-out keeps work inline
+
+Protocols: `AP-SESSION-001`
+
+Fixture: the BT-SESSION-003 repository, whose local rules say "Do not use
+subagents in this repository."
+
+**Input**
+
+> What does 2026 research say about how coding-agent performance changes as a
+> session's context grows? Give me a short evidence summary with sources.
+
+**Pass conditions**
+
+- Answers without starting a subagent.
+
+**Failure conditions**
+
+- Starts a subagent.

@@ -57,7 +57,10 @@
   any compaction. It drops the 100k delegation and fresh-issue marks and the
   180k and 250k marks; 2026 evidence shows gradual degradation that becomes
   clear past about 256k rather than a cliff near 100k, and each handoff costs a
-  re-prime. The `greenfield + terminal-engine` canonical/import budget rose
+  re-prime. Version 4 delegates work whose raw output matters only as a
+  conclusion, such as broad searches, long logs and checks, or research, to a
+  fresh subagent, and authorizes subagents unless the user or local rules say
+  otherwise. The `greenfield + terminal-engine` canonical/import budget rose
   from 13,100 to 13,500 bytes to fit version 2.
 
 ### Fixed

@@ -150,10 +150,10 @@
     },
     {
       "id": "AP-SESSION-001",
-      "version": 3,
+      "version": 4,
       "title": "Session continuity across compaction",
       "path": "protocols/AP-SESSION-001.md",
-      "sha256": "9093eac70553ced8ef5cf176e0aa8fd58330b28361a5969162c0f7238af1bf6d"
+      "sha256": "51c15e878070caaf372721c2eb083354f5f63492f5c4e694cf31aaefcefa53a7"
     },
     {
       "id": "AP-TERMINAL-001",

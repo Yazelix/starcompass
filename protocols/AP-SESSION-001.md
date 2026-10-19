@@ -1,12 +1,17 @@
 ---
 id: AP-SESSION-001
-version: 3
+version: 4
 title: Session continuity across compaction
 ---
 
 Compaction is lossy; avoid it. Write each user decision to its durable owner
-when it is made. Budget absolute context tokens, not window share; if the host
-reports none, estimate high:
+when it is made. Delegate work whose raw output matters only as a conclusion,
+such as broad searches, long logs and checks, or research, to a fresh
+subagent; subagents are authorized unless the user or local rules say
+otherwise.
+
+Budget absolute context tokens, not window share; if the host reports none,
+estimate high:
 
 - From 400k, add no scope or new steps: close the issue if it can close by
   600k, else bring work in progress to a verified state and hand off.
