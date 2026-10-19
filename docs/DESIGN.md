@@ -155,23 +155,26 @@ only a material finding outside the owning scope or one worth scheduling.
 ## Upstream agent tools belong in the consumer overlay
 
 The catalog owns stable, self-contained invariants that every consumer of a
-profile needs. A third-party agent tool such as Ponytail keeps ownership of its
-runtime integration, modes, hooks, skills, and host adapters. Starcompass does
-not vendor or reproduce that surface, and the structural checker does not
-install or attest it. A fork is justified only after a recorded incompatibility
-cannot reasonably be fixed upstream.
+profile needs. A third-party agent tool keeps ownership of its runtime
+integration, modes, hooks, skills, and host adapters. Starcompass does not
+vendor or reproduce that surface, and the structural checker does not install
+or attest it. A fork is justified only after a recorded incompatibility cannot
+reasonably be fixed upstream.
 
 Canonical text does not name such a tool. Each directive in a profile costs
 attention in every consumer, and most consumers lack any given tool. A
 repository that uses one records it, with the reviewed upstream revision, in its
-own overlay; the README gives the Ponytail text to paste.
+own overlay.
 
 `AP-MINIMAL-001` evaluates minimality across the accepted system and lifecycle,
 including coordination, coupling, portability, migration, operations, and proof.
 Patch size is only a tie-breaker among shapes satisfying the same contract and
 the ownership duties of `AP-OWNERSHIP-001`, so a locally larger root-cause or
-owner correction can be the minimum solution. A code-shape tool applies its
-bias after architecture selection; it does not select the architecture.
+owner correction can be the minimum solution. The protocol owns its code-level
+rules instead of deferring to an external code-shape tool: build only for
+current callers, finish the change and delete its orphans, report unrelated dead
+code, and handle implied bad input. Each is a requirement with its reason,
+because agents keep requirements longer than prohibitions in long sessions.
 
 ## Dependency decision
 

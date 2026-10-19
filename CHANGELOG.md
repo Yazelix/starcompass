@@ -7,8 +7,7 @@
 - Twenty-four stable-ID, individually versioned canonical protocols.
 - Starcompass project and repository identity with stable protocol and
   consumer-format names.
-- Minimum-sufficient-implementation discipline, with README overlay text for
-  repositories that use Ponytail.
+- Minimum-sufficient-implementation discipline.
 - Installed-artifact and fresh-session delivery proof plus exact-revision
   channel promotion.
 - Composable `greenfield`, `fork`, `orchestrator`, `release`, and
@@ -131,7 +130,14 @@
   direct ownership to `AP-OWNERSHIP-001`; patch size still decides only between
   equally correct system shapes. Together with the version 5 overlap removals
   in `AP-SCOPE-001` and `AP-CONTRACT-001`, this shrinks `greenfield` by 173
-  bytes.
+  bytes. Version 7 owns the code-level anti-bloat rules, each with its reason:
+  build only for current callers, not forecasts, and abstract only for a second
+  caller; update every caller, test, fixture, configuration, and export a change
+  breaks and delete what it orphans, in place of a general preference for
+  deletion; report unrelated dead code as out of scope; and handle empty,
+  malformed, and boundary input. The README no longer offers Ponytail overlay
+  text, and Starcompass no longer recommends Ponytail. Every profile grows by
+  348 bytes.
 - `AP-TEST-001` uses representative isolated task trials for consequential
   agent-instruction changes and keeps structural validation distinct from
   behavioral compliance. Since version 4, trials run when the user authorizes

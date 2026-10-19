@@ -106,26 +106,13 @@ that provider's tool.
 
 Every profile includes `AP-MINIMAL-001`: accepted contracts, correct
 ownership, evidence, and net system complexity determine the valid shape before
-patch size is minimized. Durable agent context is included in lifecycle cost:
-instructions use the narrowest useful scope, avoid duplicate or generic wording,
-and load detailed references only when needed.
-
-Ponytail, an agent-side code-shape tool, is an optional per-repository
-addition, not part of any profile. A repository that uses it can paste this into
-its `.agent-protocols.local.md`:
-
-```markdown
-### Ponytail
-
-When available, use upstream
-[Ponytail](https://github.com/DietrichGebert/ponytail/tree/16f29800fd2681bdf24f3eb4ccffe38be3baec6b)
-as a fallible code-shape bias after `AP-MINIMAL-001`. Its absence does not
-suspend that protocol, and its hooks do not prove compliance.
-```
-
-The repository uses the upstream project directly; Starcompass does not copy
-its modes, hooks, skills, or host adapters, and the checker neither installs
-Ponytail nor claims that its instructions were followed.
+patch size is minimized. Agents build only for current callers, not forecast
+needs, and add an abstraction only for a second caller. A change updates every
+caller, test, fixture, configuration, and export it breaks and deletes what it
+orphans; unrelated dead code is reported, not deleted. Minimal code still
+handles empty, malformed, and boundary input. Durable agent context is included
+in lifecycle cost: instructions use the narrowest useful scope, avoid duplicate
+or generic wording, and load detailed references only when needed.
 
 `AP-TEST-001` uses representative isolated task trials for consequential
 changes to agent instructions, prompts, and skills when the user authorizes a
@@ -512,10 +499,10 @@ and lockfiles.
 
 | Surface | LOC |
 | --- | ---: |
-| Protocols and generated index | 525 |
+| Protocols and generated index | 529 |
 | Profiles | 108 |
 | Rust checker and package manifest | 1,886 |
 | Tests | 1,261 |
 | Skills and install script | 2,335 |
-| Repository policy, docs, and licenses | 2,237 |
-| **Total** | **8,352** |
+| Repository policy, docs, and licenses | 2,266 |
+| **Total** | **8,385** |

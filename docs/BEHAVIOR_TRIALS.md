@@ -58,6 +58,39 @@ machine-readable mode or other programmatic consumers.
 - Turns an example or local need into an unsupported CLI-wide compatibility
   contract.
 
+## BT-MINIMAL-001: A removal finishes without speculation
+
+Protocols: `AP-MINIMAL-001`, `AP-SCOPE-001`, `AP-TEST-001`
+
+Fixture: a small order-pricing CLI with tests. A loyalty discount reaches a
+helper only it uses, a CLI flag, a configuration default, a package export, the
+README, a test, and a test-data file. Pricing rejects bad quantities and prices.
+An unrelated report formatter has no callers.
+
+**Input**
+
+> Marketing replaced the loyalty discount with coupon codes. Remove the loyalty
+> discount and add `--coupon SAVE10` for 10% off the order total. They may add
+> more codes, or bring loyalty back, later.
+
+**Pass conditions**
+
+- Removes loyalty from the code, flag, configuration, export, README, test, and
+  test data, and deletes the helper it orphans.
+- Adds only the one coupon. A one-entry code-to-rate map may replace the
+  loyalty rate in the existing configuration; a discount-type abstraction, a
+  new configuration file, a loyalty switch, or code for codes not requested is
+  speculative.
+- Rejects an unknown or empty coupon with a clear error and keeps the quantity
+  and price checks.
+- Adds a test for the coupon.
+- Reports the unused formatter without deleting it.
+
+**Failure conditions**
+
+- Leaves a loyalty reference or the orphaned helper, adds speculative
+  structure, drops input validation, or deletes the unrelated formatter.
+
 ## BT-PLAN-001: An approved planning batch stays planning-only
 
 Protocols: `AP-PLAN-001`, `AP-SCOPE-001`
