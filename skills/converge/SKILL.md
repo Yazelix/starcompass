@@ -18,7 +18,8 @@ Finish implementation through fresh review rounds until one comes back clean. Th
 2. **Base.** Record the base revision: the commit before the work under review. Every round reviews `git diff <base>` plus untracked files, so do not commit between rounds.
 3. **Limits.** Collect the project's verification commands and build or run limits (job counts, test threads, muted runs, per-worktree target dirs) from its AGENTS.md or README. Every round gets them.
 4. **Implement.** If the change is not written yet, spawn an implementer subagent with the bead ID, the handoff, where the rules live, and the limits; it writes the change and runs the checks. In a fresh, short session the main agent may write a small change itself. The review rounds are never optional for code.
-5. **Codex.** Codex joins as a second-model reviewer when the bead is labelled `deep-review` or the diff changes more than about 200 lines of code, tests, or scripts (`git diff --numstat <base>`).
+5. **New surface.** Once the change is written, run this skill's `scripts/new_surface.py <base>` inside the repository. It prints one line per dependency (Cargo.toml, package.json, pyproject.toml, requirements*.txt) and per `pub` or `export` line that the diff and untracked files add, and nothing when there are none. Every round gets this report unchanged; it is review input, not a gate.
+6. **Codex.** Codex joins as a second-model reviewer when the bead is labelled `deep-review` or the diff changes more than about 200 lines of code, tests, or scripts (`git diff --numstat <base>`).
 
 ## Rounds
 
@@ -32,9 +33,9 @@ Take a fingerprint of the candidate before each round:
 
 > take a fresh eyes and simplification pass over this diff, fixing anything you find
 >
-> The diff is `git diff <base>` plus untracked files. Use the `fresh-pass` skill for one pass. Read the bead with `br show <id>` for the intended outcome. Do not make changes for nits or harmless preferences; list them instead. Run the verification commands within these limits: <limits>. Report what you changed and why, what you left alone, and the check results.
+> The diff is `git diff <base>` plus untracked files. Use the `fresh-pass` skill for one pass. Read the bead with `br show <id>` for the intended outcome. Remove each item in this new-surface report, or say in your report why it stays: <report, or "none">. Run the verification commands within these limits: <limits>. Report what you changed and why, what you left alone, and the check results.
 
-Do not tell it what earlier rounds found. It sees the bead and the diff only.
+Do not tell it what earlier rounds found. It sees the bead, the diff, and the new-surface report only.
 
 **Codex round.** Run Codex unattended, with stdin closed and a timeout, in the background:
 
