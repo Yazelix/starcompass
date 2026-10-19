@@ -106,10 +106,10 @@
     },
     {
       "id": "AP-PERF-001",
-      "version": 1,
-      "title": "Measured performance claims",
+      "version": 2,
+      "title": "Measured performance work",
       "path": "protocols/AP-PERF-001.md",
-      "sha256": "500ddfc56c1293e74ba1e8e19dddca0129fbbec49e9a00735e975ee2e8a8790d"
+      "sha256": "671ba2f59620007d1a0c7338056af7a2010ea1bd2c8320dcb06c342aaca385fa"
     },
     {
       "id": "AP-PLAN-001",

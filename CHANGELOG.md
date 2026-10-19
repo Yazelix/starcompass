@@ -171,6 +171,8 @@
   and keeps the negative results that constrain it. To fit it, the
   single-profile canonical/import budget rises from 12,800 to 12,850 bytes and
   the `greenfield + terminal-engine` budget from 13,700 to 13,900 bytes.
+  Version 2 also covers redesigning for speed: fix a representative workload,
+  record a baseline, and measure where the time goes before choosing a design.
 - `AP-PLAN-001` permits one owning implementation issue or a user-authorized
   bounded planning-only batch, prevents a run from combining both shapes, and
   keeps execution and reference-gate comments delta-only. Acceptance records

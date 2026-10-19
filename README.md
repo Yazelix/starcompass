@@ -521,10 +521,10 @@ and lockfiles.
 
 | Surface | LOC |
 | --- | ---: |
-| Protocols and generated index | 570 |
+| Protocols and generated index | 572 |
 | Profiles | 53 |
 | Rust checker and package manifest | 1,886 |
 | Tests | 1,243 |
 | Skills and install script | 2,335 |
-| Repository policy, docs, and licenses | 2,354 |
-| **Total** | **8,441** |
+| Repository policy, docs, and licenses | 2,356 |
+| **Total** | **8,445** |
