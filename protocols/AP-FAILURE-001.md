@@ -1,6 +1,7 @@
 ---
 id: AP-FAILURE-001
-version: 4
+version: 5
+status: retired
 title: Designed lifecycle and failure semantics
 ---
 

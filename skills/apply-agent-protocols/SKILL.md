@@ -65,8 +65,8 @@ cargo run --locked --quiet --manifest-path "$STARCOMPASS/Cargo.toml" -- \
   --agents-out <consumer>/AGENTS.md
 ```
 
-Repeat `--profile` in the chosen order when roles compose, such as
-`--profile regular --profile terminal-engine`. The renderer de-duplicates
+Repeat `--profile` in the chosen order when profiles compose, such as
+`--profile surgical --profile release`. The renderer de-duplicates
 protocol IDs while preserving the first profile's order.
 
 When a subdirectory needs its own rules, add `--nested <dir>` for each one, and

@@ -5,8 +5,8 @@ agent projects without turning `AGENTS.md` into a remote dependency.
 
 It provides:
 
-- 25 individually identified and versioned protocols;
-- six ordered, composable profiles;
+- 25 individually identified and versioned protocols, 18 of them active;
+- three ordered, composable profiles: two postures and a release add-on;
 - deterministic, self-contained `AGENTS.md` rendering, optionally with the
   canonical text in a separate generated protocol file;
 - exact source-commit, protocol-version, overlay, and exception records;
@@ -47,12 +47,10 @@ Profiles compose by ordered union: the first appearance of a protocol sets its
 position and later duplicates are ignored.
 
 With empty exceptions and overlay, each shipped profile's canonical/import
-section is capped at 12,900 bytes. The tested `regular + terminal-engine`
-combination is capped at 13,900 bytes; with the 17,690-byte local suffix Orbit
-had as a standalone consumer, the complete instructions remain within 31,590
-bytes. These budgets
-leave room under Codex's default 32 KiB project-document loader limit without
-remote includes or consumer-specific profile forks.
+section is capped at 12,900 bytes. The largest combination,
+`surgical + release`, is capped at 15,300 bytes, which leaves about 17 KiB for
+a consumer's local rules under Codex's default 32 KiB project-document loader
+limit without remote includes or consumer-specific profile forks.
 
 A consumer can also declare directories whose agents need extra local rules,
 such as subsystems in a monorepo. Codex loads `AGENTS.md` files from the Git
@@ -97,13 +95,13 @@ issue set; that run may create, update, or close those records but cannot claim
 or implement work.
 
 `AP-REFERENCE-001` requires direct evidence before a consequential code shape.
-`AP-LICENSE-001`, in the `fork` and `surgical` profiles, requires exact
+`AP-LICENSE-001`, in the `surgical` profile, requires exact
 license interpretation. It distinguishes public-source inspection for ideas
 from copying, dependency selection, adaptation, and redistribution, and it
 forbids treating an independent user as acting for an agent provider merely
 because the user chose that provider's tool.
 
-Every profile includes `AP-MINIMAL-001`: accepted contracts, correct
+Both postures include `AP-MINIMAL-001`: accepted contracts, correct
 ownership, evidence, and net system complexity determine the valid shape before
 patch size is minimized. Agents build only for current callers, not forecast
 needs, and add an abstraction only for a second caller. A change updates every
@@ -160,14 +158,14 @@ full verification catalog.
 | --- | --- | --- |
 | `regular` | Every project | dependency, proof, and planning gates |
 | `surgical` | Soft forks and projects in maintenance | everything in `regular`, plus surgical changes and license interpretation |
-| `fork` | Maintained downstream forks | minimal delta, upstream/removal discipline, and license interpretation |
-| `orchestrator` | Thin composition layers | orchestrator ownership, one active frontier, portability |
-| `release` | Products with ordered release channels | installed-artifact proof, fresh-session dogfood, exact-revision promotion |
-| `terminal-engine` | Terminal/session engines | terminal authority, lifecycle, failure, and portability |
+| `release` | Add-on for products with ordered release channels | performance claims, bounded CI, installed-artifact proof, fresh-session dogfood, exact-revision promotion |
 
-A project may combine roles, for example `regular` plus `terminal-engine`
-plus `release`. The release profile is opt-in: it does not create branches or
-prescribe channel names, cadence, packaging commands, or platform support.
+A project chooses one posture, `regular` or `surgical`, and may add `release`.
+The add-on lists only its own protocols plus the mandatory `AP-SCOPE-001` and
+`AP-EXCEPTION-001`, so a consumer renders it after a posture, for example
+`--profile surgical --profile release`. It is opt-in: it does not create
+branches or prescribe channel names, cadence, packaging commands, or platform
+support.
 `AP-DELIVERY-001` proves the delivered artifact and fresh-session experience;
 `AP-PROMOTION-001` advances that exact proved revision through the
 consumer-declared channel order. One composed outer proof may cover an unchanged
@@ -256,7 +254,7 @@ From a clean, committed Starcompass checkout, render a consumer:
 ```sh
 cargo run --locked --quiet -- render \
   --profile regular \
-  --profile terminal-engine \
+  --profile release \
   --overlay /path/to/consumer/.agent-protocols.local.md \
   --exceptions /path/to/consumer/.agent-protocols.exceptions.json \
   --manifest-out /path/to/consumer/.agent-protocols.json \
@@ -386,6 +384,11 @@ run `version-check`, `index`, and `validate` normally. The index retains the
 record, profiles cannot select it, and the history gate prevents both new IDs
 from starting retired and retired IDs from reactivating.
 
+Retired protocols: `AP-ORCHESTRATOR-001`, `AP-FRONTIER-001`, `AP-TERMINAL-001`,
+`AP-FAILURE-001`, `AP-PORTABILITY-001`, `AP-FORK-001`, and `AP-FORK-002`. The
+`fork`, `orchestrator`, and `terminal-engine` profiles that held them are
+removed; imports pinned to an older source commit still verify there.
+
 Consumers upgrade intentionally:
 
 1. verify the old import at its pinned source commit;
@@ -510,10 +513,10 @@ and lockfiles.
 
 | Surface | LOC |
 | --- | ---: |
-| Protocols and generated index | 556 |
-| Profiles | 129 |
+| Protocols and generated index | 570 |
+| Profiles | 53 |
 | Rust checker and package manifest | 1,886 |
-| Tests | 1,271 |
+| Tests | 1,244 |
 | Skills and install script | 2,335 |
-| Repository policy, docs, and licenses | 2,326 |
-| **Total** | **8,503** |
+| Repository policy, docs, and licenses | 2,351 |
+| **Total** | **8,439** |

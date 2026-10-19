@@ -1,6 +1,7 @@
 ---
 id: AP-FORK-001
-version: 2
+version: 3
+status: retired
 title: Minimal isolated fork delta
 ---
 

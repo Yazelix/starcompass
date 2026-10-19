@@ -1,6 +1,7 @@
 ---
 id: AP-FORK-002
-version: 2
+version: 3
+status: retired
 title: Upstream and removal discipline
 ---
 

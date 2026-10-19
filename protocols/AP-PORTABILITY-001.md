@@ -1,6 +1,7 @@
 ---
 id: AP-PORTABILITY-001
-version: 2
+version: 3
+status: retired
 title: Portable core with explicit platform seams
 ---
 

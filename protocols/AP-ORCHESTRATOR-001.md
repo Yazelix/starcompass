@@ -1,6 +1,7 @@
 ---
 id: AP-ORCHESTRATOR-001
-version: 2
+version: 3
+status: retired
 title: Thin orchestrator ownership
 ---
 

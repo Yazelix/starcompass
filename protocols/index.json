@@ -38,31 +38,35 @@
     },
     {
       "id": "AP-FAILURE-001",
-      "version": 4,
+      "version": 5,
       "title": "Designed lifecycle and failure semantics",
       "path": "protocols/AP-FAILURE-001.md",
-      "sha256": "450e48b4e1532ff50a9a1da7faa49e3539450e0676f3c530f888d33b4b752e80"
+      "sha256": "6d18937c501c9d9e78a415c9c54fdd681a965e476db0e16cf5be77da5b23d536",
+      "status": "retired"
     },
     {
       "id": "AP-FORK-001",
-      "version": 2,
+      "version": 3,
       "title": "Minimal isolated fork delta",
       "path": "protocols/AP-FORK-001.md",
-      "sha256": "11847b012a06b859b42c01c5aa3f4a2fb1d079cb25de80f27c3b129ae4f4780e"
+      "sha256": "89bf687ea8a667b33c22bf00a364b9d772ff0e965820c75f862582c9b28dc8b6",
+      "status": "retired"
     },
     {
       "id": "AP-FORK-002",
-      "version": 2,
+      "version": 3,
       "title": "Upstream and removal discipline",
       "path": "protocols/AP-FORK-002.md",
-      "sha256": "4d527d23672d2541e9f8b0ba0d83613ba715bfe6e7870437eccc4bf267d0bb4d"
+      "sha256": "cd189c3ab17282d1ff20d74b7887198c1c4e4f783717ba4bc30eb9e3f21461ef",
+      "status": "retired"
     },
     {
       "id": "AP-FRONTIER-001",
-      "version": 2,
+      "version": 3,
       "title": "One active integration frontier",
       "path": "protocols/AP-FRONTIER-001.md",
-      "sha256": "0777c74645955a26dc3829812ff26fa1a00a017c3b4cc1ac6740284f2664566c"
+      "sha256": "e10719d57b9c38eed60da5017963deab0dc1cf6d465c73678499435a34a55116",
+      "status": "retired"
     },
     {
       "id": "AP-GIT-001",
@@ -87,10 +91,11 @@
     },
     {
       "id": "AP-ORCHESTRATOR-001",
-      "version": 2,
+      "version": 3,
       "title": "Thin orchestrator ownership",
       "path": "protocols/AP-ORCHESTRATOR-001.md",
-      "sha256": "f78ebc0db6db525aac1d3226703af7e84cba9953c579470763831241a7d0c2ad"
+      "sha256": "acb9d8a755c375329cb2bfa9bcd493015e265f4c400faf438a3728962c23e276",
+      "status": "retired"
     },
     {
       "id": "AP-OWNERSHIP-001",
@@ -115,10 +120,11 @@
     },
     {
       "id": "AP-PORTABILITY-001",
-      "version": 2,
+      "version": 3,
       "title": "Portable core with explicit platform seams",
       "path": "protocols/AP-PORTABILITY-001.md",
-      "sha256": "a2f5025bc7a10436b5c2f8f42c6002ccf1e361f05abbff3dea6507a3426394c0"
+      "sha256": "284474a43ab6ba6805f99bd0bda2f0c035be1a5933176aea9ece65aef4ae8570",
+      "status": "retired"
     },
     {
       "id": "AP-PROMOTION-001",
@@ -164,10 +170,11 @@
     },
     {
       "id": "AP-TERMINAL-001",
-      "version": 2,
+      "version": 3,
       "title": "Terminal state authority",
       "path": "protocols/AP-TERMINAL-001.md",
-      "sha256": "c1805e12ca5c41d3ed2a6b24739fcded2ad986758fda01fdfa3132c9f8351d9c"
+      "sha256": "3914f4a4d57518579e13d2b1aa87e7b68d64c5ea76604377e9908a97deecff3d",
+      "status": "retired"
     },
     {
       "id": "AP-TEST-001",

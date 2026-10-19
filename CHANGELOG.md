@@ -10,8 +10,8 @@
 - Minimum-sufficient-implementation discipline.
 - Installed-artifact and fresh-session delivery proof plus exact-revision
   channel promotion.
-- Composable `regular`, `surgical`, `fork`, `orchestrator`, `release`, and
-  `terminal-engine` profiles.
+- Composable `regular` and `surgical` posture profiles and a `release`
+  add-on.
 - Typed Rust catalog indexing, self-contained `AGENTS.md` rendering, pinned
   structural drift detection, and atomic cross-platform output replacement.
 - History checks for permanent protocol IDs and mandatory version increments.
@@ -200,6 +200,24 @@
   locally and report it. With an upstream, record its baseline revision and
   each patch's reason and removal condition. The single-profile
   canonical/import budget rises from 12,850 to 12,900 bytes to fit it.
+- The `fork`, `orchestrator`, and `terminal-engine` profiles are removed, and
+  `AP-ORCHESTRATOR-001`, `AP-FRONTIER-001`, `AP-TERMINAL-001`,
+  `AP-FAILURE-001`, `AP-PORTABILITY-001`, `AP-FORK-001`, and `AP-FORK-002` are
+  retired; their IDs stay reserved. `AP-SURGICAL-001` carries the fork posture
+  and upstream bookkeeping, and terminal, failure, and portability rules belong
+  in the overlays of consumers with those components. `release` becomes an
+  add-on of `AP-SCOPE-001`, `AP-PERF-001`, `AP-CI-001`, `AP-DELIVERY-001`,
+  `AP-PROMOTION-001`, and `AP-EXCEPTION-001` that renders after a posture.
+  The combined budget case becomes `surgical + release`, provisionally capped
+  at 15,300 bytes. Existing imports still verify from their pinned source
+  commit. On their next upgrade, consumers pick a posture and add `release`
+  only if they promote through channels: a project, or a hard fork that owns
+  its code, uses `regular`; a soft fork or a project in maintenance uses
+  `surgical`; former `orchestrator` and `terminal-engine` consumers use
+  `regular` and keep component rules in their overlay. For the owner's
+  consumers: eon, starcompass, and machines_vs_aliens use `regular`; nova uses
+  `regular`, plus `release` if it keeps channel promotion; nova-rio and
+  nova-helix use `surgical`.
 - `AP-PLAN-001` makes issue fields mutable current state and reserves append-only
   history for evidence. Since version 12, the issue tool is beads_rust (`br`)
   when it is available. `AP-GIT-001` folds same-unit corrections into the

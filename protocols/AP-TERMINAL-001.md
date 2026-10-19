@@ -1,6 +1,7 @@
 ---
 id: AP-TERMINAL-001
-version: 2
+version: 3
+status: retired
 title: Terminal state authority
 ---
 

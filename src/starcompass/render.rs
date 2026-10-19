@@ -291,14 +291,7 @@ mod tests {
         );
         assert_eq!(
             profiles.keys().map(String::as_str).collect::<Vec<_>>(),
-            [
-                "fork",
-                "orchestrator",
-                "regular",
-                "release",
-                "surgical",
-                "terminal-engine"
-            ]
+            ["regular", "release", "surgical"]
         );
         for profile in profiles.keys() {
             let names = [profile.clone()];
@@ -322,7 +315,6 @@ mod tests {
             .unwrap();
             assert_eq!(first, second);
             assert!(first.1.contains(&format!("- Profiles: `{profile}`")));
-            assert!(first.1.contains("### AP-MINIMAL-001 "));
             assert!(
                 first
                     .1
@@ -382,7 +374,7 @@ mod tests {
                 "{profile} canonical/import section is {actual} bytes; limit is {LIMIT}"
             );
         }
-        let selected = vec!["regular".into(), "terminal-engine".into()];
+        let selected = vec!["surgical".into(), "release".into()];
         let (_, agents) = assemble_root(
             &root(),
             &selected,
@@ -393,10 +385,10 @@ mod tests {
         )
         .unwrap();
         let actual = agents.len() - local_rules.len();
-        const COMBINED_LIMIT: usize = 13_900;
+        const COMBINED_LIMIT: usize = 15_300;
         assert!(
             actual <= COMBINED_LIMIT,
-            "regular + terminal-engine canonical/import section is {actual} bytes; limit is {COMBINED_LIMIT}"
+            "surgical + release canonical/import section is {actual} bytes; limit is {COMBINED_LIMIT}"
         );
     }
 
@@ -407,31 +399,6 @@ mod tests {
         for id in &profiles["regular"].protocols {
             assert!(surgical.contains(id), "surgical lacks {id}");
         }
-    }
-
-    #[test]
-    fn release_requires_delivery_before_promotion() {
-        let (manifest, agents) = assemble_root(
-            &root(),
-            &["release".into()],
-            "Local truth.\n",
-            &EMPTY_EXCEPTIONS,
-            SOURCE_REPOSITORY,
-            COMMIT,
-        )
-        .unwrap();
-        let ids = manifest
-            .protocols
-            .iter()
-            .map(|protocol| protocol.id.as_str())
-            .collect::<Vec<_>>();
-        let delivery = ids.iter().position(|id| *id == "AP-DELIVERY-001").unwrap();
-        let promotion = ids.iter().position(|id| *id == "AP-PROMOTION-001").unwrap();
-        assert!(delivery < promotion);
-        assert!(
-            agents.find("### AP-DELIVERY-001 ").unwrap()
-                < agents.find("### AP-PROMOTION-001 ").unwrap()
-        );
     }
 
     #[test]
@@ -475,7 +442,7 @@ mod tests {
 
         let invalid = ExceptionsDocument {
             schema: 1,
-            exceptions: vec![exception("AP-TERMINAL-001", "all")],
+            exceptions: vec![exception("AP-CI-001", "all")],
         };
         assert!(
             assemble_root(
@@ -496,7 +463,7 @@ mod tests {
     fn profiles_compose_in_order_without_duplicates() {
         let (manifest, agents) = assemble_root(
             &root(),
-            &["regular".into(), "terminal-engine".into()],
+            &["regular".into(), "release".into()],
             "Local truth.\n",
             &EMPTY_EXCEPTIONS,
             SOURCE_REPOSITORY,
@@ -506,11 +473,17 @@ mod tests {
         let ids = manifest
             .protocols
             .iter()
-            .map(|protocol| &protocol.id)
+            .map(|protocol| protocol.id.as_str())
             .collect::<Vec<_>>();
         assert_eq!(ids.len(), ids.iter().collect::<BTreeSet<_>>().len());
-        assert_eq!(manifest.profiles, ["regular", "terminal-engine"]);
-        assert!(agents.contains("- Profiles: `regular`, `terminal-engine`"));
-        assert!(ids.iter().any(|id| id.as_str() == "AP-TERMINAL-001"));
+        assert_eq!(manifest.profiles, ["regular", "release"]);
+        assert!(agents.contains("- Profiles: `regular`, `release`"));
+        let delivery = ids.iter().position(|id| *id == "AP-DELIVERY-001").unwrap();
+        let promotion = ids.iter().position(|id| *id == "AP-PROMOTION-001").unwrap();
+        assert!(delivery < promotion);
+        assert!(
+            agents.find("### AP-DELIVERY-001 ").unwrap()
+                < agents.find("### AP-PROMOTION-001 ").unwrap()
+        );
     }
 }

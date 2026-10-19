@@ -1,6 +1,7 @@
 ---
 id: AP-FRONTIER-001
-version: 2
+version: 3
+status: retired
 title: One active integration frontier
 ---
 

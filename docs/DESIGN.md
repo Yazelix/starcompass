@@ -47,16 +47,20 @@ a separate archive, retirement registry, or synthetic profile.
 
 ## Profiles compose; projects still own policy
 
-The six profiles are curated ordered sets, not inheritance trees. Repeated
+The three profiles are curated ordered sets, not inheritance trees. Repeated
 `--profile` arguments form an ordered union and discard duplicate protocol IDs at
-their second occurrence. This supports combinations such as `regular` plus
-`terminal-engine` without inventing a profile for every project type.
+their second occurrence. This supports combinations such as `surgical` plus
+`release` without inventing a profile for every project type.
 
 `regular` and `surgical` are postures: how much change a project welcomes.
 `surgical` contains every `regular` protocol, and a test keeps it that way, so
 a consumer picks one of the two. `AP-SURGICAL-001` states in its own text that
 it wins where `AP-MINIMAL-001` differs, so an agent does not have to resolve
-that conflict itself.
+that conflict itself. `release` is an add-on for one kind of product, so it
+lists only its own protocols and the two mandatory ones and renders after a
+posture. Fork, orchestrator, and terminal-engine role profiles were retired:
+a soft fork takes the `surgical` posture, and component rules belong in the
+overlays of the consumers that have those components.
 
 Profiles contain shared rules only. Repository-specific commands, branches,
 tools, paths, ownership, and release rules belong in the consumer overlay. A
@@ -64,7 +68,7 @@ consumer can alter canonical behavior only through an explicit exception.
 
 ## Delivery proof precedes promotion
 
-The optional `release` profile separates proving a delivered artifact from
+The optional `release` add-on separates proving a delivered artifact from
 changing who receives it. `AP-DELIVERY-001` owns installation, identity, and
 fresh-session evidence. `AP-PROMOTION-001` owns ordered channel movement and
 requires the exact already-proved revision. Promotion cannot manufacture proof.
@@ -76,7 +80,7 @@ fast-forwards, fresh-session dogfood for interaction changes, and additive
 reverts that traverse the normal promotion path. Starcompass does not import
 Nova's branch names, weekly cadence, Nix commands, platform checks, or runtime
 ownership. Consumers declare those local details and explicitly choose whether
-the release profile applies.
+the release add-on applies.
 
 ## Self-contained output beats remote inclusion
 
@@ -92,10 +96,10 @@ commit, profiles, protocol IDs, versions, hashes, and approved exceptions are
 visible without opening another file.
 
 Self-contained does not mean unbounded. Every individual shipped profile keeps
-its empty-overlay canonical/import section within 12,900 bytes. The current
-`regular + terminal-engine` consumer case is limited to 13,900 bytes, leaving
-about 1.1 KiB under Codex's default 32 KiB project-document limit after the
-local suffix Orbit had as a standalone consumer. The budget belongs to canonical composition; consumers
+its empty-overlay canonical/import section within 12,900 bytes. The largest
+combination, `surgical + release`, is limited to 15,300 bytes, leaving about
+17 KiB of local rules under Codex's default 32 KiB project-document limit. The
+budget belongs to canonical composition; consumers
 still own their overlays, and the renderer does not reject host-specific total
 sizes.
 
