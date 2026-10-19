@@ -167,12 +167,11 @@ repository that uses one records it, with the reviewed upstream revision, in its
 own overlay; the README gives the Ponytail text to paste.
 
 `AP-MINIMAL-001` evaluates minimality across the accepted system and lifecycle,
-including ownership, duplicated truth, coordination, coupling, portability,
-migration, operations, and proof. Patch size is only a tie-breaker among shapes
-satisfying the same contract and ownership duties, so a locally larger
-root-cause or owner correction can be the minimum solution. A code-shape tool
-applies its bias after architecture selection; it does not select the
-architecture.
+including coordination, coupling, portability, migration, operations, and proof.
+Patch size is only a tie-breaker among shapes satisfying the same contract and
+the ownership duties of `AP-OWNERSHIP-001`, so a locally larger root-cause or
+owner correction can be the minimum solution. A code-shape tool applies its
+bias after architecture selection; it does not select the architecture.
 
 ## Dependency decision
 

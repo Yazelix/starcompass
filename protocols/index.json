@@ -10,10 +10,10 @@
     },
     {
       "id": "AP-CONTRACT-001",
-      "version": 4,
+      "version": 5,
       "title": "Contract-driven changes",
       "path": "protocols/AP-CONTRACT-001.md",
-      "sha256": "cdf2e5d69cefd34ceeeaa6b7511b21f921e2be50c17d3c01b85120b20234cff7"
+      "sha256": "4e3695ec39a6d1eb01a18930d0ce3ed3241078b4dfefbee4f2e295e74fd13d1f"
     },
     {
       "id": "AP-DELIVERY-001",
@@ -80,10 +80,10 @@
     },
     {
       "id": "AP-MINIMAL-001",
-      "version": 5,
+      "version": 6,
       "title": "Minimum sufficient implementation",
       "path": "protocols/AP-MINIMAL-001.md",
-      "sha256": "a707f9f27a4ca42c4e78738830fdafd51d1c66acf80541590b9e32e016ddbe37"
+      "sha256": "8dde259c77ec251719dba23eb1090b10262bbc2fb000d4899690781eb6563e11"
     },
     {
       "id": "AP-ORCHESTRATOR-001",
@@ -143,10 +143,10 @@
     },
     {
       "id": "AP-SCOPE-001",
-      "version": 4,
+      "version": 5,
       "title": "User-owned scope",
       "path": "protocols/AP-SCOPE-001.md",
-      "sha256": "8d84dc6fca6097b2055eb3ca8467565709e4c474a18c3030ae3064cc612bdfab"
+      "sha256": "f68b0606986b0ac083a0c7949e1b2ab5d34150e0f906ddae226b9d5429ee115a"
     },
     {
       "id": "AP-SESSION-001",

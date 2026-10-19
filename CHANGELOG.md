@@ -110,18 +110,28 @@
   non-mutating unless the user also chooses a change, and preserves user inputs
   and artifacts from implicit replacement or deletion. Since version 4, every
   choice offered to the user carries a recommended answer and its reason;
-  tighter wording keeps the orchestrator profile within its budget.
+  tighter wording keeps the orchestrator profile within its budget. Version 5
+  leaves compatibility promises and public surfaces to `AP-CONTRACT-001`'s
+  fewest unsupported guarantees and keeps features, migrations, repositories,
+  and planning items.
 - `AP-CONTRACT-001` selects the contract with the fewest unsupported guarantees
   or restrictions, leaves reasonable future behavior unspecified, and treats
-  current user-facing documentation as a contract surface.
+  current user-facing documentation as a contract surface. Version 5 keeps the
+  cheapest falsifying check and leaves the one source-of-truth owner to
+  `AP-OWNERSHIP-001` and the smallest complete vertical slice to
+  `AP-MINIMAL-001`.
 - `AP-MINIMAL-001` evaluates minimality after contract and ownership selection,
-  across total system and lifecycle cost, and rejects a patch that preserves a
-  wrong owner or merely minimizes the current diff. Durable agent context uses
+  across total system and lifecycle cost, and rejects a patch that merely
+  minimizes the current diff. Durable agent context uses
   the narrowest useful scope, avoids duplicate or generic wording, and loads
   details only when needed. Version 5 removes the Ponytail paragraph, reversing
   its adoption in every profile: it put directives in every profile for a tool
   most consumers lack. Repositories that use Ponytail add the README's overlay
-  text instead.
+  text instead. Version 6 leaves duplicate truth, wrong or duplicate owners, and
+  direct ownership to `AP-OWNERSHIP-001`; patch size still decides only between
+  equally correct system shapes. Together with the version 5 overlap removals
+  in `AP-SCOPE-001` and `AP-CONTRACT-001`, this shrinks `greenfield` by 173
+  bytes.
 - `AP-TEST-001` uses representative isolated task trials for consequential
   agent-instruction changes and keeps structural validation distinct from
   behavioral compliance. Since version 4, trials run when the user authorizes
