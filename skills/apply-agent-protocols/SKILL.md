@@ -66,7 +66,7 @@ cargo run --locked --quiet --manifest-path "$STARCOMPASS/Cargo.toml" -- \
 ```
 
 Repeat `--profile` in the chosen order when roles compose, such as
-`--profile greenfield --profile terminal-engine`. The renderer de-duplicates
+`--profile regular --profile terminal-engine`. The renderer de-duplicates
 protocol IDs while preserving the first profile's order.
 
 When a subdirectory needs its own rules, add `--nested <dir>` for each one, and

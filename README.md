@@ -15,8 +15,7 @@ It provides:
   batch;
 - the owner's agent skills, two of which apply and audit the protocols, and an
   install script that links them into Claude Code and Codex; and
-- self-adoption of the `greenfield` profile through the ordinary consumer
-  format.
+- self-adoption through the ordinary consumer format.
 
 Starcompass is written for Claude Code first: protocols and skills may name its
 mechanisms, such as subagents, skills, and hooks. Codex stays supported. Both
@@ -48,7 +47,7 @@ Profiles compose by ordered union: the first appearance of a protocol sets its
 position and later duplicates are ignored.
 
 With empty exceptions and overlay, each shipped profile's canonical/import
-section is capped at 12,850 bytes. The tested `greenfield + terminal-engine`
+section is capped at 12,850 bytes. The tested `regular + terminal-engine`
 combination is capped at 13,900 bytes; with the 17,690-byte local suffix Orbit
 had as a standalone consumer, the complete instructions remain within 31,590
 bytes. These budgets
@@ -148,13 +147,13 @@ full verification catalog.
 
 | Profile | Intended role | Specialized protocols |
 | --- | --- | --- |
-| `greenfield` | Small new projects | dependency, proof, and planning gates |
+| `regular` | Every project | dependency, proof, and planning gates |
 | `fork` | Maintained downstream forks | minimal delta, upstream/removal discipline, and license interpretation |
 | `orchestrator` | Thin composition layers | orchestrator ownership, one active frontier, portability |
 | `release` | Products with ordered release channels | installed-artifact proof, fresh-session dogfood, exact-revision promotion |
 | `terminal-engine` | Terminal/session engines | terminal authority, lifecycle, failure, and portability |
 
-A project may combine roles, for example `greenfield` plus `terminal-engine`
+A project may combine roles, for example `regular` plus `terminal-engine`
 plus `release`. The release profile is opt-in: it does not create branches or
 prescribe channel names, cadence, packaging commands, or platform support.
 `AP-DELIVERY-001` proves the delivered artifact and fresh-session experience;
@@ -244,7 +243,7 @@ From a clean, committed Starcompass checkout, render a consumer:
 
 ```sh
 cargo run --locked --quiet -- render \
-  --profile greenfield \
+  --profile regular \
   --profile terminal-engine \
   --overlay /path/to/consumer/.agent-protocols.local.md \
   --exceptions /path/to/consumer/.agent-protocols.exceptions.json \
@@ -441,8 +440,8 @@ AGENTS.md                  generated self-contained active policy
 .beads/                    durable planning state managed through br
 ```
 
-Starcompass consumes its own `greenfield` profile through the same files and
-renderer used by other repositories. Its manifest pins the latest accepted
+Starcompass consumes its own protocols through the same files and renderer
+used by other repositories. Its manifest pins the latest accepted
 protocol-bearing revision rather than the consumer revision that contains the
 generated files. A same-commit pin is impossible because committing the import
 would change the commit being named.
@@ -504,5 +503,5 @@ and lockfiles.
 | Rust checker and package manifest | 1,886 |
 | Tests | 1,261 |
 | Skills and install script | 2,335 |
-| Repository policy, docs, and licenses | 2,266 |
-| **Total** | **8,385** |
+| Repository policy, docs, and licenses | 2,269 |
+| **Total** | **8,388** |

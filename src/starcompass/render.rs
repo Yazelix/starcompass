@@ -293,8 +293,8 @@ mod tests {
             profiles.keys().map(String::as_str).collect::<Vec<_>>(),
             [
                 "fork",
-                "greenfield",
                 "orchestrator",
+                "regular",
                 "release",
                 "terminal-engine"
             ]
@@ -339,9 +339,9 @@ mod tests {
         for (repository, profiles) in [
             (
                 "https://example.test/repo`\n\n## Injected",
-                vec!["greenfield".into()],
+                vec!["regular".into()],
             ),
-            (SOURCE_REPOSITORY, vec!["greenfield`\n\n## Injected".into()]),
+            (SOURCE_REPOSITORY, vec!["regular`\n\n## Injected".into()]),
         ] {
             assert!(
                 assemble_root(
@@ -381,7 +381,7 @@ mod tests {
                 "{profile} canonical/import section is {actual} bytes; limit is {LIMIT}"
             );
         }
-        let selected = vec!["greenfield".into(), "terminal-engine".into()];
+        let selected = vec!["regular".into(), "terminal-engine".into()];
         let (_, agents) = assemble_root(
             &root(),
             &selected,
@@ -395,7 +395,7 @@ mod tests {
         const COMBINED_LIMIT: usize = 13_900;
         assert!(
             actual <= COMBINED_LIMIT,
-            "greenfield + terminal-engine canonical/import section is {actual} bytes; limit is {COMBINED_LIMIT}"
+            "regular + terminal-engine canonical/import section is {actual} bytes; limit is {COMBINED_LIMIT}"
         );
     }
 
@@ -434,7 +434,7 @@ mod tests {
         document.exceptions[0].review_condition = Some("Review later.\r\n".into());
         let (manifest, agents) = assemble_root(
             &root(),
-            &["greenfield".into()],
+            &["regular".into()],
             "Local truth.\n",
             &document,
             SOURCE_REPOSITORY,
@@ -470,7 +470,7 @@ mod tests {
         assert!(
             assemble_root(
                 &root(),
-                &["greenfield".into()],
+                &["regular".into()],
                 "Local truth.\n",
                 &invalid,
                 SOURCE_REPOSITORY,
@@ -486,7 +486,7 @@ mod tests {
     fn profiles_compose_in_order_without_duplicates() {
         let (manifest, agents) = assemble_root(
             &root(),
-            &["greenfield".into(), "terminal-engine".into()],
+            &["regular".into(), "terminal-engine".into()],
             "Local truth.\n",
             &EMPTY_EXCEPTIONS,
             SOURCE_REPOSITORY,
@@ -499,8 +499,8 @@ mod tests {
             .map(|protocol| &protocol.id)
             .collect::<Vec<_>>();
         assert_eq!(ids.len(), ids.iter().collect::<BTreeSet<_>>().len());
-        assert_eq!(manifest.profiles, ["greenfield", "terminal-engine"]);
-        assert!(agents.contains("- Profiles: `greenfield`, `terminal-engine`"));
+        assert_eq!(manifest.profiles, ["regular", "terminal-engine"]);
+        assert!(agents.contains("- Profiles: `regular`, `terminal-engine`"));
         assert!(ids.iter().any(|id| id.as_str() == "AP-TERMINAL-001"));
     }
 }

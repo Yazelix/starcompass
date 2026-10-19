@@ -552,7 +552,7 @@ mod tests {
         fs::write(&overlay, "Local truth.\n").unwrap();
         let error = command_render(
             &root(),
-            &["greenfield".into()],
+            &["regular".into()],
             &overlay,
             &exceptions,
             &alias,
@@ -633,7 +633,7 @@ mod tests {
         let render = |nested: &[String], protocol_file: Option<&str>| {
             command_render(
                 &root(),
-                &["greenfield".into()],
+                &["regular".into()],
                 &overlay,
                 &exceptions,
                 &manifest_path,

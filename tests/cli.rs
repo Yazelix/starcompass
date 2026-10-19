@@ -147,7 +147,7 @@ fn validates_the_canonical_repository() {
 fn invalid_cli_inputs_are_actionable_and_fail() {
     assert_cli_error(&["not-real"], "unknown command: not-real");
     assert_cli_error(
-        &["render", "--profile=greenfield", "--overlay=overlay"],
+        &["render", "--profile=regular", "--overlay=overlay"],
         "missing required --exceptions",
     );
     assert_cli_error(

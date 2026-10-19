@@ -93,7 +93,7 @@ pub(super) fn import_fixture(
 ) -> (Manifest, String, Option<String>, Vec<NestedFiles>) {
     assemble_import(
         &root(),
-        &["greenfield".into()],
+        &["regular".into()],
         "Local truth.\n",
         &EMPTY_EXCEPTIONS,
         SOURCE_REPOSITORY,

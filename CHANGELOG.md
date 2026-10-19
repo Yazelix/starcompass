@@ -10,7 +10,7 @@
 - Minimum-sufficient-implementation discipline.
 - Installed-artifact and fresh-session delivery proof plus exact-revision
   channel promotion.
-- Composable `greenfield`, `fork`, `orchestrator`, `release`, and
+- Composable `regular`, `fork`, `orchestrator`, `release`, and
   `terminal-engine` profiles.
 - Typed Rust catalog indexing, self-contained `AGENTS.md` rendering, pinned
   structural drift detection, and atomic cross-platform output replacement.
@@ -27,8 +27,8 @@
   their history, and `skills/install.sh`, which links every skill into Claude
   Code and Codex.
 - Generated `AGENTS.md` files identify their editable consumer-owned inputs.
-- Exact-pinned `greenfield` self-adoption through the ordinary consumer format
-  and a two-revision bootstrap sequence for canonical source changes.
+- Exact-pinned self-adoption through the ordinary consumer format and a
+  two-revision bootstrap sequence for canonical source changes.
 - Source-independent `check-consumer` validation for manifest, overlay,
   exception, generated import-record, and repository-local-rule agreement.
 - Public source distribution under either the MIT or Apache-2.0 license, with
@@ -187,6 +187,10 @@
   new project rarely has hosted CI. The `fork`, `orchestrator`, `release`, and
   `terminal-engine` profiles keep it, so `greenfield + terminal-engine` is
   unchanged.
+- The `greenfield` profile is renamed `regular`: it serves every project, not
+  only new ones, and its protocols are unchanged. There is no `greenfield`
+  alias. Existing imports still verify from their pinned source commit, and
+  consumers pass `--profile regular` on their next upgrade.
 - `AP-PLAN-001` makes issue fields mutable current state and reserves append-only
   history for evidence. Since version 12, the issue tool is beads_rust (`br`)
   when it is available. `AP-GIT-001` folds same-unit corrections into the

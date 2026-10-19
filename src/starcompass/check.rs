@@ -278,7 +278,7 @@ mod tests {
         };
         let (manifest, agents) = assemble_root(
             &root(),
-            &["greenfield".into()],
+            &["regular".into()],
             "Local truth.\n",
             &empty,
             SOURCE_REPOSITORY,
@@ -368,7 +368,7 @@ mod tests {
         };
         let (manifest, agents) = assemble_root(
             &root(),
-            &["greenfield".into()],
+            &["regular".into()],
             "Local truth.\n",
             &exceptions,
             SOURCE_REPOSITORY,
@@ -405,7 +405,7 @@ mod tests {
         rejected(&changed, "profiles");
 
         let mut changed = manifest.clone();
-        changed.profiles[0] = "greenfield`\n\n## Injected".into();
+        changed.profiles[0] = "regular`\n\n## Injected".into();
         rejected(&changed, "single-line");
 
         let mut changed = manifest.clone();

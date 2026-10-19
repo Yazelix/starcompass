@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "name": "greenfield",
-  "description": "Small new projects with explicit contracts, evidence, ownership, and proof.",
+  "name": "regular",
+  "description": "Every project: explicit contracts, evidence, ownership, and proof.",
   "protocols": [
     "AP-SCOPE-001",
     "AP-CONTRACT-001",

@@ -49,8 +49,8 @@ a separate archive, retirement registry, or synthetic profile.
 
 The five profiles are curated ordered sets, not inheritance trees. Repeated
 `--profile` arguments form an ordered union and discard duplicate protocol IDs at
-their second occurrence. This supports combinations such as a greenfield
-terminal engine without inventing a profile for every project type.
+their second occurrence. This supports combinations such as `regular` plus
+`terminal-engine` without inventing a profile for every project type.
 
 Profiles contain shared rules only. Repository-specific commands, branches,
 tools, paths, ownership, and release rules belong in the consumer overlay. A
@@ -87,7 +87,7 @@ visible without opening another file.
 
 Self-contained does not mean unbounded. Every individual shipped profile keeps
 its empty-overlay canonical/import section within 12,850 bytes. The current
-`greenfield + terminal-engine` consumer case is limited to 13,900 bytes, leaving
+`regular + terminal-engine` consumer case is limited to 13,900 bytes, leaving
 about 1.1 KiB under Codex's default 32 KiB project-document limit after the
 local suffix Orbit had as a standalone consumer. The budget belongs to canonical composition; consumers
 still own their overlays, and the renderer does not reject host-specific total
@@ -252,7 +252,7 @@ separate agent, and otherwise that evidence is reported as missing.
 
 ## Bootstrap and publication
 
-Starcompass dogfoods the ordinary consumer format with the `greenfield` profile.
+Starcompass dogfoods the ordinary consumer format.
 Its generated root `AGENTS.md` cannot pin the commit that contains itself:
 committing the result would immediately change the claimed source revision.
 Instead, the manifest pins the latest accepted protocol-bearing revision and

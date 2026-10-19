@@ -601,7 +601,7 @@ mod tests {
         fs::write(&index_path, json_text(&retired).unwrap()).unwrap();
 
         validate_repository(&directory.0).unwrap();
-        let profile_path = directory.0.join("profiles/greenfield.json");
+        let profile_path = directory.0.join("profiles/regular.json");
         let mut profile: Profile = read_json(&profile_path).unwrap();
         profile.protocols.push("AP-SCOPE-001".into());
         fs::write(&profile_path, json_text(&profile).unwrap()).unwrap();
@@ -656,7 +656,7 @@ mod tests {
         );
 
         let unknown = TestDirectory::copy_catalog();
-        let path = unknown.0.join("profiles/greenfield.json");
+        let path = unknown.0.join("profiles/regular.json");
         let mut profile: Profile = read_json(&path).unwrap();
         profile.protocols.push("AP-NOT-REAL-999".into());
         fs::write(path, json_text(&profile).unwrap()).unwrap();
@@ -668,11 +668,11 @@ mod tests {
         );
 
         let unrenderable = TestDirectory::copy_catalog();
-        let old_path = unrenderable.0.join("profiles/greenfield.json");
+        let old_path = unrenderable.0.join("profiles/regular.json");
         let mut profile: Profile = read_json(&old_path).unwrap();
-        profile.name = "green`field".into();
+        profile.name = "reg`ular".into();
         fs::write(
-            unrenderable.0.join("profiles/green`field.json"),
+            unrenderable.0.join("profiles/reg`ular.json"),
             json_text(&profile).unwrap(),
         )
         .unwrap();
@@ -692,7 +692,7 @@ mod tests {
 
         for relative in [
             "protocols/AP-SCOPE-001.md",
-            "profiles/greenfield.json",
+            "profiles/regular.json",
             "protocols/index.json",
             "protocols",
         ] {
