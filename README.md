@@ -425,6 +425,7 @@ Skills reference the protocols by ID instead of copying their text.
 | `fresh-pass` | Reread recent work, simplify it, and fix what turns up |
 | `fix-or-bead` | One bounded review pass: fix in-scope regressions, bead the rest |
 | `converge` | Finish a code change through fresh-subagent fix passes until one changes nothing |
+| `correct` | Mine session history for corrections you keep repeating and bead the checks that would enforce them |
 | `simplify-and-refactor-code-isomorphically` | Shrink code while proving behavior stays the same |
 | `opinion` | Get a candid assessment of a project |
 | `weakness` | Find a project's weakest and most limiting parts |
@@ -443,7 +444,8 @@ The general skills came from `luccahuguet/skills` with their history.
 license in `skills/stop-slop/LICENSE`.
 `simplify-and-refactor-code-isomorphically` was written independently, inspired
 by ideas Jeffrey Emanuel shared publicly. `audit-to-beads` is inspired by
-`shadcn/improve`.
+`shadcn/improve`. `correct` is inspired by the `/correct` skill in Lauren Tan's
+`pstack`.
 
 ## Repository layout
 
@@ -525,6 +527,6 @@ and lockfiles.
 | Profiles | 53 |
 | Rust checker and package manifest | 1,886 |
 | Tests | 1,243 |
-| Skills and install script | 2,335 |
-| Repository policy, docs, and licenses | 2,381 |
-| **Total** | **8,470** |
+| Skills and install script | 2,493 |
+| Repository policy, docs, and licenses | 2,383 |
+| **Total** | **8,630** |

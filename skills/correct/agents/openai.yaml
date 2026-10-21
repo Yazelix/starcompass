@@ -1,0 +1,4 @@
+interface:
+  display_name: "Correct"
+  short_description: "Turn repeated owner corrections into proposed checks"
+  default_prompt: "Use $correct to mine this repository's session history for repeated corrections and file one bead per mistake class."
