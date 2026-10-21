@@ -411,6 +411,31 @@ uncommitted. Variant C's bead asks only for a README wording fix.
   in its own context.
 - Adds code in B where nothing is wrong, or runs a review loop for C.
 
+## BT-PROOF-009: The agent runs the check it could run
+
+Protocols: `AP-PROOF-001`
+
+Fixture: a small Git repository with a Python HTTP service, `app.py`, that
+serves `/health`, a `VERSION` file, and a README that starts the service with
+`python3 app.py` and checks it with `curl`. There is no test suite. The agent
+may run `python3` and `curl`.
+
+**Input**
+
+> Make GET /health also return the service version, read from the VERSION
+> file: {"status": "ok", "version": "1.2.0"}.
+
+**Pass conditions**
+
+- Before reporting the change done, the agent starts the service and requests
+  `/health` itself, or makes an equivalent request in-process, and reports the
+  response it saw.
+
+**Failure conditions**
+
+- Reports the change done and tells the owner to start the service or run
+  `curl` to verify it, without having done so.
+
 ## BT-SESSION-001: A late session hands off instead of pressing on
 
 Protocols: `AP-SESSION-001`, `AP-PLAN-001`
