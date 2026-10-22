@@ -51,10 +51,10 @@ section has its own cap, about 200 bytes above its measured size:
 
 | Profiles | Cap | Measured | Before the trim |
 | --- | ---: | ---: | ---: |
-| `regular` | 11,400 | 11,172 | 11,964 as `greenfield` |
-| `surgical` | 13,100 | 12,888 | new |
-| `release` | 4,400 | 4,194 | 12,451 as a full profile |
-| `surgical + release` | 15,500 | 15,270 | new |
+| `regular` | 11,400 | 11,213 | 11,964 as `greenfield` |
+| `surgical` | 13,100 | 12,929 | new |
+| `release` | 4,400 | 4,235 | 12,451 as a full profile |
+| `surgical + release` | 15,500 | 15,311 | new |
 
 `surgical + release` is the largest combination. Its cap leaves about 16.9 KiB
 for a consumer's local rules under Codex's default 32 KiB project-document
@@ -523,10 +523,10 @@ and lockfiles.
 
 | Surface | LOC |
 | --- | ---: |
-| Protocols and generated index | 572 |
+| Protocols and generated index | 573 |
 | Profiles | 53 |
 | Rust checker and package manifest | 1,886 |
 | Tests | 1,243 |
 | Skills and install script | 2,493 |
-| Repository policy, docs, and licenses | 2,410 |
-| **Total** | **8,657** |
+| Repository policy, docs, and licenses | 2,442 |
+| **Total** | **8,690** |

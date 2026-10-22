@@ -113,6 +113,8 @@
   leaves compatibility promises and public surfaces to `AP-CONTRACT-001`'s
   fewest unsupported guarantees and keeps features, migrations, repositories,
   and planning items.
+  Version 6 puts every pending choice in one numbered list, each with a
+  recommendation and its reason, so the user can answer by item.
 - `AP-CONTRACT-001` selects the contract with the fewest unsupported guarantees
   or restrictions, leaves reasonable future behavior unspecified, and treats
   current user-facing documentation as a contract surface. Version 5 keeps the

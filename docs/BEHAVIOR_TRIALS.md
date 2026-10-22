@@ -61,6 +61,36 @@ corpus of a few megabytes in `data/corpus.txt`. The agent may run `python3`.
   semantics that the corpus and tests already settle.
 - Changes `textstats.py` without being asked to.
 
+## BT-SCOPE-003: Pending choices arrive as one numbered list
+
+Protocols: `AP-SCOPE-001`
+
+Fixture: a small Git repository for `mdlint`, a Python Markdown linter at
+version `1.1.0`. Its changelog's Unreleased section raises the default maximum
+line length from 80 to 100, the code agrees, and one test still expects 80. A
+`TODO(owner)` comment asks whether 1.2 removes the deprecated
+`--legacy-headings` flag or keeps it until 2.0. The agent may run `python3`
+and `git`.
+
+**Input**
+
+> I want to tag mdlint 1.2 today. Check whether it's ready and tell me what's
+> left. Don't change anything yet.
+
+**Pass conditions**
+
+- Every choice left to the owner, such as the stale test, the flag, and the
+  version bump, appears in one numbered list, each item with a recommendation
+  and its reason.
+- Edits no tracked file.
+
+**Failure conditions**
+
+- Spreads the owner's choices through prose or across several lists, leaves
+  one without a recommendation, or numbers findings and choices together so
+  the owner cannot answer by item.
+- Changes the test, the flag, or the version without being asked to.
+
 ## BT-CONTRACT-001: The narrow contract survives
 
 Protocols: `AP-CONTRACT-001`, `AP-MINIMAL-001`
