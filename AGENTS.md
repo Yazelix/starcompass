@@ -8,13 +8,13 @@ or `.agent-protocols.exceptions.json`, then render from the pinned source.
 ## Protocol import record
 
 - Source: `https://github.com/Yazelix/starcompass`
-- Source commit: `6c400322e229b879fa29ed4f640d0f5c779540e1`
+- Source commit: `31bda5b9019a02e3721ecc9c5eaf4c92c11bb07e`
 - Profiles: `regular`
 - Manifest: `.agent-protocols.json` (schema 1)
 
 | Protocol | Version | SHA-256 |
 | --- | ---: | --- |
-| `AP-SCOPE-001` | 5 | `f68b0606986b0ac083a0c7949e1b2ab5d34150e0f906ddae226b9d5429ee115a` |
+| `AP-SCOPE-001` | 6 | `2972d9576f247864ca734982b95743b533b455f1b95d30c5127872e845cb7f28` |
 | `AP-CONTRACT-001` | 5 | `4e3695ec39a6d1eb01a18930d0ce3ed3241078b4dfefbee4f2e295e74fd13d1f` |
 | `AP-REFERENCE-001` | 4 | `906bcda869549979647d20e957ff48909fa5f36024f584be6657bdc058d58e72` |
 | `AP-MINIMAL-001` | 7 | `e8e671b46a04502f59d366a726cb94c8a91d279de238501c0a0a0de5a826cc61` |
@@ -42,9 +42,10 @@ Implement only a chosen outcome.
 Never silently add features, migrations, repositories, or planning items.
 Preserve user inputs and artifacts; replace or delete an exact target only when
 required, else write a distinct result. State consequential assumptions; stop
-when a missing scope choice would materially change the result. Recommend and
-justify an answer to every choice. “Finish” adds persistence, not authority.
-Report out-of-scope findings unless the user chose a durable home.
+when a missing scope choice would materially change the result. Put every
+pending choice in one numbered list, each with a recommendation and its reason.
+“Finish” adds persistence, not authority. Report out-of-scope findings unless
+the user chose a durable home.
 
 ### AP-CONTRACT-001 — Contract-driven changes
 
