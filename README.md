@@ -528,5 +528,5 @@ and lockfiles.
 | Rust checker and package manifest | 1,886 |
 | Tests | 1,243 |
 | Skills and install script | 2,493 |
-| Repository policy, docs, and licenses | 2,502 |
-| **Total** | **8,777** |
+| Repository policy, docs, and licenses | 2,523 |
+| **Total** | **8,798** |

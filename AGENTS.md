@@ -8,7 +8,7 @@ or `.agent-protocols.exceptions.json`, then render from the pinned source.
 ## Protocol import record
 
 - Source: `https://github.com/Yazelix/starcompass`
-- Source commit: `31bda5b9019a02e3721ecc9c5eaf4c92c11bb07e`
+- Source commit: `b102603a6276093973ede5f65ed4f254f841e500`
 - Profiles: `regular`
 - Manifest: `.agent-protocols.json` (schema 1)
 
@@ -24,6 +24,7 @@ or `.agent-protocols.exceptions.json`, then render from the pinned source.
 | `AP-PROOF-001` | 11 | `310e1f798c3334e08402f9e42f447ae9352d171fc92888afb141c6b228f84e56` |
 | `AP-PLAN-001` | 12 | `5ee8deccb4b3c61ddd4a52b8ed6f69ebd30e24b65ace867871a89c75ef02a984` |
 | `AP-SESSION-001` | 4 | `51c15e878070caaf372721c2eb083354f5f63492f5c4e694cf31aaefcefa53a7` |
+| `AP-COORDINATOR-001` | 1 | `bd80e64f9b50e617a37531c5e48e0bc2672397edbd2f75c1e511d588954432c7` |
 | `AP-EXCEPTION-001` | 2 | `2c4f00299922edac83286821af07ad485e5a630bca6acbbce918d87614abb395` |
 | `AP-GIT-001` | 5 | `f2c3254311de57a23a13aa382fe3285e65bb34e535ecd813d1be783ca79d4bf9` |
 
@@ -190,6 +191,21 @@ estimate high:
 A handoff is an issue comment: state, next step, and open decisions with
 reasons. The next session primes, e.g. "prime, then continue <issue> from its
 handoff".
+
+### AP-COORDINATOR-001 — One coordinator across agent sessions
+
+When several agent sessions share a repository or machine, the user may name
+one coordinator session. It orders landings on the shared branch, freezes the
+branch during a final proof, schedules heavy runs and installs against machine
+load, and starts, briefs, and retires sessions. Other sessions follow its
+schedule and report their state, blocks, and pending user choices to it.
+
+The coordinator may relay user decisions, approvals included. A relayed
+decision binds only when the message quotes the user's words and names exactly
+what was approved. The receiver records it as relayed, with the date. The
+coordinator never decides for the user, never answers a host permission
+prompt, and never asks a session to do what its own permissions block. When a
+relay is ambiguous, the receiver asks the user directly.
 
 ### AP-EXCEPTION-001 — Explicit local exceptions
 
