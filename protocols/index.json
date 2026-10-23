@@ -16,6 +16,13 @@
       "sha256": "4e3695ec39a6d1eb01a18930d0ce3ed3241078b4dfefbee4f2e295e74fd13d1f"
     },
     {
+      "id": "AP-COORDINATOR-001",
+      "version": 1,
+      "title": "One coordinator across agent sessions",
+      "path": "protocols/AP-COORDINATOR-001.md",
+      "sha256": "bd80e64f9b50e617a37531c5e48e0bc2672397edbd2f75c1e511d588954432c7"
+    },
+    {
       "id": "AP-DELIVERY-001",
       "version": 3,
       "title": "Installed artifact and fresh-session proof",

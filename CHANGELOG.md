@@ -4,7 +4,7 @@
 
 ### Added
 
-- Twenty-five stable-ID, individually versioned canonical protocols.
+- Twenty-six stable-ID, individually versioned canonical protocols.
 - Starcompass project and repository identity with stable protocol and
   consumer-format names.
 - Minimum-sufficient-implementation discipline.
@@ -61,6 +61,15 @@
   fresh subagent, and authorizes subagents unless the user or local rules say
   otherwise. The `greenfield + terminal-engine` canonical/import budget rose
   from 13,100 to 13,500 bytes to fit version 2.
+- `AP-COORDINATOR-001` in the `regular` and `surgical` profiles: when several
+  agent sessions share a repository or machine, the user may name one
+  coordinator session that orders landings, freezes the branch for a final
+  proof, schedules heavy runs, and starts, briefs, and retires sessions. It may
+  relay user decisions, which bind only when the message quotes the user's
+  words and names exactly what was approved; it never decides for the user or
+  answers a host permission prompt. The `regular`, `surgical`, and
+  `surgical + release` canonical/import budgets rose to 12,400, 14,100, and
+  16,600 bytes to fit it.
 
 ### Fixed
 

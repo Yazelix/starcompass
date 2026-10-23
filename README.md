@@ -5,7 +5,7 @@ agent projects without turning `AGENTS.md` into a remote dependency.
 
 It provides:
 
-- 25 individually identified and versioned protocols, 18 of them active;
+- 26 individually identified and versioned protocols, 19 of them active;
 - three ordered, composable profiles: two postures and a release add-on;
 - deterministic, self-contained `AGENTS.md` rendering, optionally with the
   canonical text in a separate generated protocol file;
@@ -51,12 +51,12 @@ section has its own cap, about 200 bytes above its measured size:
 
 | Profiles | Cap | Measured | Before the trim |
 | --- | ---: | ---: | ---: |
-| `regular` | 11,400 | 11,213 | 11,964 as `greenfield` |
-| `surgical` | 13,100 | 12,929 | new |
-| `release` | 4,400 | 4,235 | 12,451 as a full profile |
-| `surgical + release` | 15,500 | 15,311 | new |
+| `regular` | 12,400 | 12,192 | 11,964 as `greenfield` |
+| `surgical` | 14,100 | 13,908 | new |
+| `release` | 4,400 | 4,360 | 12,451 as a full profile |
+| `surgical + release` | 16,600 | 16,415 | new |
 
-`surgical + release` is the largest combination. Its cap leaves about 16.9 KiB
+`surgical + release` is the largest combination. Its cap leaves about 15.8 KiB
 for a consumer's local rules under Codex's default 32 KiB project-document
 loader limit without remote includes or consumer-specific profile forks.
 
@@ -164,7 +164,7 @@ full verification catalog.
 
 | Profile | Intended role | Specialized protocols |
 | --- | --- | --- |
-| `regular` | Every project | dependency, proof, and planning gates |
+| `regular` | Every project | dependency, proof, planning, and session-coordination gates |
 | `surgical` | Soft forks and projects in maintenance | everything in `regular`, plus surgical changes and license interpretation |
 | `release` | Add-on for products with ordered release channels | performance claims, bounded CI, installed-artifact proof, fresh-session dogfood, exact-revision promotion |
 
@@ -523,10 +523,10 @@ and lockfiles.
 
 | Surface | LOC |
 | --- | ---: |
-| Protocols and generated index | 573 |
-| Profiles | 53 |
+| Protocols and generated index | 598 |
+| Profiles | 55 |
 | Rust checker and package manifest | 1,886 |
 | Tests | 1,243 |
 | Skills and install script | 2,493 |
-| Repository policy, docs, and licenses | 2,443 |
-| **Total** | **8,691** |
+| Repository policy, docs, and licenses | 2,502 |
+| **Total** | **8,777** |

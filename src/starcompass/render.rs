@@ -284,7 +284,7 @@ mod tests {
     #[test]
     fn repository_and_profiles_render_deterministically() {
         let (protocols, profiles) = validate_repository(&root()).unwrap();
-        assert_eq!(protocols.len(), 25);
+        assert_eq!(protocols.len(), 26);
         assert_eq!(
             json_text(&expected_index(&root()).unwrap()).unwrap(),
             fs::read_to_string(root().join("protocols/index.json")).unwrap()
@@ -355,10 +355,10 @@ mod tests {
     #[test]
     fn profiles_fit_canonical_instruction_budget() {
         const LIMITS: [(&[&str], usize); 4] = [
-            (&["regular"], 11_400),
-            (&["surgical"], 13_100),
+            (&["regular"], 12_400),
+            (&["surgical"], 14_100),
             (&["release"], 4_400),
-            (&["surgical", "release"], 15_500),
+            (&["surgical", "release"], 16_600),
         ];
 
         let (_, profiles) = validate_repository(&root()).unwrap();
