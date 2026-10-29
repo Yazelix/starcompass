@@ -60,7 +60,9 @@
   conclusion, such as broad searches, long logs and checks, or research, to a
   fresh subagent, and authorizes subagents unless the user or local rules say
   otherwise. The `greenfield + terminal-engine` canonical/import budget rose
-  from 13,100 to 13,500 bytes to fit version 2.
+  from 13,100 to 13,500 bytes to fit version 2. Version 5 winds down from
+  300k instead of 400k and never passes 400k, handing off before the host
+  would compact, to keep sessions cheaper per turn.
 - `AP-COORDINATOR-001` in the `regular` and `surgical` profiles: when several
   agent sessions share a repository or machine, the user may name one
   coordinator session that orders landings, freezes the branch for a final
@@ -103,6 +105,11 @@
 
 ### Changed
 
+- The `converge` skill adds a second-model (Codex) review to every change to
+  code, tests, or scripts, not only to `deep-review` beads or diffs over about
+  200 lines. Eon's data showed the two models share only about a fifth of
+  blocking findings. The one exception is a pure test move or
+  behaviour-preserving refactor.
 - The canonical source repository is `Yazelix/starcompass`; existing imports
   keep their exact commit identity while recording the organization-owned URL.
 - Compact wording keeps automatic continuations inside one run, binds
@@ -188,6 +195,9 @@
   bounded planning-only batch, prevents a run from combining both shapes, and
   keeps execution and reference-gate comments delta-only. Acceptance records
   observable outcomes and cheapest falsifiers instead of full command catalogs.
+  Version 13 drops the one-issue-per-run limit: a run works issues in
+  sequence, one in progress at a time, binding each before its first write and
+  finishing or handing it off before claiming the next.
 - `AP-DELIVERY-001` lets one outer composed proof cover an unchanged embedded
   artifact only for its recorded exact identity and exercised behavior.
 - `AP-REFERENCE-001` requires direct evidence before a consequential code

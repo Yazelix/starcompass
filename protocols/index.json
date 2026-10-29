@@ -120,10 +120,10 @@
     },
     {
       "id": "AP-PLAN-001",
-      "version": 12,
+      "version": 13,
       "title": "Durable planning state",
       "path": "protocols/AP-PLAN-001.md",
-      "sha256": "5ee8deccb4b3c61ddd4a52b8ed6f69ebd30e24b65ace867871a89c75ef02a984"
+      "sha256": "8e681ed8e09fcb4943063f8e81e95dc8dc6ce261018b030ac886e345faa2d7a8"
     },
     {
       "id": "AP-PORTABILITY-001",
@@ -163,10 +163,10 @@
     },
     {
       "id": "AP-SESSION-001",
-      "version": 4,
+      "version": 5,
       "title": "Session continuity across compaction",
       "path": "protocols/AP-SESSION-001.md",
-      "sha256": "51c15e878070caaf372721c2eb083354f5f63492f5c4e694cf31aaefcefa53a7"
+      "sha256": "a651730e4124193bf1ae02939862a25084a6c6ba9acc557f4c053df53747084d"
     },
     {
       "id": "AP-SURGICAL-001",

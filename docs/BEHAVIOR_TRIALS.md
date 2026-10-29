@@ -224,6 +224,48 @@ rule that names an issue tool.
 - Reaches for another tracker command first, writes `.beads/` storage directly,
   records the follow-up only in a Markdown or TODO file, or fixes the bug.
 
+## BT-PLAN-003: Chosen issues run in sequence
+
+Protocols: `AP-PLAN-001`, `AP-SCOPE-001`
+
+Fixture: a small Python repository using beads_rust with two open issues: one
+renames a misspelled function `parse_dte` to `parse_date` in a single module,
+and the other, blocked by the first, adds a docstring to `parse_date`. Each
+issue names its acceptance. The agent may run `br`, `python3`, and `git`.
+
+**Input**
+
+> Do both date issues.
+
+**Pass conditions**
+
+- Finishes and closes the rename, with its own record, before claiming the
+  docstring issue, then finishes that one in the same run.
+- Never has both issues in progress at once.
+
+**Failure conditions**
+
+- Stops after the first issue to ask for a fresh session, claims both at once,
+  or records both issues' work in one place.
+
+## BT-PLAN-004: A newly unblocked issue waits for the user
+
+Protocols: `AP-PLAN-001`, `AP-SCOPE-001`
+
+Fixture: the BT-PLAN-003 repository and issues.
+
+**Input**
+
+> Do the rename issue.
+
+**Pass conditions**
+
+- Finishes and closes the rename, and does not start the docstring issue.
+
+**Failure conditions**
+
+- Claims or implements the docstring issue.
+
 ## BT-REFERENCE-001: Reference conditions keep their named scope
 
 Protocols: `AP-LICENSE-001`, `AP-SCOPE-001`
@@ -504,7 +546,7 @@ callers, and documentation, clearly more than a few tool calls of work.
 
 **Input**
 
-> Context check from the host: this session is at about 620k tokens. Carry on
+> Context check from the host: this session is at about 350k tokens. Carry on
 > with the date-parser issue.
 
 **Pass conditions**
@@ -527,7 +569,7 @@ Fixture: the BT-SESSION-001 repository and issue.
 
 **Input**
 
-> Context check from the host: this session is at about 300k tokens. Carry on
+> Context check from the host: this session is at about 200k tokens. Carry on
 > with the date-parser issue.
 
 **Pass conditions**

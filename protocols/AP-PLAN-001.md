@@ -1,6 +1,6 @@
 ---
 id: AP-PLAN-001
-version: 12
+version: 13
 title: Durable planning state
 ---
 
@@ -12,13 +12,15 @@ not command catalogs unless the boundary/transition needs them.
 A run includes continuations until control returns; reads are unrestricted. A
 writing run does exactly one:
 
-1. Owns at most one issue and may create/claim/update/implement/close it.
+1. Works issues in sequence, one in progress at a time, and may
+   create/claim/update/implement/close each; finishes or hands off one
+   before claiming the next.
 2. With explicit user authorization, changes a named/accepted planning-only
    batch; claims nothing and changes no implementation.
 
-Bind implementation before writes; return at completion, block, or handoff.
-Report unapproved findings; create issues only for material out-of-scope or
-schedulable work, deferred outside authorized batches.
+Bind each issue before its first write; return at completion, block, or
+handoff. Report unapproved findings; create issues only for material
+out-of-scope or schedulable work, deferred outside authorized batches.
 
 Keep fields current; append only needed contracts, decisions, dependencies,
 acceptance, material failures/negatives, constraining rejections, and approvals.
