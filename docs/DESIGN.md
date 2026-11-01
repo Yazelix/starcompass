@@ -47,7 +47,7 @@ a separate archive, retirement registry, or synthetic profile.
 
 ## Profiles compose; projects still own policy
 
-The three profiles are curated ordered sets, not inheritance trees. Repeated
+The four profiles are curated ordered sets, not inheritance trees. Repeated
 `--profile` arguments form an ordered union and discard duplicate protocol IDs at
 their second occurrence. This supports combinations such as `surgical` plus
 `release` without inventing a profile for every project type.
@@ -56,11 +56,13 @@ their second occurrence. This supports combinations such as `surgical` plus
 `surgical` contains every `regular` protocol, and a test keeps it that way, so
 a consumer picks one of the two. `AP-SURGICAL-001` states in its own text that
 it wins where `AP-MINIMAL-001` differs, so an agent does not have to resolve
-that conflict itself. `release` is an add-on for one kind of product, so it
-lists only its own protocols and the two mandatory ones and renders after a
-posture. Fork, orchestrator, and terminal-engine role profiles were retired:
-a soft fork takes the `surgical` posture, and component rules belong in the
-overlays of the consumers that have those components.
+that conflict itself. `release` and `milestones` are add-ons for one kind of
+product or planning practice, so each lists only its own protocols and the two
+mandatory ones and renders after a posture. Milestones are an add-on rather
+than part of `AP-PLAN-001` so projects that do not track them carry none of
+their rules or bytes. Fork, orchestrator, and terminal-engine role profiles
+were retired: a soft fork takes the `surgical` posture, and component rules
+belong in the overlays of the consumers that have those components.
 
 Profiles contain shared rules only. Repository-specific commands, branches,
 tools, paths, ownership, and release rules belong in the consumer overlay. A
@@ -99,11 +101,12 @@ Self-contained does not mean unbounded. Each shipped profile has its own cap
 on its empty-overlay canonical/import section, about 200 bytes above its
 measured size, so space trimmed from a small profile cannot quietly refill
 under a larger profile's cap: `regular` 12,800 bytes (measured 12,580; 11,964
-as `greenfield` before the trim), `surgical` 14,500 (14,296), and `release`
-4,400 (4,360; 12,451 as a full profile). The largest combination,
-`surgical + release`, is limited to 17,000 bytes (16,803), leaving about
-15.4 KiB of local rules under Codex's default 32 KiB project-document limit. The
-budget belongs to canonical composition; consumers
+as `greenfield` before the trim), `surgical` 14,500 (14,296), `release`
+4,400 (4,360; 12,451 as a full profile), and `milestones` 2,800 (2,601).
+`surgical + release` is limited to 17,000 bytes (16,803). The largest
+combination, `surgical + release + milestones`, is limited to 17,800 bytes
+(17,551), leaving about 14.6 KiB of local rules under Codex's default 32 KiB
+project-document limit. The budget belongs to canonical composition; consumers
 still own their overlays, and the renderer does not reject host-specific total
 sizes.
 

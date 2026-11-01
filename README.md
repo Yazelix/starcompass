@@ -5,8 +5,8 @@ agent projects without turning `AGENTS.md` into a remote dependency.
 
 It provides:
 
-- 26 individually identified and versioned protocols, 19 of them active;
-- three ordered, composable profiles: two postures and a release add-on;
+- 27 individually identified and versioned protocols, 20 of them active;
+- four ordered, composable profiles: two postures and two add-ons;
 - deterministic, self-contained `AGENTS.md` rendering, optionally with the
   canonical text in a separate generated protocol file;
 - exact source-commit, protocol-version, overlay, and exception records;
@@ -54,11 +54,14 @@ section has its own cap, about 200 bytes above its measured size:
 | `regular` | 12,800 | 12,580 | 11,964 as `greenfield` |
 | `surgical` | 14,500 | 14,296 | new |
 | `release` | 4,400 | 4,360 | 12,451 as a full profile |
+| `milestones` | 2,800 | 2,601 | new |
 | `surgical + release` | 17,000 | 16,803 | new |
+| `surgical + release + milestones` | 17,800 | 17,551 | new |
 
-`surgical + release` is the largest combination. Its cap leaves about 15.4 KiB
-for a consumer's local rules under Codex's default 32 KiB project-document
-loader limit without remote includes or consumer-specific profile forks.
+`surgical + release + milestones` is the largest combination. Its cap leaves
+about 14.6 KiB for a consumer's local rules under Codex's default 32 KiB
+project-document loader limit without remote includes or consumer-specific
+profile forks.
 
 A consumer can also declare directories whose agents need extra local rules,
 such as subsystems in a monorepo. Codex loads `AGENTS.md` files from the Git
@@ -176,20 +179,24 @@ full verification catalog.
 | `regular` | Every project | dependency, proof, planning, and session-coordination gates |
 | `surgical` | Soft forks and projects in maintenance | everything in `regular`, plus surgical changes and license interpretation |
 | `release` | Add-on for products with ordered release channels | performance claims, bounded CI, installed-artifact proof, fresh-session dogfood, exact-revision promotion |
+| `milestones` | Add-on for projects that track milestones | user-approved milestone epics ordered by `blocks` dependencies |
 
-A project chooses one posture, `regular` or `surgical`, and may add `release`.
-The add-on lists only its own protocols plus the mandatory `AP-SCOPE-001` and
-`AP-EXCEPTION-001`, so a consumer renders it after a posture, for example
-`--profile surgical --profile release`. It is opt-in: it does not create
-branches or prescribe channel names, cadence, packaging commands, or platform
-support.
+A project chooses one posture, `regular` or `surgical`, and may add `release`,
+`milestones`, or both. Each add-on lists only its own protocols plus the
+mandatory `AP-SCOPE-001` and `AP-EXCEPTION-001`, so a consumer renders it after
+a posture, for example `--profile surgical --profile release`. `release` does
+not create branches or prescribe channel names, cadence, packaging commands, or
+platform support.
 `AP-DELIVERY-001` proves the delivered artifact and fresh-session experience;
 `AP-PROMOTION-001` advances that exact proved revision through the
 consumer-declared channel order. One composed outer proof may cover an unchanged
 embedded artifact only for the exact identity and behavior it exercises;
-distinct installation or activation semantics retain their own proof. Profile
-selection remains a product-scope decision; the renderer does not infer it from
-repository contents.
+distinct installation or activation semantics retain their own proof.
+`AP-MILESTONE-001` makes a milestone an epic labelled `milestone` that the user
+approved, orders milestones by `blocks` dependencies between them, and ships
+one when its epic closes, so any reader of the issue data can say what shipped
+last and what comes next. Profile selection remains a product-scope decision;
+the renderer does not infer it from repository contents.
 
 ## Consumer layout
 
@@ -532,10 +539,10 @@ and lockfiles.
 
 | Surface | LOC |
 | --- | ---: |
-| Protocols and generated index | 606 |
-| Profiles | 55 |
+| Protocols and generated index | 630 |
+| Profiles | 65 |
 | Rust checker and package manifest | 1,886 |
-| Tests | 1,243 |
+| Tests | 1,245 |
 | Skills and install script | 2,493 |
-| Repository policy, docs, and licenses | 2,666 |
-| **Total** | **8,949** |
+| Repository policy, docs, and licenses | 2,729 |
+| **Total** | **9,048** |

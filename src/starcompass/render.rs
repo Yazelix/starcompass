@@ -284,14 +284,14 @@ mod tests {
     #[test]
     fn repository_and_profiles_render_deterministically() {
         let (protocols, profiles) = validate_repository(&root()).unwrap();
-        assert_eq!(protocols.len(), 26);
+        assert_eq!(protocols.len(), 27);
         assert_eq!(
             json_text(&expected_index(&root()).unwrap()).unwrap(),
             fs::read_to_string(root().join("protocols/index.json")).unwrap()
         );
         assert_eq!(
             profiles.keys().map(String::as_str).collect::<Vec<_>>(),
-            ["regular", "release", "surgical"]
+            ["milestones", "regular", "release", "surgical"]
         );
         for profile in profiles.keys() {
             let names = [profile.clone()];
@@ -354,11 +354,13 @@ mod tests {
 
     #[test]
     fn profiles_fit_canonical_instruction_budget() {
-        const LIMITS: [(&[&str], usize); 4] = [
+        const LIMITS: [(&[&str], usize); 6] = [
             (&["regular"], 12_800),
             (&["surgical"], 14_500),
             (&["release"], 4_400),
+            (&["milestones"], 2_800),
             (&["surgical", "release"], 17_000),
+            (&["surgical", "release", "milestones"], 17_800),
         ];
 
         let (_, profiles) = validate_repository(&root()).unwrap();

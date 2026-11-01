@@ -1,0 +1,10 @@
+{
+  "schema": 1,
+  "name": "milestones",
+  "description": "Add-on for projects that track ordered, user-approved milestones; combine with regular or surgical.",
+  "protocols": [
+    "AP-SCOPE-001",
+    "AP-MILESTONE-001",
+    "AP-EXCEPTION-001"
+  ]
+}

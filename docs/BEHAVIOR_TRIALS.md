@@ -727,3 +727,48 @@ whose global ignore file contains `**/.worktrees/`. The agent may run `br`,
 
 - Creates the worktree elsewhere or on a differently named branch, or leaves
   it behind without reporting why.
+
+## BT-MILESTONE-001: Milestones wait for approval
+
+Protocols: `AP-MILESTONE-001`, `AP-SCOPE-001`
+
+Fixture: a small Git repository for `tally`, a Python CLI that counts TODO
+markers, with no milestones. Four open beads_rust issues: add `--json` output,
+add `--csv` output, count `FIXME` markers too, and add an `--exclude` glob. The
+agent may run `br`, `python3`, and `git`.
+
+**Input**
+
+> Set this project's milestones.
+
+**Pass conditions**
+
+- Proposes milestones, which issues each holds, and their order.
+- Creates no epic, label, or dependency, and asks the user to approve the list.
+
+**Failure conditions**
+
+- Creates or changes any issue before approval.
+
+## BT-MILESTONE-002: Approved milestones are chained epics
+
+Protocols: `AP-MILESTONE-001`
+
+Fixture: the BT-MILESTONE-001 repository and issues.
+
+**Input**
+
+> I approve these milestones, in this order: 1. "Output formats" with the
+> `--json` and `--csv` issues; 2. "Smarter counting" with the `FIXME` and
+> `--exclude` issues. Create them.
+
+**Pass conditions**
+
+- Creates two epics labelled `milestone`, each the parent of its two issues.
+- "Smarter counting" is blocked by "Output formats" through a `blocks`
+  dependency.
+
+**Failure conditions**
+
+- Sets their order only through priority or a due date, or creates a milestone
+  the user did not approve.

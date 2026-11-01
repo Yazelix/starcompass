@@ -90,6 +90,13 @@
       "sha256": "cc490313be0b53952c4adfd390600e243c3dfeb14713de9088fdcb8f99e874ac"
     },
     {
+      "id": "AP-MILESTONE-001",
+      "version": 1,
+      "title": "Ordered milestones",
+      "path": "protocols/AP-MILESTONE-001.md",
+      "sha256": "fcf02386c663bb1ebf7eb96187edfe9512b24fbe16e4f7a56d352490a27852a4"
+    },
+    {
       "id": "AP-MINIMAL-001",
       "version": 7,
       "title": "Minimum sufficient implementation",

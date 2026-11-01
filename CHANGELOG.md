@@ -4,14 +4,22 @@
 
 ### Added
 
-- Twenty-six stable-ID, individually versioned canonical protocols.
+- Twenty-seven stable-ID, individually versioned canonical protocols.
 - Starcompass project and repository identity with stable protocol and
   consumer-format names.
 - Minimum-sufficient-implementation discipline.
 - Installed-artifact and fresh-session delivery proof plus exact-revision
   channel promotion.
-- Composable `regular` and `surgical` posture profiles and a `release`
-  add-on.
+- Composable `regular` and `surgical` posture profiles and `release` and
+  `milestones` add-ons.
+- `AP-MILESTONE-001` in the optional `milestones` add-on: a milestone is an
+  epic labelled `milestone` that the user approves before anyone creates it.
+  Order comes from `blocks` dependencies between milestone epics, with
+  ties broken by priority and then creation date; a due date never sets order.
+  A milestone ships when its epic closes, and agents keep the next milestone's
+  child issues current. The add-on alone is capped at 2,800 bytes (2,601), and
+  the new largest combination, `surgical + release + milestones`, at 17,800
+  (17,551).
 - Typed Rust catalog indexing, self-contained `AGENTS.md` rendering, pinned
   structural drift detection, and atomic cross-platform output replacement.
 - History checks for permanent protocol IDs and mandatory version increments.
