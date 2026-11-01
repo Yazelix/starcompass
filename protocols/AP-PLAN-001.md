@@ -1,6 +1,6 @@
 ---
 id: AP-PLAN-001
-version: 13
+version: 14
 title: Durable planning state
 ---
 
@@ -12,9 +12,12 @@ not command catalogs unless the boundary/transition needs them.
 A run includes continuations until control returns; reads are unrestricted. A
 writing run does exactly one:
 
-1. Works issues in sequence, one in progress at a time, and may
-   create/claim/update/implement/close each; finishes or hands off one
-   before claiming the next.
+1. Works issues in sequence, and may create/claim/update/implement/close
+   each; finishes or hands off one before claiming the next. Independent
+   issues (no dependency or shared files) instead run at once, each in its
+   own isolated subagent and worktree with its own record, proof, review,
+   and commit; land them one at a time. Their temporary branches are
+   authorized; remove each worktree and branch after landing.
 2. With explicit user authorization, changes a named/accepted planning-only
    batch; claims nothing and changes no implementation.
 

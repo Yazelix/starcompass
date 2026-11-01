@@ -197,7 +197,14 @@
   observable outcomes and cheapest falsifiers instead of full command catalogs.
   Version 13 drops the one-issue-per-run limit: a run works issues in
   sequence, one in progress at a time, binding each before its first write and
-  finishing or handing it off before claiming the next.
+  finishing or handing it off before claiming the next. In version 14,
+  independent issues, with no dependency or shared files, run at once, each
+  in its own isolated subagent and worktree with its own record, proof,
+  review, and commit, and land one at a time. Their temporary branches are
+  authorized, and each worktree and branch is removed after landing, so the
+  rule settles `AP-GIT-001`'s branch authority. The `regular`, `surgical`, and
+  `surgical + release` caps rise to 12,650, 14,350, and 16,850 bytes to fit
+  it.
 - `AP-DELIVERY-001` lets one outer composed proof cover an unchanged embedded
   artifact only for its recorded exact identity and exercised behavior.
 - `AP-REFERENCE-001` requires direct evidence before a consequential code

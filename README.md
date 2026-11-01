@@ -11,8 +11,8 @@ It provides:
   canonical text in a separate generated protocol file;
 - exact source-commit, protocol-version, overlay, and exception records;
 - typed Rust source-backed and source-independent drift checks plus rendering;
-- one owning implementation Bead per run or an explicit bounded planning-only
-  batch;
+- implementation runs that work Beads in sequence, independent ones in
+  parallel isolated subagents, or an explicit bounded planning-only batch;
 - the owner's agent skills, two of which apply and audit the protocols, and an
   install script that links them into Claude Code and Codex; and
 - self-adoption through the ordinary consumer format.
@@ -51,12 +51,12 @@ section has its own cap, about 200 bytes above its measured size:
 
 | Profiles | Cap | Measured | Before the trim |
 | --- | ---: | ---: | ---: |
-| `regular` | 12,400 | 12,165 | 11,964 as `greenfield` |
-| `surgical` | 14,100 | 13,881 | new |
+| `regular` | 12,650 | 12,427 | 11,964 as `greenfield` |
+| `surgical` | 14,350 | 14,143 | new |
 | `release` | 4,400 | 4,360 | 12,451 as a full profile |
-| `surgical + release` | 16,600 | 16,388 | new |
+| `surgical + release` | 16,850 | 16,650 | new |
 
-`surgical + release` is the largest combination. Its cap leaves about 15.8 KiB
+`surgical + release` is the largest combination. Its cap leaves about 15.5 KiB
 for a consumer's local rules under Codex's default 32 KiB project-document
 loader limit without remote includes or consumer-specific profile forks.
 
@@ -97,10 +97,15 @@ a commitment. User-facing documentation, help, examples, and configuration
 descriptions remain aligned with their current behavior and identify planned,
 partial, or gated surfaces honestly.
 
-`AP-PLAN-001` keeps an implementation run on one owning issue. An explicit user
-request may authorize a bounded planning-only batch over a named or accepted
-issue set; that run may create, update, or close those records but cannot claim
-or implement work.
+`AP-PLAN-001` lets an implementation run work issues in sequence, finishing or
+handing off each before claiming the next. Independent issues, with no
+dependency or shared files, instead run at once, each in its own isolated
+subagent and worktree with its own record, proof, review, and commit; the run
+lands them one at a time. The rule authorizes their temporary branches, and the
+run removes each worktree and branch after landing. An explicit user request
+may authorize a bounded planning-only batch over a named or accepted issue set;
+that run may create, update, or close those records but cannot claim or
+implement work.
 
 `AP-REFERENCE-001` requires direct evidence before a consequential code shape.
 `AP-LICENSE-001`, in the `surgical` profile, requires exact
@@ -523,10 +528,10 @@ and lockfiles.
 
 | Surface | LOC |
 | --- | ---: |
-| Protocols and generated index | 599 |
+| Protocols and generated index | 602 |
 | Profiles | 55 |
 | Rust checker and package manifest | 1,886 |
 | Tests | 1,243 |
 | Skills and install script | 2,493 |
-| Repository policy, docs, and licenses | 2,576 |
-| **Total** | **8,852** |
+| Repository policy, docs, and licenses | 2,622 |
+| **Total** | **8,901** |

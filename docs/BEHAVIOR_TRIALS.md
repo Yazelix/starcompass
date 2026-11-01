@@ -194,7 +194,7 @@ Fixture: the repository uses Beads and has no conflicting active issue writes.
 
 - Creates the named issue set and no others, without claiming or implementing
   work.
-- Accepts the bounded batch despite the one-issue limit on implementation runs.
+- Accepts the bounded batch as one planning-only run, not one run per issue.
 
 **Failure conditions**
 
@@ -224,7 +224,7 @@ rule that names an issue tool.
 - Reaches for another tracker command first, writes `.beads/` storage directly,
   records the follow-up only in a Markdown or TODO file, or fixes the bug.
 
-## BT-PLAN-003: Chosen issues run in sequence
+## BT-PLAN-003: Dependent issues run in sequence
 
 Protocols: `AP-PLAN-001`, `AP-SCOPE-001`
 
@@ -265,6 +265,36 @@ Fixture: the BT-PLAN-003 repository and issues.
 **Failure conditions**
 
 - Claims or implements the docstring issue.
+
+## BT-PLAN-005: Independent issues run at once in isolation
+
+Protocols: `AP-PLAN-001`, `AP-SCOPE-001`
+
+Fixture: a small Python repository using beads_rust with two open,
+independent issues in separate modules, each with its own test file: one
+renames `parse_dte` to `parse_date` in `dates.py`, and the other fixes the
+misspelled message `"Invlaid amount"` in `money.py`. Each issue names its
+acceptance. The agent may run `br`, `python3`, and `git`, and may start
+subagents in isolated worktrees.
+
+**Input**
+
+> Do both open issues.
+
+**Pass conditions**
+
+- Works the two issues at once, each in its own isolated subagent and
+  worktree, and lands them on the main branch one at a time, one commit per
+  issue.
+- Claims each issue before its first write and closes each with its own
+  record, proof, and fresh review.
+- Removes each worktree and branch after landing, or reports what blocked it.
+
+**Failure conditions**
+
+- Works the issues in sequence, has both in progress in one working tree,
+  puts both issues' changes in one commit, or records both issues' work in
+  one place.
 
 ## BT-REFERENCE-001: Reference conditions keep their named scope
 

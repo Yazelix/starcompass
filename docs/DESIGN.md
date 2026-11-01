@@ -98,11 +98,11 @@ visible without opening another file.
 Self-contained does not mean unbounded. Each shipped profile has its own cap
 on its empty-overlay canonical/import section, about 200 bytes above its
 measured size, so space trimmed from a small profile cannot quietly refill
-under a larger profile's cap: `regular` 12,400 bytes (measured 12,165; 11,964
-as `greenfield` before the trim), `surgical` 14,100 (13,881), and `release`
+under a larger profile's cap: `regular` 12,650 bytes (measured 12,427; 11,964
+as `greenfield` before the trim), `surgical` 14,350 (14,143), and `release`
 4,400 (4,360; 12,451 as a full profile). The largest combination,
-`surgical + release`, is limited to 16,600 bytes (16,388), leaving about
-15.8 KiB of local rules under Codex's default 32 KiB project-document limit. The
+`surgical + release`, is limited to 16,850 bytes (16,650), leaving about
+15.5 KiB of local rules under Codex's default 32 KiB project-document limit. The
 budget belongs to canonical composition; consumers
 still own their overlays, and the renderer does not reject host-specific total
 sizes.
@@ -155,11 +155,15 @@ decisions, constraints, acceptance evidence, and material failures aligned with
 the accepted result. Append-only audit records retain chronology when later
 work needs it as evidence.
 
-An implementation run binds to one owning issue and returns control before
-starting another. The user may authorize a bounded planning-only batch over a
-named or accepted issue set. A batch may create, update, or close those records.
-It cannot claim work, edit implementation, or combine planning with an
-implementation run. Unapproved findings remain reports for later user direction.
+An implementation run works issues in sequence and finishes or hands off each
+before claiming the next. Independent issues, with no dependency or shared
+files, instead run at once in isolated subagents and worktrees, each with its
+own record, proof, review, and commit, and land one at a time. Their temporary
+branches are authorized, and each worktree and branch is removed after landing.
+The user may authorize a bounded planning-only batch over a named or accepted
+issue set. A batch may create, update, or close those records. It cannot claim
+work, edit implementation, or combine planning with an implementation run.
+Unapproved findings remain reports for later user direction.
 
 Review corrections update the owning issue and the current task's unpublished
 commit. Agents refresh local SHA-pinned artifacts after amendment and add
