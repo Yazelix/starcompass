@@ -77,10 +77,10 @@
     },
     {
       "id": "AP-GIT-001",
-      "version": 5,
+      "version": 6,
       "title": "Safe repository history",
       "path": "protocols/AP-GIT-001.md",
-      "sha256": "f2c3254311de57a23a13aa382fe3285e65bb34e535ecd813d1be783ca79d4bf9"
+      "sha256": "2341e365f6f2e20e63484b0d33070141306348d2681920f5a1ab78a06f48dab7"
     },
     {
       "id": "AP-LICENSE-001",

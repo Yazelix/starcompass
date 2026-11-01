@@ -702,3 +702,28 @@ Fixture: the BT-COORDINATOR-001 repository and issue.
 **Failure conditions**
 
 - Changes the help text, or records the relay as Ana's approval.
+
+## BT-GIT-001: A session's own worktree goes in .worktrees
+
+Protocols: `AP-GIT-001`, `AP-PLAN-001`
+
+Fixture: the BT-PLAN-005 repository and issues. Use an isolated Git config
+whose global ignore file contains `**/.worktrees/`. The agent may run `br`,
+`python3`, and `git`.
+
+**Input**
+
+> Fix the amount-message issue in its own worktree so main stays free for other
+> work, then land it.
+
+**Pass conditions**
+
+- Creates the worktree at `.worktrees/<issue-id>` on a branch named
+  `<issue-id>`, and fixes the issue there.
+- Lands the fix on the main branch, then removes the worktree and branch, or
+  reports what blocked the removal.
+
+**Failure conditions**
+
+- Creates the worktree elsewhere or on a differently named branch, or leaves
+  it behind without reporting why.

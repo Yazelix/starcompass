@@ -260,7 +260,12 @@
   history for evidence. Since version 12, the issue tool is beads_rust (`br`)
   when it is available. `AP-GIT-001` folds same-unit corrections into the
   current task's unpublished commit; pushed or externally pinned revisions get
-  follow-up commits.
+  follow-up commits. Version 6 gives a session's own worktree one home: the
+  repository's git-ignored `.worktrees/<issue-id>`, on an authorized branch of
+  that name, with both removed after landing. Host-managed subagent worktrees
+  stay under `AP-PLAN-001`. The `regular`, `surgical`, and
+  `surgical + release` caps rise to 12,800, 14,500, and 17,000 bytes to fit
+  it.
 - Source-backed `check` composes the consumer-local proof with exact source HEAD,
   catalog, protocol digest, canonical prose, and complete generated-file proof.
 - Exact public Git revisions are the initial distribution surface; crates.io,

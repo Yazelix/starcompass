@@ -98,11 +98,11 @@ visible without opening another file.
 Self-contained does not mean unbounded. Each shipped profile has its own cap
 on its empty-overlay canonical/import section, about 200 bytes above its
 measured size, so space trimmed from a small profile cannot quietly refill
-under a larger profile's cap: `regular` 12,650 bytes (measured 12,427; 11,964
-as `greenfield` before the trim), `surgical` 14,350 (14,143), and `release`
+under a larger profile's cap: `regular` 12,800 bytes (measured 12,580; 11,964
+as `greenfield` before the trim), `surgical` 14,500 (14,296), and `release`
 4,400 (4,360; 12,451 as a full profile). The largest combination,
-`surgical + release`, is limited to 16,850 bytes (16,650), leaving about
-15.5 KiB of local rules under Codex's default 32 KiB project-document limit. The
+`surgical + release`, is limited to 17,000 bytes (16,803), leaving about
+15.4 KiB of local rules under Codex's default 32 KiB project-document limit. The
 budget belongs to canonical composition; consumers
 still own their overlays, and the renderer does not reject host-specific total
 sizes.
@@ -160,6 +160,9 @@ before claiming the next. Independent issues, with no dependency or shared
 files, instead run at once in isolated subagents and worktrees, each with its
 own record, proof, review, and commit, and land one at a time. Their temporary
 branches are authorized, and each worktree and branch is removed after landing.
+A session's own worktree has one home, the repository's git-ignored
+`.worktrees/<issue-id>`, on a branch of that name, and both are removed after
+landing.
 The user may authorize a bounded planning-only batch over a named or accepted
 issue set. A batch may create, update, or close those records. It cannot claim
 work, edit implementation, or combine planning with an implementation run.

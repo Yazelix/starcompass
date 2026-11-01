@@ -1,6 +1,6 @@
 ---
 id: AP-GIT-001
-version: 5
+version: 6
 title: Safe repository history
 ---
 
@@ -14,3 +14,7 @@ release, or pin), commit corrections separately. Never reset, discard,
 force-push, rewrite published history, or create a branch without authority.
 Verify intended diff before commit and remote state after push. Roll back with a
 reviewed revert unless local policy says otherwise.
+
+A session's own worktree goes in the repository's git-ignored
+`.worktrees/<issue-id>`, on an authorized branch of that name; remove both
+after landing.

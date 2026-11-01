@@ -51,12 +51,12 @@ section has its own cap, about 200 bytes above its measured size:
 
 | Profiles | Cap | Measured | Before the trim |
 | --- | ---: | ---: | ---: |
-| `regular` | 12,650 | 12,427 | 11,964 as `greenfield` |
-| `surgical` | 14,350 | 14,143 | new |
+| `regular` | 12,800 | 12,580 | 11,964 as `greenfield` |
+| `surgical` | 14,500 | 14,296 | new |
 | `release` | 4,400 | 4,360 | 12,451 as a full profile |
-| `surgical + release` | 16,850 | 16,650 | new |
+| `surgical + release` | 17,000 | 16,803 | new |
 
-`surgical + release` is the largest combination. Its cap leaves about 15.5 KiB
+`surgical + release` is the largest combination. Its cap leaves about 15.4 KiB
 for a consumer's local rules under Codex's default 32 KiB project-document
 loader limit without remote includes or consumer-specific profile forks.
 
@@ -106,6 +106,10 @@ run removes each worktree and branch after landing. An explicit user request
 may authorize a bounded planning-only batch over a named or accepted issue set;
 that run may create, update, or close those records but cannot claim or
 implement work.
+
+`AP-GIT-001` keeps a session's own worktree in the repository's git-ignored
+`.worktrees/<issue-id>`, on an authorized branch of the same name, and removes
+both after landing.
 
 `AP-REFERENCE-001` requires direct evidence before a consequential code shape.
 `AP-LICENSE-001`, in the `surgical` profile, requires exact
@@ -528,10 +532,10 @@ and lockfiles.
 
 | Surface | LOC |
 | --- | ---: |
-| Protocols and generated index | 602 |
+| Protocols and generated index | 606 |
 | Profiles | 55 |
 | Rust checker and package manifest | 1,886 |
 | Tests | 1,243 |
 | Skills and install script | 2,493 |
-| Repository policy, docs, and licenses | 2,625 |
-| **Total** | **8,904** |
+| Repository policy, docs, and licenses | 2,662 |
+| **Total** | **8,945** |
