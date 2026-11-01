@@ -8,8 +8,8 @@ or `.agent-protocols.exceptions.json`, then render from the pinned source.
 ## Protocol import record
 
 - Source: `https://github.com/Yazelix/starcompass`
-- Source commit: `cf812643711a2e233aeff38dbbde1ef55c8f244c`
-- Profiles: `regular`
+- Source commit: `825a93eeb803eaf9cab8871f76af210ce54b4e5c`
+- Profiles: `regular`, `milestones`
 - Manifest: `.agent-protocols.json` (schema 1)
 
 | Protocol | Version | SHA-256 |
@@ -27,6 +27,7 @@ or `.agent-protocols.exceptions.json`, then render from the pinned source.
 | `AP-COORDINATOR-001` | 1 | `bd80e64f9b50e617a37531c5e48e0bc2672397edbd2f75c1e511d588954432c7` |
 | `AP-EXCEPTION-001` | 2 | `2c4f00299922edac83286821af07ad485e5a630bca6acbbce918d87614abb395` |
 | `AP-GIT-001` | 6 | `2341e365f6f2e20e63484b0d33070141306348d2681920f5a1ab78a06f48dab7` |
+| `AP-MILESTONE-001` | 1 | `fcf02386c663bb1ebf7eb96187edfe9512b24fbe16e4f7a56d352490a27852a4` |
 
 ### Local exceptions
 
@@ -234,6 +235,20 @@ reviewed revert unless local policy says otherwise.
 A session's own worktree goes in the repository's git-ignored
 `.worktrees/<issue-id>`, on an authorized branch of that name; remove both
 after landing.
+
+### AP-MILESTONE-001 — Ordered milestones
+
+A milestone is an epic labelled `milestone`. Agents may propose milestones and
+their order; the user approves each one before anyone creates it.
+
+Order comes from `blocks` dependencies between milestone epics. The next
+milestone is the first open one whose milestone blockers are all closed; break
+ties by priority, then creation date. Never order by priority alone or by due
+date; an optional due date is for display only.
+
+A milestone ships when its epic closes; the close reason or external reference
+may name the release tag. Keep the next milestone's child issues current as
+work lands.
 
 ## Repository-local rules
 
