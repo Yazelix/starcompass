@@ -80,6 +80,15 @@
   answers a host permission prompt. The `regular`, `surgical`, and
   `surgical + release` canonical/import budgets rose to 12,400, 14,100, and
   16,600 bytes to fit it.
+- `guards/dcg/starcompass-waits.yaml`, a dcg pack that blocks a wait loop
+  polling with `pgrep -f` or `pkill -f`, which finds its own shell and never
+  ends, the failure recorded in ap-ouv and ap-lll. Lookups with `-A`, `-x`, or
+  a pattern that starts with a bracket class pass, as the usual idioms that
+  keep a lookup off its own shell.
+  `skills/install.sh` links it into `~/.config/dcg/packs/`, and
+  `guards/dcg/check.sh` proves its decisions under the hook's POSIX dialect.
+  Loops without a `timeout` stay unenforced: dcg strips a leading `timeout N`,
+  so no rule can tell a bounded `bash -c` wait from an unbounded one.
 
 ### Fixed
 

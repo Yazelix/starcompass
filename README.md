@@ -462,6 +462,53 @@ by ideas Jeffrey Emanuel shared publicly. `audit-to-beads` is inspired by
 `shadcn/improve`. `correct` is inspired by the `/correct` skill in Lauren Tan's
 `pstack`.
 
+## Guards
+
+Some protocol rules are also enforced as command guards through
+[dcg](https://github.com/Dicklesworthstone/destructive_command_guard), a
+pre-execution command guard for Claude Code and Codex.
+`guards/dcg/starcompass-waits.yaml` blocks an `until` or `while` loop that polls
+with `pgrep -f` or `pkill -f` (or `--full`): the loop's own shell carries the
+pattern, so the wait finds itself and never ends (`AP-PROOF-001`; the failures
+recorded in ap-ouv and ap-lll). The block message names the fix: in a separate
+command, find the target's PID with `pgrep -af`, then wait on it under
+`timeout` with `kill -0`. Commands that only quote such a loop, such as a commit
+message, pass. So do the usual idioms that keep a lookup off its own shell,
+when they appear among the options right after `pgrep` or `pkill`: `-A`, which
+skips ancestors, `-x`, which demands an exact match, and a pattern that starts
+with a bracket class right after `-f`, such as `'[w]orker'`. These are
+heuristics: `pgrep -fx '.*worker.*'` and `pgrep -f '[[:alpha:]].*worker'` still
+match their own shell and pass. The pack judges only `pgrep` and `pkill`; a
+`ps | grep` loop passes.
+
+A regex cannot parse the shell, so the pack misses a lookup inside `$(...)`,
+which dcg checks as a separate command, one after a nested loop's `done`, a
+`for` loop, a body lookup in a loop that never sleeps, and a lookup whose option
+argument contains an `A` or `x` (`pgrep -d x -f`, written `-dx`). It blocks a
+sleeping loop whose body runs such a lookup even when the loop's exit does not
+depend on it, such as a `while read` loop; an exempt option or bracket pattern
+placed after an argument (`pgrep -u me -fx worker`); and text that dcg does not
+treat as data, such as an interpreter's `-c` script or quoted text in a command
+that also has `$(...)` or a redirect such as `2>&1`, when that text holds such a
+loop after a semicolon or newline.
+
+The pack does not require a `timeout` on other wait loops. dcg strips a leading
+`timeout N` before matching, so no rule can tell `timeout 120 bash -c '<loop>'`
+from an unbounded `bash -c '<loop>'`, and a rule anchored at the start of the
+command would catch only a bare loop.
+
+When `~/.config/dcg` exists, `skills/install.sh` links the pack into
+`~/.config/dcg/packs/`. dcg loads it once its config names that folder:
+
+```toml
+[packs]
+custom_paths = ["~/.config/dcg/packs/*.yaml"]
+```
+
+`guards/dcg/check.sh` runs `dcg test` with the POSIX dialect the Bash hook uses
+over the cases the pack must block or allow, with only this pack added to dcg's
+defaults.
+
 ## Repository layout
 
 ```text
@@ -472,6 +519,7 @@ src/starcompass/           catalog, manifest, render, check, and command modules
 src/main.rs                `starcompass` process boundary
 tests/                     focused contract tests
 skills/                    agent skills and install.sh
+guards/dcg/                dcg command-guard packs and their check
 docs/DESIGN.md             architecture decisions and boundaries
 docs/BEHAVIOR_TRIALS.md    manual isolated agent-behavior cases
 .agent-protocols.local.md  Starcompass-specific policy input
@@ -505,8 +553,11 @@ target/debug/starcompass check-consumer \
   --manifest .agent-protocols.json \
   --agents AGENTS.md
 claude plugin validate --strict skills
+guards/dcg/check.sh
 git diff --check
 ```
+
+`guards/dcg/check.sh` needs `dcg` on `PATH`.
 
 `claude plugin validate --strict` checks every skill's frontmatter the way
 Claude Code loads it, but it accepts malformed YAML. Where Codex is installed,
@@ -542,6 +593,7 @@ and lockfiles.
 | Profiles | 65 |
 | Rust checker and package manifest | 1,886 |
 | Tests | 1,245 |
-| Skills and install script | 2,510 |
-| Repository policy, docs, and licenses | 2,790 |
-| **Total** | **9,128** |
+| Skills and install script | 2,523 |
+| dcg guards and check | 97 |
+| Repository policy, docs, and licenses | 2,861 |
+| **Total** | **9,309** |

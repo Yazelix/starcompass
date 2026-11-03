@@ -1,0 +1,29 @@
+# Starcompass dcg pack: a wait loop must not match itself (AP-PROOF-001, ap-lll).
+# A wait's shell carries its whole command line, so a `pgrep -f` or `pkill -f`
+# lookup that polls inside an `until`/`while` loop finds the waiter itself and
+# the loop never ends. skills/install.sh links this file into
+# ~/.config/dcg/packs/, and dcg loads it through `custom_paths` in its config.
+#
+# The rule finds a lookup before the loop's `do`, or before `done` in a loop
+# that sleeps. It starts at a loop keyword in command position and ends only at
+# `do` or `done` in command position, so a loop quoted as data passes. README.md
+# "Guards" lists the exempt lookups and what the pack misses and over-blocks.
+id: starcompass.waits
+name: Starcompass waits
+version: 1.0.0
+description: Blocks wait loops that match their own command line
+keywords: [pgrep, pkill]
+destructive_patterns:
+  - name: self-matching-wait
+    pattern: '(?:^|[;&|({\n]|\b(?:do|then|else)\b|\s-[a-zA-Z]*c\s+[\x22\x27])\s*(?:until|while)\b(?:(?:(?!(?:;|\n)\s*do\b)[\s\S])*?|(?=(?:(?!(?:;|\n|&)\s*done\b)[\s\S])*?\bsleep\b)(?:(?!(?:;|\n|&)\s*done\b)[\s\S])*?)\b(?:pgrep|pkill)\b(?!(?:\s+-[^\s;&|]*)*?\s+(?:-[a-zA-Z]*[Ax][a-zA-Z]*|--ignore-ancestors|--exact)(?=[\s;&|]|$))\s+(?:[^\s;&|]+\s+)*?(?:-[a-zA-Z]*f[a-zA-Z]*|--full)\b(?!(?:\s+-[^\s;&|]*)*\s+[\x22\x27]?\[)'
+    severity: high
+    description: This wait loop matches its own command line, so it never ends.
+    explanation: >-
+      The shell running the loop carries the whole command, pattern included, so
+      `pgrep -f` or `pkill -f` inside the loop finds the waiter itself. In a
+      separate command, list candidates with `pgrep -af <pattern>` and pick the
+      target's PID from the printed command lines; then wait on that PID with a
+      bound:
+      `timeout 600 bash -c 'while kill -0 <pid> 2>/dev/null; do sleep 1; done'`.
+      Or wait on the port, file, or artifact the run produces, also under
+      `timeout`.

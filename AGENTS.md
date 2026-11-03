@@ -277,6 +277,8 @@ planning bead until the user has chosen that direction.
   the one concern it owns. `src/main.rs` owns only process I/O and exit status.
 - `skills/` holds the owner's agent skills and `skills/install.sh`. Skills
   reference protocols by ID instead of copying their text.
+- `guards/dcg/` holds the dcg pack that enforces a protocol rule as a command
+  guard, and `guards/dcg/check.sh`, which proves the pack's decisions.
 - A consumer repository owns its local overlay and explicit exceptions.
 
 Protocol IDs are permanent. Never recycle, rename, or remove an ID. Every change
@@ -355,8 +357,11 @@ cargo check --locked
 cargo test --locked
 cargo clippy --locked --all-targets -- -D warnings
 claude plugin validate --strict skills
+guards/dcg/check.sh
 git diff --check
 ```
+
+`guards/dcg/check.sh` needs `dcg` on `PATH`.
 
 `claude plugin validate --strict` checks every skill's frontmatter the way
 Claude Code loads it, but it accepts malformed YAML. Where Codex is installed,
