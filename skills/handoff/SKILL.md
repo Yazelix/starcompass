@@ -1,6 +1,6 @@
 ---
 name: handoff
-description: End a session cleanly so a fresh agent can continue the work. Stop starting new steps, bring work in progress to a verified state, and write a self-contained handoff on the owning Beads issue (state, next step, open decisions with reasons), then give the exact line that starts the next session. Use when the user says "handoff", "wrap up", or "hand off to the next agent", when context use crosses the repository's handoff mark, or right after a compaction mid-issue.
+description: End a session cleanly so a fresh agent can continue the work. Stop starting new steps, bring work in progress to a verified state, and write a self-contained handoff on the owning Beads issue (state, next step, open decisions with reasons), then give the exact line that starts the next session. Also writes the same comment as a checkpoint when the repository's rules say to checkpoint before compacting and continue. Use when the user says "handoff", "wrap up", "checkpoint", or "hand off to the next agent", or when context use crosses the repository's handoff or checkpoint mark.
 ---
 
 # Handoff
@@ -8,6 +8,8 @@ description: End a session cleanly so a fresh agent can continue the work. Stop 
 ## Overview
 
 A handoff trades this session's context for a clean one. The next agent starts from the repository, the owning bead, and the handoff comment only, so everything it needs must be written down. Chat history does not survive.
+
+A checkpoint is the same comment written before a compaction the session survives. Follow steps 1-7 with "Checkpoint" in place of "Handoff" and without the restart line, then compact or ask the operator to run `/compact`, and continue as `AP-SESSION-001` says.
 
 ## Workflow
 
@@ -24,7 +26,7 @@ A handoff trades this session's context for a clean one. The next agent starts f
 ## Handoff template
 
 ```text
-Handoff (<reason: context mark, compaction, or user request>).
+Handoff (<reason: context mark, compaction cap, or user request>).
 State: <revision and dirty files>; <steps done and the check that verified each>; <work in progress and exactly where it stopped>.
 Next step: <the first concrete action, with file or command>.
 Open decisions: <each question, the options, your recommendation, and why>.

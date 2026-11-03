@@ -51,15 +51,15 @@ section has its own cap, no more than about 200 bytes above its measured size:
 
 | Profiles | Cap | Measured | Before the trim |
 | --- | ---: | ---: | ---: |
-| `regular` | 12,800 | 12,731 | 11,964 as `greenfield` |
-| `surgical` | 14,500 | 14,447 | new |
+| `regular` | 13,000 | 12,965 | 11,964 as `greenfield` |
+| `surgical` | 14,700 | 14,681 | new |
 | `release` | 4,400 | 4,360 | 12,451 as a full profile |
 | `milestones` | 2,800 | 2,601 | new |
-| `surgical + release` | 17,000 | 16,954 | new |
-| `surgical + release + milestones` | 17,800 | 17,702 | new |
+| `surgical + release` | 17,200 | 17,188 | new |
+| `surgical + release + milestones` | 18,000 | 17,936 | new |
 
 `surgical + release + milestones` is the largest combination. Its cap leaves
-about 14.6 KiB for a consumer's local rules under Codex's default 32 KiB
+about 14.4 KiB for a consumer's local rules under Codex's default 32 KiB
 project-document loader limit without remote includes or consumer-specific
 profile forks.
 
@@ -434,7 +434,7 @@ Skills reference the protocols by ID instead of copying their text.
 | `prime-beads` | Review and refine a Beads plan, keeping beads small enough for one session |
 | `create-beads` | Turn chosen work into right-sized beads, with epics for larger work |
 | `list-beads` | List in-progress Beads issues and the 10 highest-priority ready ones |
-| `handoff` | End a session with a handoff on the owning bead for a fresh agent |
+| `handoff` | End a session with a handoff, or checkpoint before a compaction, on the owning bead |
 | `audit-to-beads` | Audit a codebase and record improvements as Beads, without editing code |
 | `fresh-eyes` | Reread recent work for bugs, omissions, and confusion, without editing |
 | `fresh-pass` | Reread recent work, simplify it, and fix what turns up |
@@ -589,11 +589,11 @@ and lockfiles.
 
 | Surface | LOC |
 | --- | ---: |
-| Protocols and generated index | 632 |
+| Protocols and generated index | 634 |
 | Profiles | 65 |
 | Rust checker and package manifest | 1,886 |
 | Tests | 1,245 |
-| Skills and install script | 2,523 |
+| Skills and install script | 2,525 |
 | dcg guards and check | 97 |
-| Repository policy, docs, and licenses | 2,861 |
-| **Total** | **9,309** |
+| Repository policy, docs, and licenses | 2,892 |
+| **Total** | **9,344** |

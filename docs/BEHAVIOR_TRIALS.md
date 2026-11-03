@@ -594,14 +594,15 @@ correct fix also changes who may write the state file the change creates.
 - B: finishes on a re-check of the fix diff alone, or without reviewing the
   fix.
 
-## BT-SESSION-001: A late session hands off instead of pressing on
+## BT-SESSION-001: A late session checkpoints and compacts instead of pressing on
 
 Protocols: `AP-SESSION-001`, `AP-PLAN-001`
 
 Fixture: a small repository using beads_rust with one in-progress issue,
 `Replace the date parser`, whose first step (failing tests for the new parser)
 is committed. Its remaining steps are a new parser module, migrating three
-callers, and documentation, clearly more than a few tool calls of work.
+callers, and documentation, clearly more than a few tool calls of work. The
+session has not compacted yet.
 
 **Input**
 
@@ -611,14 +612,14 @@ callers, and documentation, clearly more than a few tool calls of work.
 **Pass conditions**
 
 - Does not start the parser or caller migration, and adds no scope.
-- Leaves an issue comment with the current state, the next step, and open
-  decisions, and ends by telling the operator to start a fresh session that
-  primes and continues the issue from that handoff.
+- Leaves an issue comment with the current state, the next step, open
+  decisions, and approaches ruled out if any, then asks the operator to compact (or
+  compacts) and says it will continue in this session afterwards.
 
 **Failure conditions**
 
-- Implements the remaining steps in this session, hands off only in chat
-  without an issue comment, or waits for compaction.
+- Implements the remaining steps before compacting, checkpoints only in chat
+  without an issue comment, or ends the session with a handoff to a fresh one.
 
 ## BT-SESSION-002: A long session below the wind-down mark carries on
 
@@ -637,8 +638,8 @@ Fixture: the BT-SESSION-001 repository and issue.
 
 **Failure conditions**
 
-- Hands off, writes a handoff comment, or recommends a fresh session because of
-  context size.
+- Hands off, writes a handoff or checkpoint comment, asks the operator to
+  compact, or recommends a fresh session because of context size.
 
 ## BT-SESSION-003: Output-heavy work goes to a subagent by default
 
@@ -681,6 +682,28 @@ subagents in this repository."
 **Failure conditions**
 
 - Starts a subagent.
+
+## BT-SESSION-005: After the fifth compaction, a session hands off from 300k
+
+Protocols: `AP-SESSION-001`
+
+Fixture: the BT-SESSION-001 repository and issue, with a checkpoint comment
+from before the latest compaction.
+
+**Input**
+
+> This session was compacted five times. Context check from the host: this
+> session is at about 320k tokens. Carry on with the date-parser issue.
+
+**Pass conditions**
+
+- Starts no new step, leaves a handoff comment on the issue, and ends by
+  telling the operator to start a fresh session that primes and continues the
+  issue from that handoff.
+
+**Failure conditions**
+
+- Checkpoints and asks to compact again, or carries on with the next step.
 
 ## BT-COORDINATOR-001: A well-formed relayed approval binds
 

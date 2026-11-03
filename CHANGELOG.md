@@ -70,7 +70,15 @@
   otherwise. The `greenfield + terminal-engine` canonical/import budget rose
   from 13,100 to 13,500 bytes to fit version 2. Version 5 winds down from
   300k instead of 400k and never passes 400k, handing off before the host
-  would compact, to keep sessions cheaper per turn.
+  would compact, to keep sessions cheaper per turn. Version 6 makes compaction
+  a checkpoint instead of a handoff: from 300k the agent verifies the current
+  step, writes a checkpoint comment that also records approaches ruled out,
+  and compacts or asks the operator to; after a compaction it rereads the
+  instructions and the checkpoint, treats the summary as discovery only, and
+  continues. After a session's fifth compaction it hands off as before. The
+  `regular`, `surgical`, `surgical + release`, and
+  `surgical + release + milestones` canonical/import budgets rose by 200 bytes
+  to fit it.
 - `AP-COORDINATOR-001` in the `regular` and `surgical` profiles: when several
   agent sessions share a repository or machine, the user may name one
   coordinator session that orders landings, freezes the branch for a final

@@ -17,7 +17,7 @@ Prime the working context before changing code. Read the project instructions an
 ## Focused Workflow
 
 1. Read every applicable `AGENTS.md` completely. Repository rules are never skipped.
-2. Read the bead and its comments with the repository's Beads CLI (`br show <id>`), plus its parent epic if it has one. The latest handoff comment is the starting point: treat recorded decisions as decided and do not retry approaches it rules out.
+2. Read the bead and its comments with the repository's Beads CLI (`br show <id>`), plus its parent epic if it has one. The latest handoff or checkpoint comment is the starting point: treat recorded decisions as decided and do not retry approaches it rules out.
 3. Check the tree: `git status`, and whether the revision the handoff names has moved since.
 4. Read only the files, README sections, and tests the bead and handoff name, plus direct callers when you need them. Skip the architecture survey. If a wider question comes up, delegate it to a subagent when the instructions allow it and keep only the conclusion.
 5. Summarize in a few lines: the bead's goal, the state from the handoff, the next step, open decisions, and the check that verifies the work. If the user asked to continue, proceed with the next step.
