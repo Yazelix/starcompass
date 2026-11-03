@@ -595,5 +595,5 @@ and lockfiles.
 | Tests | 1,245 |
 | Skills and install script | 2,525 |
 | dcg guards and check | 97 |
-| Repository policy, docs, and licenses | 2,892 |
-| **Total** | **9,344** |
+| Repository policy, docs, and licenses | 2,894 |
+| **Total** | **9,346** |
