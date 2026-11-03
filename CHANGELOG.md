@@ -97,6 +97,11 @@
   `guards/dcg/check.sh` proves its decisions under the hook's POSIX dialect.
   Loops without a `timeout` stay unenforced: dcg strips a leading `timeout N`,
   so no rule can tell a bounded `bash -c` wait from an unbounded one.
+- `hooks/after-compact.sh`, a Claude Code `SessionStart` hook for compactions:
+  it points the agent back to `AGENTS.md` and the latest checkpoint and counts
+  the session's compactions against `AP-SESSION-001`'s cap of five.
+  `skills/install.sh` links it into `~/.claude/hooks/`, and `hooks/check.sh`
+  proves its counts and messages.
 
 ### Fixed
 

@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 # Link every skill beside this script into each installed agent host (Claude
-# Code, Codex), and the repo's dcg packs into dcg's pack folder when dcg's
-# config folder exists. An existing entry that is not already this repo's link
-# is moved to a timestamped backup first. Safe to rerun.
+# Code, Codex), the repo's Claude Code hook into ~/.claude/hooks/, and its dcg
+# packs into dcg's pack folder when dcg's config folder exists. Registering a
+# hook or pack stays a manual edit of that host's settings. An existing entry
+# that is not already this repo's link is moved to a timestamped backup first.
+# Safe to rerun.
 set -euo pipefail
 
 skills=$(cd "$(dirname "$0")" && pwd)
@@ -28,6 +30,12 @@ for host in "$HOME/.codex" "$HOME/.claude"; do
     link "$source" "$host/skills/$(basename "$source")" "$(basename "$host")"
   done
 done
+
+if [ -d "$HOME/.claude" ]; then
+  mkdir -p "$HOME/.claude/hooks"
+  link "$(dirname "$skills")/hooks/after-compact.sh" \
+    "$HOME/.claude/hooks/starcompass-after-compact.sh" claude-hooks
+fi
 
 dcg_config="$HOME/.config/dcg"
 if [ -d "$dcg_config" ]; then

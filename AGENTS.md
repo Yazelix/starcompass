@@ -281,6 +281,8 @@ planning bead until the user has chosen that direction.
   reference protocols by ID instead of copying their text.
 - `guards/dcg/` holds the dcg pack that enforces a protocol rule as a command
   guard, and `guards/dcg/check.sh`, which proves the pack's decisions.
+- `hooks/` holds agent-host hooks that support a protocol rule, and
+  `hooks/check.sh`, which proves them.
 - A consumer repository owns its local overlay and explicit exceptions.
 
 Protocol IDs are permanent. Never recycle, rename, or remove an ID. Every change
@@ -360,6 +362,7 @@ cargo test --locked
 cargo clippy --locked --all-targets -- -D warnings
 claude plugin validate --strict skills
 guards/dcg/check.sh
+hooks/check.sh
 git diff --check
 ```
 

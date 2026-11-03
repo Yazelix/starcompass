@@ -509,6 +509,54 @@ custom_paths = ["~/.config/dcg/packs/*.yaml"]
 over the cases the pack must block or allow, with only this pack added to dcg's
 defaults.
 
+## Hooks
+
+`hooks/after-compact.sh` is a Claude Code `SessionStart` hook for
+`AP-SESSION-001`. After each compaction it tells the agent to reread
+`AGENTS.md` and the in-progress issue's latest checkpoint, and it counts the
+session's compactions, which the agent cannot do across summaries. At the
+fifth it says to hand off from 300k instead of compacting again; past the fifth
+it says to hand off now. Counts live in
+`${XDG_STATE_HOME:-~/.local/state}/starcompass/compactions/`, one file per
+session ID, pruned after about a week. A missing or unsafe session ID gets the
+reminder without a count.
+
+When `~/.claude` exists, `skills/install.sh` links the hook as
+`~/.claude/hooks/starcompass-after-compact.sh`. Claude Code runs it once
+`~/.claude/settings.json` registers it:
+
+```json
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "compact",
+        "hooks": [
+          { "type": "command", "command": "~/.claude/hooks/starcompass-after-compact.sh" }
+        ]
+      }
+    ]
+  }
+}
+```
+
+The hook's messages follow `AP-SESSION-001` v6. Settings in
+`~/.claude/settings.json` apply to every repository, so register it there only
+when the repositories you work in import v6 or later; otherwise register it in
+each consumer's git-ignored `.claude/settings.local.json`, since the hook path
+exists only where `skills/install.sh` ran.
+
+Claude Code compacts on its own only near the end of its auto-compact window.
+Setting `"autoCompactWindow": 400000` in `~/.claude/settings.json` puts that
+point near the protocol's 400k limit unless a per-model value saved with
+`/autocompact` takes precedence. An agent cannot compact by itself, so before
+then it asks the operator to run `/compact`. Codex documents a matching
+`SessionStart` source, `compact`, but whether its hook output reaches the model
+is unverified, so the hook is not set up for Codex.
+
+`hooks/check.sh` runs the hook against a temporary state folder and checks the
+counts, the cap messages, and the handling of bad session IDs.
+
 ## Repository layout
 
 ```text
@@ -520,6 +568,7 @@ src/main.rs                `starcompass` process boundary
 tests/                     focused contract tests
 skills/                    agent skills and install.sh
 guards/dcg/                dcg command-guard packs and their check
+hooks/                     Claude Code hooks and their check
 docs/DESIGN.md             architecture decisions and boundaries
 docs/BEHAVIOR_TRIALS.md    manual isolated agent-behavior cases
 .agent-protocols.local.md  Starcompass-specific policy input
@@ -554,6 +603,7 @@ target/debug/starcompass check-consumer \
   --agents AGENTS.md
 claude plugin validate --strict skills
 guards/dcg/check.sh
+hooks/check.sh
 git diff --check
 ```
 
@@ -593,7 +643,8 @@ and lockfiles.
 | Profiles | 65 |
 | Rust checker and package manifest | 1,886 |
 | Tests | 1,245 |
-| Skills and install script | 2,525 |
+| Skills and install script | 2,533 |
 | dcg guards and check | 97 |
-| Repository policy, docs, and licenses | 2,894 |
-| **Total** | **9,346** |
+| Claude Code hooks and check | 94 |
+| Repository policy, docs, and licenses | 2,956 |
+| **Total** | **9,510** |
