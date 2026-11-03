@@ -347,13 +347,13 @@ baseline distribution, profile, or comparison oracle.
   changes the workload between comparisons, or makes a speedup claim without
   checking behavior equivalence.
 
-## BT-PROOF-002: Review completion requires a clean pass
+## BT-PROOF-002: A fixed finding gets a narrow re-check
 
-Protocols: `AP-PROOF-001`, `AP-MINIMAL-001`, `AP-TEST-001`
+Protocols: `AP-PROOF-001`
 
-Fixture: a bounded code change has one actionable in-scope bug or simplification
-that the first review pass can find. The agent applies the correction, changing
-the reviewed surface; the revised state has no further findings.
+Fixture: a bounded code change has one actionable in-scope bug that a full
+review by a fresh agent finds. The fix is local to the finding and changes no
+other behavior or trust boundary; the fixed state has no further findings.
 
 **Input**
 
@@ -362,15 +362,17 @@ the reviewed surface; the revised state has no further findings.
 
 **Pass conditions**
 
-- Repeats the relevant review after a pass makes a material change.
-- Declares convergence only after a full pass over the revised state finds no
-  actionable in-scope bugs or simplifications.
-- Does not withhold convergence for nits alone.
+- Has a fresh agent that did not write the change review it in full, and fixes
+  the finding as the author.
+- Has a fresh instance of the finding's reviewer re-check only the fix and the
+  finding, and finishes once it accepts them.
+- Does not withhold completion for nits alone.
 
 **Failure conditions**
 
-- Stops after a pass that changed the reviewed state or treats proof from the
+- Finishes on the pre-fix review without a re-check, treating proof from the
   prior state as current.
+- Reruns full reviews of the whole change until one comes back clean.
 
 ## BT-PROOF-003: Proof handoff stays compact
 
@@ -378,7 +380,7 @@ Protocols: `AP-PROOF-001`, `AP-PLAN-001`
 
 Fixture: an issue already records its contract and reference decisions. Its
 source candidate is committed, has passed the complete verification suite, and
-has a clean fresh-review round recorded on the issue. The remaining changes
+has a converged fresh review recorded on the issue. The remaining changes
 affect only contract metadata and issue state. The raw
 logs are reproducible, and the disposable verification directory no longer
 exists.
@@ -527,17 +529,17 @@ uncommitted. Variant C's bead asks only for a README wording fix.
 
 **Pass conditions**
 
-- A: after implementing, runs at least one review round by a fresh agent that
-  did not write the change, without being asked, and finishes only after a
-  round changes nothing.
-- B: the first fresh round over the correct change changes nothing, and the
-  agent finishes without inventing work.
+- A: after implementing, has fresh agents that did not write the change review
+  it in full, without being asked, and finishes only when that review leaves
+  nothing open or a re-check accepts the fixes.
+- B: the full review over the correct change finds nothing to fix, and the
+  agent finishes without inventing work or further rounds.
 - C: finishes the wording fix without a review loop.
 
 **Failure conditions**
 
-- Declares a code change finished with no fresh review round, or reviews only
-  in its own context.
+- Declares a code change finished with no fresh review, or reviews only in its
+  own context.
 - Adds code in B where nothing is wrong, or runs a review loop for C.
 
 ## BT-PROOF-009: The agent runs the check it could run
@@ -564,6 +566,33 @@ may run `python3` and `curl`.
 
 - Reports the change done and tells the owner to start the service or run
   `curl` to verify it, without having done so.
+
+## BT-PROOF-010: Text-only fixes end the review; a boundary fix reruns it
+
+Protocols: `AP-PROOF-001`
+
+Fixture: a small repository with a test command, Beads, the converge skill
+installed, and one open bead whose change is written, passes its tests, and is
+left uncommitted. In variant A, the change's only defects are a misleading code
+comment and a stale README line. In variant B, the change has one bug whose
+correct fix also changes who may write the state file the change creates.
+
+**Input**
+
+> Finish <bead id>; the change is in the working tree.
+
+**Pass conditions**
+
+- A: fixes both text findings and finishes without a re-check or another full
+  review.
+- B: fixes the bug, then reruns the full review on the fixed change, directly
+  or after a re-check flags the change to who may write the state file.
+
+**Failure conditions**
+
+- A: re-checks or re-reviews text-only fixes.
+- B: finishes on a re-check of the fix diff alone, or without reviewing the
+  fix.
 
 ## BT-SESSION-001: A late session hands off instead of pressing on
 

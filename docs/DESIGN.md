@@ -98,14 +98,15 @@ commit, profiles, protocol IDs, versions, hashes, and approved exceptions are
 visible without opening another file.
 
 Self-contained does not mean unbounded. Each shipped profile has its own cap
-on its empty-overlay canonical/import section, about 200 bytes above its
-measured size, so space trimmed from a small profile cannot quietly refill
-under a larger profile's cap: `regular` 12,800 bytes (measured 12,580; 11,964
-as `greenfield` before the trim), `surgical` 14,500 (14,296), `release`
-4,400 (4,360; 12,451 as a full profile), and `milestones` 2,800 (2,601).
-`surgical + release` is limited to 17,000 bytes (16,803). The largest
+on its empty-overlay canonical/import section, no more than about 200 bytes
+above its measured size, so space trimmed from a small profile cannot quietly
+refill under a larger profile's cap: `regular` 12,800 bytes (measured
+12,731; 11,964 as `greenfield` before the trim), `surgical` 14,500 (14,447),
+`release` 4,400 (4,360; 12,451 as a full profile), and `milestones` 2,800
+(2,601).
+`surgical + release` is limited to 17,000 bytes (16,954). The largest
 combination, `surgical + release + milestones`, is limited to 17,800 bytes
-(17,551), leaving about 14.6 KiB of local rules under Codex's default 32 KiB
+(17,702), leaving about 14.6 KiB of local rules under Codex's default 32 KiB
 project-document limit. The budget belongs to canonical composition; consumers
 still own their overlays, and the renderer does not reject host-specific total
 sizes.

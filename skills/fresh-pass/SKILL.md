@@ -32,7 +32,7 @@ Reread recent work as if seeing it for the first time, simplify it, and fix what
 4. **Fix.** Bug fixes add whatever the defect needs. Simplification fixes only delete or inline; never add a helper, abstraction, or option to simplify. Keep each fix scoped; preserve behavior, features, supported edge cases, and safety checks. Do not simplify away anything the task required. When a finding is uncertain or a fix would change intended behavior, leave it and report it instead.
 5. **Verify.** Rerun the project's relevant checks (tests, typecheck, lint, build, or a run of the changed behavior) after fixing. If a fix breaks something, fix or revert it.
 
-This is one pass. To repeat passes until one changes nothing, use the `converge` skill.
+This is one pass. To finish a change through independent review, use the `converge` skill.
 
 ## Standards
 

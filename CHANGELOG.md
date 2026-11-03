@@ -191,6 +191,15 @@
   Since version 11, every change to code, tests, or scripts finishes through
   review by a fresh agent that did not write it, through the `converge` skill
   in Claude Code; docs-only and planning-only work is exempt.
+  Since version 12, that review is one full pass, with a second model where
+  available and behavior changes;
+  the author fixes or rebuts each finding, and its finder re-checks only those
+  fixes and rebuttals. The full review reruns only when a fix changes behavior
+  beyond its finding or crosses a trust boundary, and text-only fixes need no
+  re-check. Eon's review history showed later full rounds finding few defects
+  and all of the drift into speculative changes. The `converge` skill runs
+  Claude and Codex in parallel as read-only reviewers and stops for the owner
+  after two steps past the full review; `regular` measures 12,731 bytes.
 - `AP-PERF-001`, in the `terminal-engine` and `release` profiles, requires a
   measured bottleneck, a fixed workload and environment, a baseline, a
   correctness oracle, and a distribution or bound before a performance claim,

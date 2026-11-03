@@ -47,16 +47,16 @@ Profiles compose by ordered union: the first appearance of a protocol sets its
 position and later duplicates are ignored.
 
 With empty exceptions and overlay, each shipped profile's canonical/import
-section has its own cap, about 200 bytes above its measured size:
+section has its own cap, no more than about 200 bytes above its measured size:
 
 | Profiles | Cap | Measured | Before the trim |
 | --- | ---: | ---: | ---: |
-| `regular` | 12,800 | 12,580 | 11,964 as `greenfield` |
-| `surgical` | 14,500 | 14,296 | new |
+| `regular` | 12,800 | 12,731 | 11,964 as `greenfield` |
+| `surgical` | 14,500 | 14,447 | new |
 | `release` | 4,400 | 4,360 | 12,451 as a full profile |
 | `milestones` | 2,800 | 2,601 | new |
-| `surgical + release` | 17,000 | 16,803 | new |
-| `surgical + release + milestones` | 17,800 | 17,551 | new |
+| `surgical + release` | 17,000 | 16,954 | new |
+| `surgical + release + milestones` | 17,800 | 17,702 | new |
 
 `surgical + release + milestones` is the largest combination. Its cap leaves
 about 14.6 KiB for a consumer's local rules under Codex's default 32 KiB
@@ -153,14 +153,13 @@ use a separate assessment rubric, and record the exercised revision and
 environment without assigning a general compliance score.
 
 Under `AP-PROOF-001`, every change to code, tests, or scripts finishes through
-review by a fresh agent that did not write it; in Claude Code that is the
-`converge` skill, and docs-only and planning-only work skips it. Agents treat
-review and simplification completion as
-convergence over the accepted scope. A pass that makes a material change
-invalidates the prior assessment; completion requires a full pass over the
-revised state with no actionable in-scope bugs or simplifications. Nits never
-block convergence, and text-only fixes restart a review at most twice per
-slice.
+one full review by fresh agents that did not write it, a second model too where
+available and behavior changes; in Claude Code that is the `converge` skill,
+and docs-only and planning-only work skips it. The author fixes or rebuts each
+finding, and the reviewer that found it re-checks only those fixes and
+rebuttals. The full review reruns only when a fix changes behavior beyond its
+finding or crosses a trust boundary. Nits never block, and text-only fixes need
+no re-check.
 Durable proof keeps the relevant result rather than disposable paths or
 reproducible raw logs. An unchanged source candidate retains its complete-suite
 proof while metadata, documentation, or planning-only follow-ups receive their
@@ -440,7 +439,7 @@ Skills reference the protocols by ID instead of copying their text.
 | `fresh-eyes` | Reread recent work for bugs, omissions, and confusion, without editing |
 | `fresh-pass` | Reread recent work, simplify it, and fix what turns up |
 | `fix-or-bead` | One bounded review pass: fix in-scope regressions, bead the rest |
-| `converge` | Finish a code change through fresh-subagent fix passes until one changes nothing |
+| `converge` | Finish a code change through one parallel Claude and Codex review, then narrow re-checks of the fixes |
 | `correct` | Mine session history for corrections you keep repeating and bead the checks that would enforce them |
 | `simplify-and-refactor-code-isomorphically` | Shrink code while proving behavior stays the same |
 | `opinion` | Get a candid assessment of a project |
@@ -539,10 +538,10 @@ and lockfiles.
 
 | Surface | LOC |
 | --- | ---: |
-| Protocols and generated index | 630 |
+| Protocols and generated index | 632 |
 | Profiles | 65 |
 | Rust checker and package manifest | 1,886 |
 | Tests | 1,245 |
-| Skills and install script | 2,493 |
-| Repository policy, docs, and licenses | 2,750 |
-| **Total** | **9,069** |
+| Skills and install script | 2,510 |
+| Repository policy, docs, and licenses | 2,788 |
+| **Total** | **9,126** |

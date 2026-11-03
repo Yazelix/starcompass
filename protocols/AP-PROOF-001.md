@@ -1,6 +1,6 @@
 ---
 id: AP-PROOF-001
-version: 11
+version: 12
 title: Explicit proof lifecycle
 ---
 
@@ -20,8 +20,10 @@ or a summary loses detail; a temporary path is not proof. Unattended runs and
 waits close unused stdin, time out, check progress early, and never match
 themselves as the target; stalls fail.
 
-Finish every change to code, tests, or scripts with review by a fresh agent
-that did not write it, since authors miss their own leftovers; in Claude Code,
-use the converge skill. Docs-only and planning-only work skips it. A pass that
-changes anything requires another; convergence needs a full clean pass. Nits
-never block it, and text-only fixes restart a review at most twice per slice.
+Finish every change to code, tests, or scripts with one full review by fresh
+agents that did not write it, a second model too where available and behavior
+changes, since authors miss their own leftovers; in Claude Code, use the
+converge skill. Docs-only and planning-only work skips it. The author fixes or
+rebuts each finding; its finder re-checks only those fixes and rebuttals. Rerun
+the full review only when a fix changes behavior beyond its finding or crosses
+a trust boundary. Nits never block, and text-only fixes need no re-check.
