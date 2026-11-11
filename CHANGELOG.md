@@ -88,6 +88,17 @@
   answers a host permission prompt. The `regular`, `surgical`, and
   `surgical + release` canonical/import budgets rose to 12,400, 14,100, and
   16,600 bytes to fit it.
+  Version 2 starts sessions where account quota lets their work finish, and no
+  session types reports or briefs into a terminal a person may use. A relayed
+  decision binds only in the project it was given for. The user may grant the
+  coordinator standing approval for a named class of decisions with named
+  exclusions; the coordinator quotes the grant on each issue it approves under
+  it and reports afterwards, and a grant never reverses a user decision. The
+  `regular`, `surgical`, `surgical + release`, and
+  `surgical + release + milestones` budgets rose to 13,400, 15,100, 17,600, and
+  18,400 bytes to fit it. Behavior trials BT-COORDINATOR-003 to
+  BT-COORDINATOR-005 cover the grant from both sides and the project-bound
+  relay.
 - `guards/dcg/starcompass-waits.yaml`, a dcg pack that blocks a wait loop
   polling with `pgrep -f` or `pkill -f`, which finds its own shell and never
   ends, the failure recorded in ap-ouv and ap-lll. Lookups with `-A`, `-x`, or

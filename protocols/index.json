@@ -17,10 +17,10 @@
     },
     {
       "id": "AP-COORDINATOR-001",
-      "version": 1,
+      "version": 2,
       "title": "One coordinator across agent sessions",
       "path": "protocols/AP-COORDINATOR-001.md",
-      "sha256": "bd80e64f9b50e617a37531c5e48e0bc2672397edbd2f75c1e511d588954432c7"
+      "sha256": "67ac157433f9f67edfaa78bbf213edd37a74d025939cd09bdc51187411bdd9f7"
     },
     {
       "id": "AP-DELIVERY-001",

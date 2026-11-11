@@ -51,15 +51,15 @@ section has its own cap, no more than about 200 bytes above its measured size:
 
 | Profiles | Cap | Measured | Before the trim |
 | --- | ---: | ---: | ---: |
-| `regular` | 13,000 | 12,965 | 11,964 as `greenfield` |
-| `surgical` | 14,700 | 14,681 | new |
+| `regular` | 13,400 | 13,369 | 11,964 as `greenfield` |
+| `surgical` | 15,100 | 15,085 | new |
 | `release` | 4,400 | 4,360 | 12,451 as a full profile |
 | `milestones` | 2,800 | 2,601 | new |
-| `surgical + release` | 17,200 | 17,188 | new |
-| `surgical + release + milestones` | 18,000 | 17,936 | new |
+| `surgical + release` | 17,600 | 17,592 | new |
+| `surgical + release + milestones` | 18,400 | 18,340 | new |
 
 `surgical + release + milestones` is the largest combination. Its cap leaves
-about 14.4 KiB for a consumer's local rules under Codex's default 32 KiB
+about 14 KiB for a consumer's local rules under Codex's default 32 KiB
 project-document loader limit without remote includes or consumer-specific
 profile forks.
 
@@ -639,12 +639,12 @@ and lockfiles.
 
 | Surface | LOC |
 | --- | ---: |
-| Protocols and generated index | 634 |
+| Protocols and generated index | 642 |
 | Profiles | 65 |
 | Rust checker and package manifest | 1,886 |
 | Tests | 1,245 |
 | Skills and install script | 2,533 |
 | dcg guards and check | 97 |
 | Claude Code hooks and check | 94 |
-| Repository policy, docs, and licenses | 2,956 |
-| **Total** | **9,510** |
+| Repository policy, docs, and licenses | 3,036 |
+| **Total** | **9,598** |
