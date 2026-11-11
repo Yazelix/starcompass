@@ -8,7 +8,7 @@ or `.agent-protocols.exceptions.json`, then render from the pinned source.
 ## Protocol import record
 
 - Source: `https://github.com/Yazelix/starcompass`
-- Source commit: `37bc4b081810ebb072013201343615b34f666611`
+- Source commit: `0e75b97db3c188cee339b7bee9afe7282d062968`
 - Profiles: `regular`, `milestones`
 - Manifest: `.agent-protocols.json` (schema 1)
 
@@ -24,7 +24,7 @@ or `.agent-protocols.exceptions.json`, then render from the pinned source.
 | `AP-PROOF-001` | 12 | `1833a0bd0db4a8fa1c6f11fa155cc9f5599f0559b0846c05e9bace9cf61bcf94` |
 | `AP-PLAN-001` | 14 | `e759edf249af38d1b0424e8b0f10eb74e981b809a90abd953f70cc5324f71d94` |
 | `AP-SESSION-001` | 6 | `c7e5bcbaa142c0db12afc54318590fe00565bf2e77496847f9c31d2a866fa3cc` |
-| `AP-COORDINATOR-001` | 1 | `bd80e64f9b50e617a37531c5e48e0bc2672397edbd2f75c1e511d588954432c7` |
+| `AP-COORDINATOR-001` | 2 | `67ac157433f9f67edfaa78bbf213edd37a74d025939cd09bdc51187411bdd9f7` |
 | `AP-EXCEPTION-001` | 2 | `2c4f00299922edac83286821af07ad485e5a630bca6acbbce918d87614abb395` |
 | `AP-GIT-001` | 6 | `2341e365f6f2e20e63484b0d33070141306348d2681920f5a1ab78a06f48dab7` |
 | `AP-MILESTONE-001` | 1 | `fcf02386c663bb1ebf7eb96187edfe9512b24fbe16e4f7a56d352490a27852a4` |
@@ -206,15 +206,23 @@ primes, e.g. "prime, then continue <issue> from its handoff".
 When several agent sessions share a repository or machine, the user may name
 one coordinator session. It orders landings on the shared branch, freezes the
 branch during a final proof, schedules heavy runs and installs against machine
-load, and starts, briefs, and retires sessions. Other sessions follow its
-schedule and report their state, blocks, and pending user choices to it.
+load, starts sessions where account quota lets work finish, and briefs and
+retires them. Other sessions follow its schedule and report their state,
+blocks, and pending user choices to it. No session types reports or briefs
+into a terminal a person may use.
 
 The coordinator may relay user decisions, approvals included. A relayed
-decision binds only when the message quotes the user's words and names exactly
-what was approved. The receiver records it as relayed, with the date. The
-coordinator never decides for the user, never answers a host permission
-prompt, and never asks a session to do what its own permissions block. When a
-relay is ambiguous, the receiver asks the user directly.
+decision binds only in the project it was given for and only when the message
+quotes the user's words and names exactly what was approved. The receiver
+records it as relayed, with the date. When a relay is ambiguous, the receiver
+asks the user directly.
+
+The user may grant the coordinator standing approval for a named class of
+decisions with named exclusions; within it the coordinator approves, quoting
+the grant on each issue, and reports afterwards. A grant never reverses a user
+decision. Outside a grant, the coordinator never decides for the user. It never
+answers a host permission prompt or asks a session to do what its own
+permissions block.
 
 ### AP-EXCEPTION-001 — Explicit local exceptions
 

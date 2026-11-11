@@ -646,5 +646,5 @@ and lockfiles.
 | Skills and install script | 2,533 |
 | dcg guards and check | 97 |
 | Claude Code hooks and check | 94 |
-| Repository policy, docs, and licenses | 3,036 |
-| **Total** | **9,598** |
+| Repository policy, docs, and licenses | 3,044 |
+| **Total** | **9,606** |

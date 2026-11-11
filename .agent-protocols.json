@@ -2,7 +2,7 @@
   "schema": 1,
   "source": {
     "repository": "https://github.com/Yazelix/starcompass",
-    "commit": "37bc4b081810ebb072013201343615b34f666611"
+    "commit": "0e75b97db3c188cee339b7bee9afe7282d062968"
   },
   "profiles": [
     "regular",
@@ -61,8 +61,8 @@
     },
     {
       "id": "AP-COORDINATOR-001",
-      "version": 1,
-      "sha256": "bd80e64f9b50e617a37531c5e48e0bc2672397edbd2f75c1e511d588954432c7"
+      "version": 2,
+      "sha256": "67ac157433f9f67edfaa78bbf213edd37a74d025939cd09bdc51187411bdd9f7"
     },
     {
       "id": "AP-EXCEPTION-001",
