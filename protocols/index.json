@@ -169,6 +169,13 @@
       "sha256": "2972d9576f247864ca734982b95743b533b455f1b95d30c5127872e845cb7f28"
     },
     {
+      "id": "AP-SEARCH-001",
+      "version": 1,
+      "title": "Search narrowly",
+      "path": "protocols/AP-SEARCH-001.md",
+      "sha256": "bfaf409e71175aff1a345532fa63b579b780b3256de211171c927ff6d7421122"
+    },
+    {
       "id": "AP-SESSION-001",
       "version": 6,
       "title": "Session continuity across compaction",

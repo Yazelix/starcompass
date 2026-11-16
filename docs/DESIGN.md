@@ -102,7 +102,7 @@ on its empty-overlay canonical/import section, no more than about 200 bytes
 above its measured size, so space trimmed from a small profile cannot quietly
 refill under a larger profile's cap. The README budget table lists each cap
 and measured size; the largest combination, `surgical + release + milestones`,
-leaves about 14 KiB of local rules under Codex's default 32 KiB
+leaves about 13.5 KiB of local rules under Codex's default 32 KiB
 project-document limit. The budget belongs to canonical composition; consumers
 still own their overlays, and the renderer does not reject host-specific total
 sizes.

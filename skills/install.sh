@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Link every skill beside this script into each installed agent host (Claude
-# Code, Codex), the repo's Claude Code hook into ~/.claude/hooks/, and its dcg
+# Code, Codex), the repo's Claude Code hooks into ~/.claude/hooks/, and its dcg
 # packs into dcg's pack folder when dcg's config folder exists. Registering a
 # hook or pack stays a manual edit of that host's settings. An existing entry
 # that is not already this repo's link is moved to a timestamped backup first.
@@ -35,6 +35,8 @@ if [ -d "$HOME/.claude" ]; then
   mkdir -p "$HOME/.claude/hooks"
   link "$(dirname "$skills")/hooks/after-compact.sh" \
     "$HOME/.claude/hooks/starcompass-after-compact.sh" claude-hooks
+  link "$(dirname "$skills")/hooks/block-wide-search.py" \
+    "$HOME/.claude/hooks/starcompass-block-wide-search.py" claude-hooks
 fi
 
 dcg_config="$HOME/.config/dcg"

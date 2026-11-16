@@ -5,7 +5,7 @@ agent projects without turning `AGENTS.md` into a remote dependency.
 
 It provides:
 
-- 27 individually identified and versioned protocols, 20 of them active;
+- 28 individually identified and versioned protocols, 21 of them active;
 - four ordered, composable profiles: two postures and two add-ons;
 - deterministic, self-contained `AGENTS.md` rendering, optionally with the
   canonical text in a separate generated protocol file;
@@ -51,15 +51,15 @@ section has its own cap, no more than about 200 bytes above its measured size:
 
 | Profiles | Cap | Measured | Before the trim |
 | --- | ---: | ---: | ---: |
-| `regular` | 13,400 | 13,369 | 11,964 as `greenfield` |
-| `surgical` | 15,100 | 15,085 | new |
+| `regular` | 13,900 | 13,832 | 11,964 as `greenfield` |
+| `surgical` | 15,600 | 15,548 | new |
 | `release` | 4,400 | 4,360 | 12,451 as a full profile |
 | `milestones` | 2,800 | 2,601 | new |
-| `surgical + release` | 17,600 | 17,592 | new |
-| `surgical + release + milestones` | 18,400 | 18,340 | new |
+| `surgical + release` | 18,100 | 18,055 | new |
+| `surgical + release + milestones` | 18,900 | 18,803 | new |
 
 `surgical + release + milestones` is the largest combination. Its cap leaves
-about 14 KiB for a consumer's local rules under Codex's default 32 KiB
+about 13.5 KiB for a consumer's local rules under Codex's default 32 KiB
 project-document loader limit without remote includes or consumer-specific
 profile forks.
 
@@ -175,7 +175,7 @@ full verification catalog.
 
 | Profile | Intended role | Specialized protocols |
 | --- | --- | --- |
-| `regular` | Every project | dependency, proof, planning, and session-coordination gates |
+| `regular` | Every project | dependency, proof, planning, session-coordination, and narrow-search gates |
 | `surgical` | Soft forks and projects in maintenance | everything in `regular`, plus surgical changes and license interpretation |
 | `release` | Add-on for products with ordered release channels | performance claims, bounded CI, installed-artifact proof, fresh-session dogfood, exact-revision promotion |
 | `milestones` | Add-on for projects that track milestones | user-approved milestone epics ordered by `blocks` dependencies |
@@ -554,8 +554,71 @@ then it asks the operator to run `/compact`. Codex documents a matching
 `SessionStart` source, `compact`, but whether its hook output reaches the model
 is unverified, so the hook is not set up for Codex.
 
-`hooks/check.sh` runs the hook against a temporary state folder and checks the
-counts, the cap messages, and the handling of bad session IDs.
+`hooks/block-wide-search.py` is a Claude Code `PreToolUse` hook for
+`AP-SEARCH-001`. It denies a recursive search rooted exactly at a blocked
+root: `grep -r` and `ugrep -r`; `rg`, `find`, and `fd` without a depth limit
+of 2 or less; any `du`, whose `-d` limits only output; the `Grep` tool; and
+the `Glob` tool with a `**` pattern. It walks a Bash command in order,
+following `cd`, `root/*` globs, scripts passed to `bash -c` and its kin, and
+wrappers such as `nice`, `ionice`, `timeout`, `env`, `time`, and `xargs`, and
+it tells patterns and option values from paths. A root never covers its
+descendants: `rg foo src/` in a repository under `~` passes. It reads the
+command and never runs it. Bad input or an internal error allows the call.
+
+`STARCOMPASS_BLOCKED_SEARCH_ROOTS` is the complete list of roots, separated by
+colons, with `~` and `$HOME` expanded and trailing slashes ignored; relative
+entries are ignored. Unset, empty, or without an absolute entry, it is `/:~`.
+It is a heuristic, not a sandbox. Known gaps:
+
+- A path held in a shell variable is caught only when the search runs from a
+  root, and `$(...)` is not expanded.
+- A `cd` inside a subshell still counts after it.
+- A number before a redirect written with a space, as in
+  `find ~ -maxdepth 2 > out`, is read as a file descriptor, so such a command
+  can be denied.
+- `env --chdir` is not followed, so `env --chdir <repo> rg foo` run from a
+  root is denied.
+- Some short options with attached values, such as `grep -re123 /`, hide
+  `-r`, and such a search passes.
+- Dot-globs such as `du -sh ~/.[!.]*` are not read as their root.
+
+Codex has no pre-tool hook, so there the protocol text is the only control.
+
+The hook needs `python3`. When `~/.claude` exists, `skills/install.sh` links
+it as `~/.claude/hooks/starcompass-block-wide-search.py`; register it in
+`~/.claude/settings.json`, adding any roots beyond `/` and `~`:
+
+```json
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Grep|Glob|Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "STARCOMPASS_BLOCKED_SEARCH_ROOTS='/:~:~/.cache' python3 -I ~/.claude/hooks/starcompass-block-wide-search.py",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+Two companions narrow the searches the hook allows. A `.ignore` file at the
+root of a folder shared by many agents, listing `target/`, `.git/`,
+`node_modules/`, `.direnv/`, `result`, `result-*`, `*.rlib`, and `*.rmeta`,
+keeps `rg` run anywhere below it out of build output and worktree metadata;
+`rg` already skips what `.gitignore` lists. An rg config named by
+`RIPGREP_CONFIG_PATH` with `--threads=2`, `--max-filesize=64M`, and
+`--one-file-system` bounds what one search can read.
+
+`hooks/check.sh` runs the compaction hook against a temporary state folder and
+checks the counts, the cap messages, and the handling of bad session IDs. It
+then pipes tool calls into the search hook under a temporary `HOME` and checks
+each decision, the root list, and that bad input fails open.
 
 ## Repository layout
 
@@ -639,12 +702,12 @@ and lockfiles.
 
 | Surface | LOC |
 | --- | ---: |
-| Protocols and generated index | 642 |
-| Profiles | 65 |
+| Protocols and generated index | 660 |
+| Profiles | 67 |
 | Rust checker and package manifest | 1,886 |
 | Tests | 1,245 |
-| Skills and install script | 2,533 |
+| Skills and install script | 2,535 |
 | dcg guards and check | 97 |
-| Claude Code hooks and check | 94 |
-| Repository policy, docs, and licenses | 3,044 |
-| **Total** | **9,606** |
+| Claude Code hooks and check | 545 |
+| Repository policy, docs, and licenses | 3,120 |
+| **Total** | **10,155** |

@@ -4,7 +4,7 @@
 
 ### Added
 
-- Twenty-seven stable-ID, individually versioned canonical protocols.
+- Twenty-eight stable-ID, individually versioned canonical protocols.
 - Starcompass project and repository identity with stable protocol and
   consumer-format names.
 - Minimum-sufficient-implementation discipline.
@@ -113,6 +113,19 @@
   the session's compactions against `AP-SESSION-001`'s cap of five.
   `skills/install.sh` links it into `~/.claude/hooks/`, and `hooks/check.sh`
   proves its counts and messages.
+- `AP-SEARCH-001` in the `regular` and `surgical` profiles: search inside one
+  named folder; never sweep `/`, a home directory, a cache root, or a folder
+  of shared agent work trees, and never run `du` on them; narrow a search a
+  guard blocks instead of routing around it. Hosts without a pre-tool hook,
+  such as Codex, rely on the rule alone. The `regular`, `surgical`,
+  `surgical + release`, and `surgical + release + milestones` budgets rose to
+  13,900, 15,600, 18,100, and 18,900 bytes to fit it.
+- `hooks/block-wide-search.py`, a Claude Code `PreToolUse` hook for
+  `AP-SEARCH-001` that denies recursive searches rooted exactly at a blocked
+  root: `/` and `~` by default, a list `STARCOMPASS_BLOCKED_SEARCH_ROOTS`
+  replaces. It came from a guard deployed after three disk-saturation incidents
+  on 2026-11-16. `skills/install.sh` links it into `~/.claude/hooks/`, and
+  `hooks/check.sh` proves its decisions with dry-run tool calls.
 
 ### Fixed
 
