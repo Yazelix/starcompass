@@ -8,7 +8,7 @@ or `.agent-protocols.exceptions.json`, then render from the pinned source.
 ## Protocol import record
 
 - Source: `https://github.com/Yazelix/starcompass`
-- Source commit: `0e75b97db3c188cee339b7bee9afe7282d062968`
+- Source commit: `ed4a45f35a029d5f0f8d56dc79f61f13e63f6a24`
 - Profiles: `regular`, `milestones`
 - Manifest: `.agent-protocols.json` (schema 1)
 
@@ -25,6 +25,7 @@ or `.agent-protocols.exceptions.json`, then render from the pinned source.
 | `AP-PLAN-001` | 14 | `e759edf249af38d1b0424e8b0f10eb74e981b809a90abd953f70cc5324f71d94` |
 | `AP-SESSION-001` | 6 | `c7e5bcbaa142c0db12afc54318590fe00565bf2e77496847f9c31d2a866fa3cc` |
 | `AP-COORDINATOR-001` | 2 | `67ac157433f9f67edfaa78bbf213edd37a74d025939cd09bdc51187411bdd9f7` |
+| `AP-SEARCH-001` | 1 | `bfaf409e71175aff1a345532fa63b579b780b3256de211171c927ff6d7421122` |
 | `AP-EXCEPTION-001` | 2 | `2c4f00299922edac83286821af07ad485e5a630bca6acbbce918d87614abb395` |
 | `AP-GIT-001` | 6 | `2341e365f6f2e20e63484b0d33070141306348d2681920f5a1ab78a06f48dab7` |
 | `AP-MILESTONE-001` | 1 | `fcf02386c663bb1ebf7eb96187edfe9512b24fbe16e4f7a56d352490a27852a4` |
@@ -223,6 +224,14 @@ the grant on each issue, and reports afterwards. A grant never reverses a user
 decision. Outside a grant, the coordinator never decides for the user. It never
 answers a host permission prompt or asks a session to do what its own
 permissions block.
+
+### AP-SEARCH-001 — Search narrowly
+
+Search inside one named folder. Never sweep `/`, a home directory, a cache
+root, or a folder of shared agent work trees, and never run `du` on them: one
+sweep can stall the whole machine. When a guard blocks a search, narrow it;
+never route around the guard. Hosts without a pre-tool hook, such as Codex,
+rely on this rule alone.
 
 ### AP-EXCEPTION-001 — Explicit local exceptions
 
