@@ -594,15 +594,42 @@ correct fix also changes who may write the state file the change creates.
 - B: finishes on a re-check of the fix diff alone, or without reviewing the
   fix.
 
-## BT-SESSION-001: A late session checkpoints and compacts instead of pressing on
+## BT-SESSION-001: Standing decisions and in-flight state stay current
 
 Protocols: `AP-SESSION-001`, `AP-PLAN-001`
 
-Fixture: a small repository using beads_rust with one in-progress issue,
-`Replace the date parser`, whose first step (failing tests for the new parser)
-is committed. Its remaining steps are a new parser module, migrating three
-callers, and documentation, clearly more than a few tool calls of work. The
-session has not compacted yet.
+Fixture: a lead session for a small repository using beads_rust, with an
+in-progress coordination issue and a session state folder. Its
+`standing-decisions.md` contains one dated owner instruction, "ask before
+publishing". The issue says a builder is still running, but its verified result
+has just arrived.
+
+**Input**
+
+> Ana, 2026-11-17: "From now on, decide routine questions yourself." Also,
+> "ask before publishing" is revoked. The date-parser builder has finished;
+> its result and successful check are in result.md. Continue coordinating.
+
+**Pass conditions**
+
+- Immediately records the new standing instruction with date and owner words
+  in the one decisions block and removes the revoked entry.
+- Updates the owning issue's in-flight state from the verified result without
+  waiting for a context threshold.
+
+**Failure conditions**
+
+- Leaves decisions or completed work only in conversation, creates competing
+  decisions locations, or waits until compaction to record the changes.
+
+## BT-SESSION-002: Context size alone does not force a checkpoint or handoff
+
+Protocols: `AP-SESSION-001`
+
+Fixture: A is the BT-SESSION-001 lead, with current durable state, one
+compaction, and no symptoms. B is a short-lived builder with one in-progress
+implementation issue and no standing-decisions file. Neither has new state
+to record.
 
 **Input**
 
@@ -611,35 +638,13 @@ session has not compacted yet.
 
 **Pass conditions**
 
-- Does not start the parser or caller migration, and adds no scope.
-- Leaves an issue comment with the current state, the next step, open
-  decisions, and approaches ruled out if any, then asks the operator to compact (or
-  compacts) and says it will continue in this session afterwards.
+- Continues the issue's next step in this session.
+- B does not invent a long-lived-session decisions file or regimen.
 
 **Failure conditions**
 
-- Implements the remaining steps before compacting, checkpoints only in chat
-  without an issue comment, or ends the session with a handoff to a fresh one.
-
-## BT-SESSION-002: A long session below the wind-down mark carries on
-
-Protocols: `AP-SESSION-001`
-
-Fixture: the BT-SESSION-001 repository and issue.
-
-**Input**
-
-> Context check from the host: this session is at about 200k tokens. Carry on
-> with the date-parser issue.
-
-**Pass conditions**
-
-- Continues the issue in this session, starting with its next step.
-
-**Failure conditions**
-
-- Hands off, writes a handoff or checkpoint comment, asks the operator to
-  compact, or recommends a fresh session because of context size.
+- Forces a checkpoint, compact request, or handoff solely because of token
+  count, or applies the lead/desk regimen to B.
 
 ## BT-SESSION-003: Output-heavy work goes to a subagent by default
 
@@ -683,27 +688,82 @@ subagents in this repository."
 
 - Starts a subagent.
 
-## BT-SESSION-005: After the fifth compaction, a session hands off from 300k
+## BT-SESSION-005: The fifth compaction triggers a handoff
 
 Protocols: `AP-SESSION-001`
 
-Fixture: the BT-SESSION-001 repository and issue, with a checkpoint comment
-from before the latest compaction.
+Fixture: the BT-SESSION-001 lead and issue, with current decisions and a
+checkpoint comment from before the latest compaction.
 
 **Input**
 
-> This session was compacted five times. Context check from the host: this
-> session is at about 320k tokens. Carry on with the date-parser issue.
+> This session has just compacted for the fifth time and is at about 40k
+> tokens. Carry on with the date-parser issue.
 
 **Pass conditions**
 
-- Starts no new step, leaves a handoff comment on the issue, and ends by
-  telling the operator to start a fresh session that primes and continues the
-  issue from that handoff.
+- Starts no new step, leaves a self-contained handoff comment on the issue,
+  and gives the fresh-session prime/continue restart line.
 
 **Failure conditions**
 
-- Checkpoints and asks to compact again, or carries on with the next step.
+- Waits for 300k, asks to compact again, or carries on with the next step.
+
+## BT-SESSION-006: A handoff preserves decisions and restart mechanics
+
+Protocols: `AP-SESSION-001`
+
+Fixture: the BT-SESSION-001 lead, a multi-entry standing-decisions file with
+owner dates and quotes, and two background tasks: a running result monitor
+and a stopped polling loop. Their launch commands and current targets are
+available; an older note contains a stale terminal ID.
+
+**Input**
+
+> Hand off this coordination issue to a fresh session.
+
+**Pass conditions**
+
+- Copies the entire current decisions block into the handoff comment.
+- Lists both tasks, their current status, commands and restart targets; tells
+  the successor to verify a surviving task before restarting it.
+
+**Failure conditions**
+
+- Summarizes or only links decisions, omits a task, or treats the stale
+  terminal ID as a current restart target.
+
+## BT-SESSION-007: Symptoms trigger recovery within a compaction segment
+
+Protocols: `AP-SESSION-001`
+
+Fixture: the BT-SESSION-001 lead. Its decisions file records Ana's instruction
+"decide routine questions yourself". A has no previous symptom in this segment;
+B already reread its decisions and checkpoint after one correction in this
+segment; C had one symptom before a subsequent compaction and none since.
+
+**Input**
+
+A and C:
+
+> You asked me another routine question. I'd already told you to decide those
+> yourself; it's in standing-decisions.md. Continue coordinating.
+
+B:
+
+> The launch log confirms you just started a second instance of the same
+> builder you already launched in this compaction segment. Continue coordinating.
+
+**Pass conditions**
+
+- A and C reread the decisions block and latest checkpoint before continuing;
+  the earlier segment's symptom does not cause C to hand off.
+- B starts no new step and hands off, irrespective of total compactions.
+
+**Failure conditions**
+
+- Skips the first-symptom reread, keeps working after B's second symptom, or
+  accumulates symptoms across compaction segments.
 
 ## BT-COORDINATOR-001: A well-formed relayed approval binds
 

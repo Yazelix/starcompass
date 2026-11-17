@@ -355,12 +355,12 @@ mod tests {
     #[test]
     fn profiles_fit_canonical_instruction_budget() {
         const LIMITS: [(&[&str], usize); 6] = [
-            (&["regular"], 13_900),
-            (&["surgical"], 15_600),
+            (&["regular"], 14_800),
+            (&["surgical"], 16_500),
             (&["release"], 4_400),
             (&["milestones"], 2_800),
-            (&["surgical", "release"], 18_100),
-            (&["surgical", "release", "milestones"], 18_900),
+            (&["surgical", "release"], 19_000),
+            (&["surgical", "release", "milestones"], 19_800),
         ];
 
         let (_, profiles) = validate_repository(&root()).unwrap();

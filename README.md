@@ -51,15 +51,15 @@ section has its own cap, no more than about 200 bytes above its measured size:
 
 | Profiles | Cap | Measured | Before the trim |
 | --- | ---: | ---: | ---: |
-| `regular` | 13,900 | 13,832 | 11,964 as `greenfield` |
-| `surgical` | 15,600 | 15,548 | new |
+| `regular` | 14,800 | 14,665 | 11,964 as `greenfield` |
+| `surgical` | 16,500 | 16,381 | new |
 | `release` | 4,400 | 4,360 | 12,451 as a full profile |
 | `milestones` | 2,800 | 2,601 | new |
-| `surgical + release` | 18,100 | 18,055 | new |
-| `surgical + release + milestones` | 18,900 | 18,803 | new |
+| `surgical + release` | 19,000 | 18,888 | new |
+| `surgical + release + milestones` | 19,800 | 19,636 | new |
 
 `surgical + release + milestones` is the largest combination. Its cap leaves
-about 13.5 KiB for a consumer's local rules under Codex's default 32 KiB
+about 12.7 KiB for a consumer's local rules under Codex's default 32 KiB
 project-document loader limit without remote includes or consumer-specific
 profile forks.
 
@@ -434,7 +434,7 @@ Skills reference the protocols by ID instead of copying their text.
 | `prime-beads` | Review and refine a Beads plan, keeping beads small enough for one session |
 | `create-beads` | Turn chosen work into right-sized beads, with epics for larger work |
 | `list-beads` | List in-progress Beads issues and the 10 highest-priority ready ones |
-| `handoff` | End a session with a handoff, or checkpoint before a compaction, on the owning bead |
+| `handoff` | Record current state, or hand off with standing decisions and background-task restart instructions |
 | `audit-to-beads` | Audit a codebase and record improvements as Beads, without editing code |
 | `fresh-eyes` | Reread recent work for bugs, omissions, and confusion, without editing |
 | `fresh-pass` | Reread recent work, simplify it, and fix what turns up |
@@ -511,15 +511,37 @@ defaults.
 
 ## Hooks
 
-`hooks/after-compact.sh` is a Claude Code `SessionStart` hook for
-`AP-SESSION-001`. After each compaction it tells the agent to reread
-`AGENTS.md` and the in-progress issue's latest checkpoint, and it counts the
-session's compactions, which the agent cannot do across summaries. At the
-fifth it says to hand off from 300k instead of compacting again; past the fifth
-it says to hand off now. Counts live in
-`${XDG_STATE_HOME:-~/.local/state}/starcompass/compactions/`, one file per
-session ID, pruned after about a week. A missing or unsafe session ID gets the
-reminder without a count.
+`hooks/after-compact.sh` is a `SessionStart` hook with matcher `compact` for
+`AP-SESSION-001` v7. Every session gets its compaction counter and a reminder to
+reread `AGENTS.md` and the issue's latest checkpoint. At the fifth compaction
+it says to hand off now; past the fifth it repeats that instruction. Counts
+live in `${XDG_STATE_HOME:-~/.local/state}/starcompass/compactions/`, one file per
+session ID, pruned after about a week. A missing or unsafe session ID, or an
+unwritable counter, gets the reminder without a count; replay still runs.
+
+[AP-SESSION-001 v7](protocols/AP-SESSION-001.md) defines the long-lived lead/desk
+regime, continuous checkpoints, symptom recovery, and handoff contents. Builders
+are outside that regime; the hook still shows their counter and cap lines.
+
+Only a long-lived session's own launcher sets `STARCOMPASS_STATE_DIR` to its
+absolute state folder **before starting the host process**, for example:
+
+```sh
+STARCOMPASS_STATE_DIR=/path/to/session-state claude
+```
+
+Independent leads set their own path. Builder and reviewer launchers must
+`unset STARCOMPASS_STATE_DIR` before starting their host, so children cannot
+replay a parent's approvals as their own. A path in the launch prompt alone
+cannot configure the hook subprocess.
+
+After the counter/reminder and any cap line, the hook names the file and
+replays at most 8,192 bytes. A truncation note names the full file to read;
+the byte boundary may split a UTF-8 character. Read the file in full after
+compaction even when replay is unavailable. An unset or
+empty variable emits a lead/desk reminder to read their file. Missing,
+unreadable or non-regular files emit an unavailable reminder; empty files are
+skipped, and read failures never block the session. Replay supplements the required reread; it does not prove compliance.
 
 When `~/.claude` exists, `skills/install.sh` links the hook as
 `~/.claude/hooks/starcompass-after-compact.sh`. Claude Code runs it once
@@ -540,19 +562,25 @@ When `~/.claude` exists, `skills/install.sh` links the hook as
 }
 ```
 
-The hook's messages follow `AP-SESSION-001` v6. Settings in
+The hook's messages follow `AP-SESSION-001` v7. Settings in
 `~/.claude/settings.json` apply to every repository, so register it there only
-when the repositories you work in import v6 or later; otherwise register it in
+when the repositories you work in import v7 or later; otherwise register it in
 each consumer's git-ignored `.claude/settings.local.json`, since the hook path
-exists only where `skills/install.sh` ran.
+exists only where `skills/install.sh` ran. Launch environment setup is separate
+from registration; the install script does not set session paths.
 
-Claude Code compacts on its own only near the end of its auto-compact window.
-Setting `"autoCompactWindow": 400000` in `~/.claude/settings.json` puts that
-point near the protocol's 400k limit unless a per-model value saved with
-`/autocompact` takes precedence. An agent cannot compact by itself, so before
-then it asks the operator to run `/compact`. Codex documents a matching
-`SessionStart` source, `compact`, but whether its hook output reaches the model
-is unverified, so the hook is not set up for Codex.
+[Codex's SessionStart guide](https://learn.chatgpt.com/docs/hooks#sessionstart)
+and the installed Codex 0.169.0 release's
+[stdout parser test](https://github.com/openai/codex/blob/d32063f96c2dff1dc96af839b3952abb6acfeda4/codex-rs/hooks/src/events/session_start.rs#L376)
+and [compaction integration tests](https://github.com/openai/codex/blob/d32063f96c2dff1dc96af839b3952abb6acfeda4/codex-rs/core/tests/suite/hooks.rs#L2185)
+establish that `SessionStart` with source `compact` adds plain stdout as
+developer context before the next model request, including immediate
+continuation after automatic compaction. For Codex replay, register this as a
+`SessionStart` hook with matcher `compact` and complete Codex's
+[hook review and trust](https://learn.chatgpt.com/docs/hooks#review-and-trust-hooks).
+`skills/install.sh` links this hook only for Claude Code. Codex registration and
+live delivery have not been verified locally; Codex-run leads without that
+setup must reread their decisions file themselves.
 
 `hooks/block-wide-search.py` is a Claude Code `PreToolUse` hook for
 `AP-SEARCH-001`. It denies a recursive search rooted exactly at a blocked
@@ -616,7 +644,8 @@ keeps `rg` run anywhere below it out of build output and worktree metadata;
 `--one-file-system` bounds what one search can read.
 
 `hooks/check.sh` runs the compaction hook against a temporary state folder and
-checks the counts, the cap messages, and the handling of bad session IDs. It
+checks counts, cap messages, bad session IDs, bounded decisions replay,
+child isolation, and fail-open paths. It
 then pipes tool calls into the search hook under a temporary `HOME` and checks
 each decision, the root list, and that bad input fails open.
 
@@ -702,12 +731,12 @@ and lockfiles.
 
 | Surface | LOC |
 | --- | ---: |
-| Protocols and generated index | 660 |
+| Protocols and generated index | 670 |
 | Profiles | 67 |
 | Rust checker and package manifest | 1,886 |
 | Tests | 1,245 |
-| Skills and install script | 2,535 |
+| Skills and install script | 2,537 |
 | dcg guards and check | 97 |
-| Claude Code hooks and check | 545 |
-| Repository policy, docs, and licenses | 3,134 |
-| **Total** | **10,169** |
+| Claude Code hooks and check | 643 |
+| Repository policy, docs, and licenses | 3,240 |
+| **Total** | **10,385** |

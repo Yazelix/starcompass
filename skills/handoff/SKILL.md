@@ -1,6 +1,6 @@
 ---
 name: handoff
-description: End a session cleanly so a fresh agent can continue the work. Stop starting new steps, bring work in progress to a verified state, and write a self-contained handoff on the owning Beads issue (state, next step, open decisions with reasons), then give the exact line that starts the next session. Also writes the same comment as a checkpoint when the repository's rules say to checkpoint before compacting and continue. Use when the user says "handoff", "wrap up", "checkpoint", or "hand off to the next agent", or when context use crosses the repository's handoff or checkpoint mark.
+description: End a session cleanly with a self-contained Beads handoff, standing decisions, and background-loop restart inventory, then give the exact restart line. Also records checkpoints as in-flight state changes. Use when the user says "handoff", "wrap up", "checkpoint", or "hand off to the next agent", or AP-SESSION-001 calls for a handoff.
 ---
 
 # Handoff
@@ -9,7 +9,7 @@ description: End a session cleanly so a fresh agent can continue the work. Stop 
 
 A handoff trades this session's context for a clean one. The next agent starts from the repository, the owning bead, and the handoff comment only, so everything it needs must be written down. Chat history does not survive.
 
-A checkpoint is the same comment written before a compaction the session survives. Follow steps 1-7 with "Checkpoint" in place of "Handoff" and without the restart line, then compact or ask the operator to run `/compact`, and continue as `AP-SESSION-001` says.
+A checkpoint records in-flight state when it changes, as `AP-SESSION-001` requires; it does not wait for a token threshold or require compaction. Use the template with "Checkpoint" in place of "Handoff", verify changed claims, update the owning bead, and continue without a restart line.
 
 ## Workflow
 
@@ -18,7 +18,7 @@ A checkpoint is the same comment written before a compaction the session survive
 3. **Leave a known tree.** Follow the repository's commit policy. If you commit, use a focused message. If you leave changes uncommitted, list the dirty files in the handoff. Never leave work that only exists in this session's memory.
 4. **Find the owning bead.** Use the repository's Beads CLI (`br` when available). If the work has no bead, propose creating one; if the user declines or the repository does not use Beads, give the handoff in your reply instead.
 5. **Split if the rest is too big.** If the remaining work will not fit comfortably in one fresh session, turn the bead into an epic of child beads under the Bead Size rule in the `create-beads` skill (`../create-beads/SKILL.md`), and point the handoff at the first ready child.
-6. **Write the handoff comment** on the owning bead (`br comments add <id> -f <file>` for multi-line text), using the template below.
+6. **Write the handoff comment** on the owning bead (`br comments add <id> -f <file>` for multi-line text), using the template below. Copy the current standing-decisions block in full from the session's `standing-decisions.md` when present; a summary or link loses instructions. List background loops and monitors, whether each survives or stopped, and its restart command and target. Verify surviving processes before restarting so the successor does not duplicate them; replace stale terminal IDs with current targets. Write `none` when absent; builders do not need to create a decisions file.
 7. **Flush and report.** Run `br sync --flush-only` if the repository commits Beads state, then end your reply with the restart line:
 
    > Start a fresh session with: prime, then continue `<id>` from its handoff.
@@ -26,11 +26,13 @@ A checkpoint is the same comment written before a compaction the session survive
 ## Handoff template
 
 ```text
-Handoff (<reason: context mark, compaction cap, or user request>).
+Handoff (<reason: symptom, compaction cap, or user request>).
 State: <revision and dirty files>; <steps done and the check that verified each>; <work in progress and exactly where it stopped>.
 Next step: <the first concrete action, with file or command>.
 Open decisions: <each question, the options, your recommendation, and why>.
 Do not retry: <approaches tried or rejected, and why>. (Omit if none.)
+Standing decisions: <full current block, including dates and owner quotes; none if absent>.
+Background loops and monitors: <status, restart command, and target for each; none if absent>.
 ```
 
 ## Rules

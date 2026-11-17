@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Prove hooks/after-compact.sh: per-session counts, the cap messages, and a
 # reminder without a count for missing or unsafe session IDs or a counter it
-# cannot write. Then prove hooks/block-wide-search.py's decisions by piping
+# cannot write; bounded decisions replay and child isolation. Then prove
+# hooks/block-wide-search.py's decisions by piping
 # tool-call JSON into it under a temporary HOME; no case runs a search. Uses a
 # temporary state directory.
 set -euo pipefail
@@ -10,11 +11,17 @@ hooks=$(cd "$(dirname "$0")" && pwd)
 hook=$hooks/after-compact.sh
 state=$(mktemp -d)
 trap 'chmod -R u+w "$state"; rm -rf "$state"' EXIT
+unset STARCOMPASS_STATE_DIR
+replay_dir=
+
+run_compact() {
+  printf '%s' "$1" | STARCOMPASS_STATE_DIR=$replay_dir XDG_STATE_HOME=$state "$hook"
+}
 
 failed=0
 expect() {
   local want=$1 input=$2 unwanted=${3:-} out
-  out=$(printf '%s' "$input" | XDG_STATE_HOME=$state "$hook") || {
+  out=$(run_compact "$input") || {
     echo "hook exited $? for: $input"
     failed=1
     return
@@ -30,7 +37,7 @@ a='{"session_id":"abc-123","hook_event_name":"SessionStart","source":"compact"}'
 for n in 1 2 3 4; do
   expect "compaction $n of 5" "$a" "hand off"
 done
-expect "last compaction" "$a"
+expect "last compaction AP-SESSION-001 allows: hand off now" "$a" "300k"
 expect "past AP-SESSION-001's cap of 5" "$a"
 expect "compaction 1 of 5" '{"source": "compact", "session_id": "other_9"}'
 
@@ -42,6 +49,72 @@ if [ -e "$state/starcompass/escape" ]; then
   echo "an unsafe session ID wrote outside the counter folder"
   failed=1
 fi
+
+# Every invocation overrides the launch environment; no live decisions are read.
+expect 'STARCOMPASS_STATE_DIR is not set' '{"session_id":"no-replay"}'
+replay_dir="$state/lead state"
+mkdir -p "$replay_dir"
+decisions=$replay_dir/standing-decisions.md
+block=$'# Standing decisions\n2026-11-17: "continue means go"\nLast decision.'
+printf '%s\n' "$block" >"$decisions"
+expect "Standing decisions from $decisions:" '{"session_id":"replay"}'
+expect "$block" '{"session_id":"replay"}'
+expect "$block" '{"session_id":"../escape"}'
+expect "$block" ''
+# Counter creation failure must still replay, even when running as root.
+state_before=$state
+state=$state/counter-is-a-file
+printf x >"$state"
+expect "$block" '{"session_id":"counter-failure"}'
+state=$state_before
+out=$(printf '%s' '{"session_id":"child"}' |
+  STARCOMPASS_STATE_DIR=$replay_dir XDG_STATE_HOME=$state env -u STARCOMPASS_STATE_DIR "$hook")
+if [[ $out != *'compaction 1 of 5'* || $out != *'STARCOMPASS_STATE_DIR is not set'* || $out == *"$block"* ]]; then
+  echo 'child did not retain its counter while clearing decisions replay'
+  failed=1
+fi
+
+# The header follows the counter; the entire small block appears, not a summary.
+out=$(run_compact '{"session_id":"ordering"}')
+if [[ $out != "Context was compacted: compaction 1 of 5"*$'\n'"Standing decisions from $decisions:"$'\n'"$block" ]]; then
+  echo 'decisions replay was incomplete or preceded the counter'
+  failed=1
+fi
+python3 -I -c 'import sys; sys.stdout.write("x" * 8192)' >"$decisions"
+at_limit=$(cat "$decisions")
+expect "$at_limit" '{"session_id":"exact-limit"}' 'truncated'
+# The first omitted byte is a newline: command substitution must not hide it.
+printf '\nOMITTED\n' >>"$decisions"
+expect "truncated at 8192 bytes; read $decisions in full" '{"session_id":"over-limit"}' 'OMITTED'
+out=$(run_compact '{"session_id":"bounded"}')
+if [[ $out != *"Standing decisions from $decisions:"$'\n'"$at_limit"$'\n'"Standing decisions truncated at 8192 bytes; read $decisions in full." ]]; then
+  echo 'decisions replay did not preserve exactly the first 8192 bytes'
+  failed=1
+fi
+# Exercise the byte limit under a UTF-8 locale, including a split character.
+if [ "$(LC_ALL=C.UTF-8 locale charmap 2>/dev/null)" = UTF-8 ]; then
+  printf '%s\303\251\n' "${at_limit:1}" >"$decisions"
+  out=$(LC_ALL=C.UTF-8 run_compact '{"session_id":"utf8-boundary"}')
+  prefix=${at_limit:1}$'\303'
+  if [[ $out != *"Standing decisions from $decisions:"$'\n'"$prefix"$'\n'"Standing decisions truncated at 8192 bytes; read $decisions in full." ]]; then
+    echo 'UTF-8 replay did not respect the byte limit'
+    failed=1
+  fi
+fi
+: >"$decisions"
+expect 'compaction 1 of 5' '{"session_id":"empty"}' 'Standing decisions from'
+rm "$decisions"
+expect "Standing decisions unavailable at $decisions" '{"session_id":"missing-file"}' 'Standing decisions from'
+mkdir "$decisions"
+expect 'compaction 1 of 5' '{"session_id":"directory"}' 'Standing decisions from'
+rmdir "$decisions"
+printf '%s\n' "$block" >"$decisions"
+if [ "$(id -u)" != 0 ]; then
+  chmod a-r "$decisions"
+  expect 'compaction 1 of 5' '{"session_id":"unreadable"}' 'Standing decisions from'
+  chmod u+r "$decisions"
+fi
+replay_dir=
 
 counters=$state/starcompass/compactions
 echo junk >"$counters/corrupt"

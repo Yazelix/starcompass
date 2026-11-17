@@ -2,6 +2,23 @@
 
 ## Unreleased
 
+### Changed
+
+- `AP-SESSION-001` v7: long-lived leads and desks keep dated owner quotes in
+  `standing-decisions.md` and update decisions and in-flight state as they
+  change, replacing the 300k/400k checkpoint gate. The first symptom prompts a
+  reread; the second within the same compaction segment prompts a handoff,
+  with the fifth compaction retained as the backstop. Builders are outside
+  this long-lived-session regime. The compact hook retains every session's
+  counter/cap messages and replays up to 8 KiB from the state folder supplied
+  by `STARCOMPASS_STATE_DIR`, with a named source and truncation note. Only a
+  session's own launcher sets it; builder/reviewer launches clear it. Handoffs
+  copy standing decisions in full and inventory background loops and monitors
+  to restart. The four affected render caps are 14,800, 16,500, 19,000, and
+  19,800 bytes. Approved as a fleet-wide maintenance-freeze exception on
+  2026-11-17: Lucca told eon-desk, "I agree with meta eon's recommendations",
+  as recorded in ap-dgy; earlier approval was relayed through tide-desk.
+
 ### Added
 
 - Twenty-eight stable-ID, individually versioned canonical protocols.
