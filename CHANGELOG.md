@@ -4,6 +4,9 @@
 
 ### Changed
 
+- Starcompass self-adoption pins source `5af2ac4` with `AP-SESSION-001` v7
+  in its `regular` + `milestones` import.
+
 - `AP-SESSION-001` v7: long-lived leads and desks keep dated owner quotes in
   `standing-decisions.md` and update decisions and in-flight state as they
   change, replacing the 300k/400k checkpoint gate. The first symptom prompts a

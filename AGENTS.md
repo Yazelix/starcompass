@@ -8,7 +8,7 @@ or `.agent-protocols.exceptions.json`, then render from the pinned source.
 ## Protocol import record
 
 - Source: `https://github.com/Yazelix/starcompass`
-- Source commit: `ed4a45f35a029d5f0f8d56dc79f61f13e63f6a24`
+- Source commit: `5af2ac4e7f65548585886c2e441c1cbeb48e8bca`
 - Profiles: `regular`, `milestones`
 - Manifest: `.agent-protocols.json` (schema 1)
 
@@ -23,7 +23,7 @@ or `.agent-protocols.exceptions.json`, then render from the pinned source.
 | `AP-TEST-001` | 4 | `1c1c5eafa1f611fd7575ecf00b32a2068a477614c8be78ac4efa41630ec8b5ad` |
 | `AP-PROOF-001` | 12 | `1833a0bd0db4a8fa1c6f11fa155cc9f5599f0559b0846c05e9bace9cf61bcf94` |
 | `AP-PLAN-001` | 14 | `e759edf249af38d1b0424e8b0f10eb74e981b809a90abd953f70cc5324f71d94` |
-| `AP-SESSION-001` | 6 | `c7e5bcbaa142c0db12afc54318590fe00565bf2e77496847f9c31d2a866fa3cc` |
+| `AP-SESSION-001` | 7 | `1eda78eb33655f584dee4ea0e9a82608c457eed04bebb0bfca3533ff741f6b77` |
 | `AP-COORDINATOR-001` | 2 | `67ac157433f9f67edfaa78bbf213edd37a74d025939cd09bdc51187411bdd9f7` |
 | `AP-SEARCH-001` | 1 | `bfaf409e71175aff1a345532fa63b579b780b3256de211171c927ff6d7421122` |
 | `AP-EXCEPTION-001` | 2 | `2c4f00299922edac83286821af07ad485e5a630bca6acbbce918d87614abb395` |
@@ -181,26 +181,36 @@ the issue tool (beads_rust `br` when available), never its storage.
 
 ### AP-SESSION-001 — Session continuity across compaction
 
-Compaction is lossy; keep it rare and checkpointed. Write each user decision
-to its durable owner when it is made. Delegate work whose raw output matters
-only as a conclusion, such as broad searches, long logs and checks, or
-research, to a fresh subagent; subagents are authorized unless the user or
-local rules say otherwise.
+Write each user decision to its durable owner when it is made. Delegate work
+whose raw output matters only as a conclusion, such as broad searches, long
+logs and checks, or research, to a fresh subagent; subagents are authorized
+unless the user or local rules say otherwise.
 
-Budget absolute context tokens, not window share; if the host reports none,
-estimate high:
+Long-lived lead and desk sessions keep one "Standing decisions" block in their
+state folder's `standing-decisions.md`: every standing owner instruction,
+including decision modes, approvals, "don't ask about X", and conventions such
+as "continue means go". Record each immediately with its date and the owner's
+words; remove revoked entries. Update this block and in-flight issue state
+when they change, not at a context threshold. Builders are outside this
+long-lived-session regime.
 
-- From 300k, start no new step: close the issue if it can close soon, else
-  bring the current step to a verified state, checkpoint, and compact, or ask
-  the operator to. Never pass 400k without a checkpoint.
-- After a compaction, reread the instructions and the latest checkpoint, treat
-  the summary as discovery only, and continue.
-- After a session's fifth compaction, hand off from 300k instead of
-  compacting.
+Only the session's own launch sets `STARCOMPASS_STATE_DIR` to its absolute state
+folder before starting the host; independent leads set their own value, and
+builder/reviewer launchers clear it. The compact hook replays a bounded excerpt;
+read the full file after compaction even when replay is unavailable or truncated.
+Reread the instructions and latest checkpoint too; summaries are discovery only.
+
+A symptom is the owner correcting a session for forgetting or contradicting a
+recorded decision, or the session repeating a state-changing action it already
+did. At the first symptom, reread the block and latest checkpoint. At the second
+within the same compaction segment, hand off regardless of the compaction count.
+After the fifth compaction, hand off instead of compacting again.
 
 A checkpoint or handoff is an issue comment: state, next step, open decisions
-with reasons, and approaches ruled out. After a handoff, the next session
-primes, e.g. "prime, then continue <issue> from its handoff".
+with reasons, and approaches ruled out. Every handoff copies the standing
+decisions block in full when present and lists background loops and monitors to
+restart. After a handoff, the next session primes, e.g. "prime, then continue
+<issue> from its handoff".
 
 ### AP-COORDINATOR-001 — One coordinator across agent sessions
 
